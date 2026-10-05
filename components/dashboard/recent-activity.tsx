@@ -1,6 +1,13 @@
 import { activities } from "@/lib/mock/activities"
 import { formatPersianText, toPersianDigits } from "@/lib/digits"
 import {
+  DashboardPanel,
+  DashboardPanelBody,
+  DashboardPanelDescription,
+  DashboardPanelHeader,
+  DashboardPanelTitle,
+} from "@/components/dashboard/dashboard-panel"
+import {
   Item,
   ItemContent,
   ItemDescription,
@@ -10,14 +17,16 @@ import {
 
 export function RecentActivity() {
   return (
-    <div className="rounded-xl border">
-      <div className="border-b px-4 py-3">
-        <h2 className="text-sm font-medium">فعالیت‌های اخیر</h2>
-        <p className="text-xs text-muted-foreground">
-          رویدادهای مهم پنل در ساعات گذشته
-        </p>
-      </div>
-      <div className="p-3">
+    <DashboardPanel>
+      <DashboardPanelHeader>
+        <div>
+          <DashboardPanelTitle>فعالیت‌های اخیر</DashboardPanelTitle>
+          <DashboardPanelDescription>
+            رویدادهای مهم پنل در ساعات گذشته
+          </DashboardPanelDescription>
+        </div>
+      </DashboardPanelHeader>
+      <DashboardPanelBody className="p-3">
         <ItemGroup className="gap-0">
           {activities.map((activity) => (
             <Item
@@ -38,7 +47,7 @@ export function RecentActivity() {
             </Item>
           ))}
         </ItemGroup>
-      </div>
-    </div>
+      </DashboardPanelBody>
+    </DashboardPanel>
   )
 }

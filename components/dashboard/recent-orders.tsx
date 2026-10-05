@@ -2,6 +2,12 @@ import Link from "next/link"
 
 import { formatJalaliDate, formatToman } from "@/lib/format"
 import { recentOrders } from "@/lib/mock/orders"
+import {
+  DashboardPanel,
+  DashboardPanelDescription,
+  DashboardPanelHeader,
+  DashboardPanelTitle,
+} from "@/components/dashboard/dashboard-panel"
 import { EntityActionsMenu } from "@/components/shared/entity-actions-menu"
 import { OrderStatusBadge } from "@/components/shared/status-badges"
 import { Button } from "@/components/ui/button"
@@ -17,18 +23,18 @@ import {
 
 export function RecentOrders() {
   return (
-    <div className="rounded-xl border">
-      <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
+    <DashboardPanel>
+      <DashboardPanelHeader>
         <div>
-          <h2 className="text-sm font-medium">آخرین سفارش‌ها</h2>
-          <p className="text-xs text-muted-foreground">
+          <DashboardPanelTitle>آخرین سفارش‌ها</DashboardPanelTitle>
+          <DashboardPanelDescription>
             پنج سفارش اخیر ثبت‌شده در سامانه
-          </p>
+          </DashboardPanelDescription>
         </div>
         <Button variant="outline" size="sm" render={<Link href="/orders" />}>
           مشاهده همه
         </Button>
-      </div>
+      </DashboardPanelHeader>
       <Table>
         <TableHeader>
           <TableRow>
@@ -64,6 +70,6 @@ export function RecentOrders() {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </DashboardPanel>
   )
 }

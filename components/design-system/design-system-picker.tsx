@@ -146,19 +146,22 @@ function DesignTriggerButton({
   return (
     <Button
       type="button"
-      variant="outline"
-      size="icon-sm"
+      variant="default"
+      size="sm"
       aria-label={`دیزاین‌سیستم: ${active.label}`}
-      title={`دیزاین‌سیستم: ${active.label}`}
       aria-haspopup="dialog"
       aria-expanded={open}
       className={cn(
-        "shrink-0 border-border/80 bg-background/80 text-muted-foreground shadow-none hover:text-foreground",
+        "h-9 shrink-0 cursor-pointer gap-2 px-3.5 text-sm font-medium shadow-sm",
         className
       )}
       {...props}
     >
-      <SlidersHorizontalIcon className="size-4" />
+      <SlidersHorizontalIcon className="size-4 shrink-0" />
+      <span className="truncate">دیزاین‌سیستم</span>
+      <span className="hidden rounded-md bg-primary-foreground/15 px-1.5 py-0.5 text-[0.6875rem] font-medium sm:inline">
+        {active.label}
+      </span>
     </Button>
   )
 }
@@ -172,7 +175,7 @@ function DesktopPicker() {
         render={<DesignTriggerButton open={open} />}
       />
       <PopoverContent
-        align="end"
+        align="center"
         side="bottom"
         sideOffset={8}
         className="w-[min(22.5rem,calc(100vw-1.5rem))] gap-3 p-3.5"

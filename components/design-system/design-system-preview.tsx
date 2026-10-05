@@ -9,9 +9,11 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import { useTheme } from "next-themes"
 
 import {
   DESIGN_SYSTEM_STORAGE_KEY,
+  isDarkDefaultDesignSystem,
   normalizeDesignSystemId,
   persistDesignSystemId,
   type DesignSystemCookieId,
@@ -111,6 +113,7 @@ export function DesignSystemPreviewProvider({
   const [designSystemId, setDesignSystemIdState] =
     useState<DesignSystemId>(bootId)
   const [hydrated, setHydrated] = useState(false)
+  const { setTheme } = useTheme()
 
   useLayoutEffect(() => {
     const raw = window.localStorage.getItem(DESIGN_SYSTEM_STORAGE_KEY)
@@ -123,6 +126,7 @@ export function DesignSystemPreviewProvider({
     setDesignSystemIdState(next)
     persistDesignSystemId(next as DesignSystemCookieId)
     applyStyleRootClass(preset.styleRootClass)
+
     setHydrated(true)
   }, [])
 
@@ -132,12 +136,19 @@ export function DesignSystemPreviewProvider({
     applyStyleRootClass(resolvePreset(designSystemId).styleRootClass)
   }, [designSystemId, hydrated])
 
-  const setDesignSystemId = useCallback((id: DesignSystemId) => {
-    if (!DESIGN_SYSTEM_PRESETS.some((preset) => preset.id === id)) return
-    persistDesignSystemId(id as DesignSystemCookieId)
-    applyStyleRootClass(resolvePreset(id).styleRootClass)
-    setDesignSystemIdState(id)
-  }, [])
+  const setDesignSystemId = useCallback(
+    (id: DesignSystemId) => {
+      if (!DESIGN_SYSTEM_PRESETS.some((preset) => preset.id === id)) return
+      persistDesignSystemId(id as DesignSystemCookieId)
+      applyStyleRootClass(resolvePreset(id).styleRootClass)
+      setDesignSystemIdState(id)
+      // Only on picker select — not on hydrate — so ModeToggle light still sticks.
+      if (isDarkDefaultDesignSystem(id)) {
+        setTheme("dark")
+      }
+    },
+    [setTheme]
+  )
 
   const preset = resolvePreset(designSystemId)
 

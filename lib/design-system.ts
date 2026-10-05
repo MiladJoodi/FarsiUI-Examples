@@ -5,6 +5,13 @@
 export const DESIGN_SYSTEM_STORAGE_KEY = "design-system-preview"
 export const DESIGN_SYSTEM_COOKIE = "design-system-preview"
 
+/** فیروزه + نیلی — when picked in the UI, enter dark as the default. */
+export function isDarkDefaultDesignSystem(
+  id: string | null | undefined
+): boolean {
+  return id === "glass" || id === "nili"
+}
+
 export const DESIGN_SYSTEM_IDS = [
   "default",
   "comfort",

@@ -40,8 +40,8 @@ export function SiteHeader() {
     Boolean(meta.breadcrumbs?.length) && meta.breadcrumbs![0] !== meta.title
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 px-3 backdrop-blur supports-backdrop-filter:bg-background/80 sm:px-4">
-      <div className="flex min-w-0 flex-1 items-center gap-2">
+    <header className="sticky top-0 z-20 grid h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b bg-background/95 px-3 backdrop-blur supports-backdrop-filter:bg-background/80 sm:px-4">
+      <div className="flex min-w-0 items-center gap-2 justify-self-start">
         <SidebarTrigger className="-ms-1" />
         <Separator orientation="vertical" className="me-1 hidden h-4 sm:block" />
         <div className="min-w-0">
@@ -63,15 +63,19 @@ export function SiteHeader() {
               </BreadcrumbList>
             </Breadcrumb>
           ) : meta.description ? (
-            <p className="hidden truncate text-xs text-muted-foreground md:block">
+            <p className="hidden truncate text-xs text-muted-foreground lg:block">
               {meta.description}
             </p>
           ) : null}
         </div>
       </div>
 
-      <div className="flex items-center gap-1 sm:gap-1.5">
-        <InputGroup className="hidden h-8 w-48 lg:flex xl:w-60">
+      <div className="justify-self-center">
+        <DesignSystemPicker />
+      </div>
+
+      <div className="flex items-center justify-self-end gap-1 sm:gap-1.5">
+        <InputGroup className="hidden h-8 w-40 lg:flex xl:w-52">
           <InputGroupAddon align="inline-start">
             <SearchIcon className="size-4" />
           </InputGroupAddon>
@@ -120,8 +124,6 @@ export function SiteHeader() {
         </DropdownMenu>
 
         <ModeToggle />
-
-        <DesignSystemPicker />
 
         <DropdownMenu>
           <DropdownMenuTrigger

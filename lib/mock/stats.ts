@@ -28,11 +28,11 @@ export const weeklyOrdersData = [
 ]
 
 export const categoryShareData = [
-  { name: "لوازم جانبی", value: 34, fill: "var(--chart-1)" },
-  { name: "صوتی", value: 22, fill: "var(--chart-2)" },
-  { name: "نمایشگر", value: 18, fill: "var(--chart-3)" },
-  { name: "تصویری", value: 15, fill: "var(--chart-4)" },
-  { name: "سایر", value: 11, fill: "var(--chart-5)" },
+  { name: "لوازم جانبی", value: 34, fill: "var(--color-chart-1)" },
+  { name: "صوتی", value: 22, fill: "var(--color-chart-2)" },
+  { name: "نمایشگر", value: 18, fill: "var(--color-chart-3)" },
+  { name: "تصویری", value: 15, fill: "var(--color-chart-4)" },
+  { name: "سایر", value: 11, fill: "var(--color-chart-5)" },
 ]
 
 export const channelSalesData = [

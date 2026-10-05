@@ -12,10 +12,10 @@
 /* -------------------------------------------------------------------------- */
 
 .style-glass {
-  --glass-primary: #0f766e;
+  --glass-primary: #0d9488;
   --glass-primary-foreground: #f0fdfa;
   --glass-ring: #14b8a6;
-  --glass-brand: #0d9488;
+  --glass-brand: #0f766e;
   --glass-brand-foreground: #f0fdfa;
   --glass-chart-1: #0d9488;
   --glass-chart-2: #0284c7;
@@ -23,33 +23,33 @@
   --glass-chart-4: #d97706;
   --glass-chart-5: #64748b;
 
-  /* Soft mist canvas — airy, not heavy teal wash */
-  --background: #f3f8f9;
+  /* Cool aqua mist — atmosphere shows through transparent inset */
+  --background: #e8f4f5;
   --foreground: #0c1b1f;
-  --card: #ffffff;
+  --card: #ffffffd9;
   --card-foreground: #0c1b1f;
-  --popover: #ffffff;
+  --popover: #fffffff2;
   --popover-foreground: #0c1b1f;
   --primary: var(--glass-primary);
   --primary-foreground: var(--glass-primary-foreground);
-  --secondary: #e6f4f3;
+  --secondary: #d5eef0;
   --secondary-foreground: #134e4a;
-  --muted: #eaf3f4;
-  --muted-foreground: #5b7378;
-  --accent: #d9f3ef;
+  --muted: #dceef0;
+  --muted-foreground: #4a6a70;
+  --accent: #c8ebe8;
   --accent-foreground: #115e59;
   --destructive: #e11d48;
-  --border: #0c1b1f12;
-  --input: #0c1b1f1f;
+  --border: #0c1b1f16;
+  --input: #0c1b1f24;
   --ring: var(--glass-ring);
 
-  --sidebar: #ffffff;
+  --sidebar: #fffffff0;
   --sidebar-foreground: #0c1b1f;
   --sidebar-primary: var(--glass-primary);
   --sidebar-primary-foreground: var(--glass-primary-foreground);
-  --sidebar-accent: #e6f4f3;
+  --sidebar-accent: #d5eef0;
   --sidebar-accent-foreground: #115e59;
-  --sidebar-border: #0c1b1f10;
+  --sidebar-border: #0c1b1f12;
   --sidebar-ring: var(--glass-ring);
 
   --chart-1: var(--glass-chart-1);
@@ -60,7 +60,7 @@
 
   --radius: 0.875rem;
   --radius-field: 0.75rem;
-  --radius-surface: 1.375rem;
+  --radius-surface: 1.25rem;
   --radius-overlay: 1rem;
   --radius-control: 0.75rem;
   --radius-4xl: 1.375rem;
@@ -69,38 +69,38 @@
   --radius-xl: 0.875rem;
   --radius-lg: 0.75rem;
 
-  /* Opaque frost surfaces + soft aqua bloom shadows */
-  --surface: #ffffff;
-  --surface-muted: #eaf3f4;
-  --surface-border: #0c1b1f12;
-  --surface-filter: blur(16px) saturate(1.35);
-  --surface-opacity: 0.92;
+  /* Frosted glass cards */
+  --surface: #ffffffc7;
+  --surface-muted: #ffffff99;
+  --surface-border: #0c1b1f14;
+  --surface-filter: blur(18px) saturate(1.45);
+  --surface-opacity: 0.78;
   --surface-foreground: #0c1b1f;
 
-  --field: #ffffff;
-  --field-border: #0c1b1f18;
+  --field: #ffffffd6;
+  --field-border: #0c1b1f1a;
   --field-shadow:
-    inset 0 1px 0 0 #ffffff, 0 1px 2px 0 #0c1b1f08;
+    inset 0 1px 0 0 #ffffffcc, 0 1px 2px 0 #0c1b1f0a;
 
-  --control: #ffffff;
-  --control-border: #0c1b1f14;
+  --control: #ffffffc2;
+  --control-border: #0c1b1f16;
   --control-shadow:
-    0 1px 0 0 #ffffff inset, 0 8px 20px -12px #0d948866;
+    0 1px 0 0 #ffffffcc inset, 0 10px 22px -12px #0d948866;
 
-  --overlay: #ffffff;
+  --overlay: #fffffff5;
   --overlay-shadow:
-    0 1px 0 0 #ffffff inset, 0 22px 48px -18px #0c1b1f28,
-    0 0 0 1px #0d948814;
+    0 1px 0 0 #ffffff inset, 0 22px 48px -18px #0c1b1f2e,
+    0 0 0 1px #0d948818;
 
   --shadow-surface:
-    0 1px 0 0 #ffffff inset, 0 14px 36px -18px #0d94883a,
-    0 0 0 1px #0c1b1f0a;
-  --shadow-field: inset 0 1px 0 0 #ffffff, 0 1px 2px 0 #0c1b1f08;
+    0 1px 0 0 #ffffffeb inset, 0 16px 40px -20px #0d948850,
+    0 0 0 1px #0c1b1f0c;
+  --shadow-field: inset 0 1px 0 0 #ffffffcc, 0 1px 2px 0 #0c1b1f0a;
   --shadow-overlay:
-    0 1px 0 0 #ffffff inset, 0 22px 48px -18px #0c1b1f28,
-    0 0 0 1px #0d948814;
+    0 1px 0 0 #ffffff inset, 0 22px 48px -18px #0c1b1f2e,
+    0 0 0 1px #0d948818;
   --shadow-control:
-    0 1px 0 0 #ffffff inset, 0 8px 20px -12px #0d948866;
+    0 1px 0 0 #ffffffcc inset, 0 10px 22px -12px #0d948866;
   --shadow-press: inset 0 1px 2px 0 #0c1b1f14;
 
   --motion-fast: 280ms;
@@ -213,7 +213,7 @@ html.dark.style-glass,
 
 /* Light collage — soft teal mist (no repeating hatch) */
 .style-glass [data-collage-surface] {
-  background-color: #e6f4f6 !important;
+  background-color: #e8f4f5 !important;
   background-image:
     radial-gradient(55% 45% at 90% 0%, #00bdbe40, transparent 70%),
     radial-gradient(45% 50% at 5% 100%, #3f69d333, transparent 70%),

@@ -36,7 +36,7 @@ export function EntityActionsMenu({
             size="icon-sm"
             aria-label={label}
             className={cn(
-              "shrink-0 border-border/70 bg-background text-muted-foreground shadow-none hover:bg-muted/60 hover:text-foreground",
+              "shrink-0 border-foreground/20 bg-background text-foreground shadow-xs hover:border-foreground/30 hover:bg-muted hover:text-foreground",
               className
             )}
           />

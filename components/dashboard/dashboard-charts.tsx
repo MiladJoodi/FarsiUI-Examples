@@ -18,6 +18,13 @@ import {
   weeklyOrdersData,
 } from "@/lib/mock/stats"
 import {
+  DashboardPanel,
+  DashboardPanelBody,
+  DashboardPanelDescription,
+  DashboardPanelHeader,
+  DashboardPanelTitle,
+} from "@/components/dashboard/dashboard-panel"
+import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -27,7 +34,7 @@ import {
 } from "@/components/ui/chart"
 
 const ordersConfig = {
-  orders: { label: "سفارش", color: "var(--chart-3)" },
+  orders: { label: "سفارش", color: "var(--chart-1)" },
   returned: { label: "مرجوعی", color: "var(--chart-5)" },
 } satisfies ChartConfig
 
@@ -36,19 +43,21 @@ const categoryConfig = {
 } satisfies ChartConfig
 
 const channelConfig = {
-  sales: { label: "سهم فروش", color: "var(--chart-4)" },
+  sales: { label: "سهم فروش", color: "var(--chart-2)" },
 } satisfies ChartConfig
 
 export function WeeklyOrdersChart() {
   return (
-    <div className="rounded-xl border">
-      <div className="border-b px-4 py-3">
-        <h2 className="text-sm font-medium">سفارش‌های هفته</h2>
-        <p className="text-xs text-muted-foreground">
-          تعداد سفارش موفق و مرجوعی در هفت روز اخیر
-        </p>
-      </div>
-      <div className="p-4">
+    <DashboardPanel>
+      <DashboardPanelHeader>
+        <div>
+          <DashboardPanelTitle>سفارش‌های هفته</DashboardPanelTitle>
+          <DashboardPanelDescription>
+            تعداد سفارش موفق و مرجوعی در هفت روز اخیر
+          </DashboardPanelDescription>
+        </div>
+      </DashboardPanelHeader>
+      <DashboardPanelBody>
         <ChartContainer
           config={ordersConfig}
           className="aspect-[5/4] w-full sm:aspect-video"
@@ -84,21 +93,23 @@ export function WeeklyOrdersChart() {
             />
           </BarChart>
         </ChartContainer>
-      </div>
-    </div>
+      </DashboardPanelBody>
+    </DashboardPanel>
   )
 }
 
 export function CategoryShareChart() {
   return (
-    <div className="rounded-xl border">
-      <div className="border-b px-4 py-3">
-        <h2 className="text-sm font-medium">سهم دسته‌بندی‌ها</h2>
-        <p className="text-xs text-muted-foreground">
-          توزیع فروش بر اساس دسته محصول
-        </p>
-      </div>
-      <div className="p-4">
+    <DashboardPanel>
+      <DashboardPanelHeader>
+        <div>
+          <DashboardPanelTitle>سهم دسته‌بندی‌ها</DashboardPanelTitle>
+          <DashboardPanelDescription>
+            توزیع فروش بر اساس دسته محصول
+          </DashboardPanelDescription>
+        </div>
+      </DashboardPanelHeader>
+      <DashboardPanelBody>
         <ChartContainer
           config={categoryConfig}
           className="mx-auto aspect-square max-h-[260px] w-full"
@@ -133,21 +144,23 @@ export function CategoryShareChart() {
             </li>
           ))}
         </ul>
-      </div>
-    </div>
+      </DashboardPanelBody>
+    </DashboardPanel>
   )
 }
 
 export function ChannelSalesChart() {
   return (
-    <div className="rounded-xl border">
-      <div className="border-b px-4 py-3">
-        <h2 className="text-sm font-medium">کانال‌های فروش</h2>
-        <p className="text-xs text-muted-foreground">
-          سهم هر کانال از کل فروش ماه
-        </p>
-      </div>
-      <div className="p-4">
+    <DashboardPanel>
+      <DashboardPanelHeader>
+        <div>
+          <DashboardPanelTitle>کانال‌های فروش</DashboardPanelTitle>
+          <DashboardPanelDescription>
+            سهم هر کانال از کل فروش ماه
+          </DashboardPanelDescription>
+        </div>
+      </DashboardPanelHeader>
+      <DashboardPanelBody>
         <ChartContainer config={channelConfig} className="aspect-[5/4] w-full">
           <BarChart
             data={channelSalesData}
@@ -176,7 +189,7 @@ export function ChannelSalesChart() {
             />
           </BarChart>
         </ChartContainer>
-      </div>
-    </div>
+      </DashboardPanelBody>
+    </DashboardPanel>
   )
 }

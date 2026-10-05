@@ -34,27 +34,22 @@ export const pageMeta: Record<
   "/users": {
     title: "کاربران",
     description: "مدیریت حساب‌های کاربران",
-    breadcrumbs: ["کاربران"],
   },
   "/orders": {
     title: "سفارش‌ها",
     description: "پیگیری و بررسی سفارش‌ها",
-    breadcrumbs: ["سفارش‌ها"],
   },
   "/products": {
     title: "محصولات",
     description: "فهرست و وضعیت موجودی",
-    breadcrumbs: ["محصولات"],
   },
   "/reports": {
     title: "گزارش‌ها",
     description: "خلاصه عملکرد فروش",
-    breadcrumbs: ["گزارش‌ها"],
   },
   "/settings": {
     title: "تنظیمات",
-    description: "پیکربندی حساب و سامانه",
-    breadcrumbs: ["تنظیمات"],
+    description: "مدیریت حساب، اعلان‌ها و ظاهر پنل",
   },
 }
 

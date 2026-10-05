@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
@@ -47,8 +48,15 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
               render={<Link href="/" />}
               className="gap-3"
             >
-              <span className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sm font-semibold text-sidebar-primary-foreground">
-                ه
+              <span className="relative flex size-8 shrink-0 overflow-hidden rounded-lg">
+                <Image
+                  src="/favicon.png"
+                  alt="همیار"
+                  width={32}
+                  height={32}
+                  className="size-8 object-cover"
+                  priority
+                />
               </span>
               <span className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
                 <span className="font-semibold">همیار</span>

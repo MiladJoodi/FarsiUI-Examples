@@ -3,6 +3,7 @@ import { TrendingDownIcon, TrendingUpIcon } from "lucide-react"
 import { formatCount, formatToman } from "@/lib/format"
 import { formatPersianNumber } from "@/lib/digits"
 import { dashboardStats } from "@/lib/mock/stats"
+import { DashboardPanel } from "@/components/dashboard/dashboard-panel"
 
 const items = [
   {
@@ -40,10 +41,15 @@ export function StatsCards() {
   return (
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
-        <div
+        <DashboardPanel
           key={item.label}
-          className="rounded-xl border bg-background px-4 py-3"
+          size="sm"
+          className="relative overflow-hidden"
         >
+          <span
+            aria-hidden
+            className="absolute inset-y-0 start-0 w-1 bg-primary/80"
+          />
           <p className="text-sm text-muted-foreground">{item.label}</p>
           <p className="mt-0.5 text-lg font-semibold tracking-tight sm:text-xl">
             {item.value}
@@ -66,7 +72,7 @@ export function StatsCards() {
                 : `${item.up ? "+" : "−"}${formatPersianNumber(item.delta)}٪ ${item.hint}`}
             </span>
           </div>
-        </div>
+        </DashboardPanel>
       ))}
     </div>
   )

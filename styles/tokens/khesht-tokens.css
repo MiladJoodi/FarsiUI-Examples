@@ -25,7 +25,7 @@
   --khesht-chart-4: #b45309;
   --khesht-chart-5: #6b5b4c;
 
-  --background: #f3ebe2;
+  --background: #efe4d8;
   --foreground: var(--khesht-ink);
   --card: #fbf6ef;
   --card-foreground: var(--khesht-ink);
@@ -33,9 +33,9 @@
   --popover-foreground: var(--khesht-ink);
   --primary: var(--khesht-primary);
   --primary-foreground: var(--khesht-primary-foreground);
-  --secondary: #fbf6ef;
+  --secondary: #f5ebe0;
   --secondary-foreground: var(--khesht-ink);
-  --muted: #e8ddd0;
+  --muted: #e6d8c8;
   --muted-foreground: #6b5b4c;
   --accent: #eddccc;
   --accent-foreground: var(--khesht-ink);
@@ -44,7 +44,7 @@
   --input: var(--khesht-ink);
   --ring: var(--khesht-ring);
 
-  --sidebar: #fbf6ef;
+  --sidebar: #f7efe4;
   --sidebar-foreground: var(--khesht-ink);
   --sidebar-primary: var(--khesht-primary);
   --sidebar-primary-foreground: var(--khesht-primary-foreground);
@@ -74,7 +74,7 @@
   --radius-sm: 0.25rem;
 
   --surface: #fbf6ef;
-  --surface-muted: #e8ddd0;
+  --surface-muted: #e6d8c8;
   --surface-border: var(--khesht-ink);
   --surface-filter: none;
   --surface-opacity: 1;
