@@ -22,12 +22,12 @@ export function PasswordInput({
   const [visible, setVisible] = React.useState(false)
 
   return (
-    <div className="relative max-w-md">
+    <div className="auth-password-wrap relative w-full" dir="ltr">
       <Input
         id={id}
         type={visible ? "text" : "password"}
         dir="ltr"
-        className={cn("pe-10 text-start", className)}
+        className={cn("auth-input text-start", className)}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
@@ -39,14 +39,14 @@ export function PasswordInput({
         type="button"
         variant="ghost"
         size="icon-sm"
-        className="absolute end-1 top-1/2 -translate-y-1/2"
+        className="auth-eye"
         onClick={() => setVisible((v) => !v)}
         aria-label={visible ? "پنهان کردن رمز" : "نمایش رمز"}
       >
         {visible ? (
-          <EyeOffIcon className="size-4" />
+          <EyeOffIcon className="size-3.5" />
         ) : (
-          <EyeIcon className="size-4" />
+          <EyeIcon className="size-3.5" />
         )}
       </Button>
     </div>

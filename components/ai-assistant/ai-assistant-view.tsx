@@ -6,14 +6,14 @@ import {
   CopyIcon,
   FileIcon,
   GlobeIcon,
-  HistoryIcon,
+  MessageSquareIcon,
+  MoreHorizontalIcon,
+  PanelLeftIcon,
   PaperclipIcon,
-  PlusIcon,
   RefreshCwIcon,
-  SearchIcon,
   SendIcon,
-  Settings2Icon,
   SparklesIcon,
+  SquarePenIcon,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -33,16 +33,12 @@ import {
   type Conversation,
   type SourceRef,
 } from "@/lib/mock/ai-assistant"
+import { DesignSystemPicker } from "@/components/design-system/design-system-picker"
+import { ModeToggle } from "@/components/layout/mode-toggle"
+import { SearchField } from "@/components/shared/search-field"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-  InputGroupTextarea,
-} from "@/components/ui/input-group"
+import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Select,
@@ -63,6 +59,10 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { HighlightedCode } from "@/components/ai-assistant/highlight-code"
+
+const numericClass =
+  "tracking-normal [font-variant-numeric:normal] [font-feature-settings:normal]"
 
 export function AiAssistantView() {
   const [items, setItems] = React.useState(initialConversations)
@@ -70,15 +70,13 @@ export function AiAssistantView() {
   const [query, setQuery] = React.useState("")
   const [draft, setDraft] = React.useState("")
   const [modelId, setModelId] = React.useState(models[0].id)
-  const [historyOpen, setHistoryOpen] = React.useState(false)
+  const [sidebarOpen, setSidebarOpen] = React.useState(false)
   const [sourcesOpen, setSourcesOpen] = React.useState(false)
   const [settingsOpen, setSettingsOpen] = React.useState(false)
   const [thinking, setThinking] = React.useState(false)
   const bottomRef = React.useRef<HTMLDivElement>(null)
 
   const active = items.find((c) => c.id === activeId) ?? items[0]
-  const activeModel =
-    models.find((m) => m.id === (active?.modelId || modelId)) ?? models[0]
 
   const filtered = items.filter((c) => {
     const q = query.trim()
@@ -106,7 +104,7 @@ export function AiAssistantView() {
     setActiveId(id)
     const conv = items.find((c) => c.id === id)
     if (conv) setModelId(conv.modelId)
-    setHistoryOpen(false)
+    setSidebarOpen(false)
   }
 
   function startNewChat() {
@@ -114,7 +112,7 @@ export function AiAssistantView() {
     setItems((prev) => [conv, ...prev])
     setActiveId(conv.id)
     setDraft("")
-    setHistoryOpen(false)
+    setSidebarOpen(false)
   }
 
   function applyPrompt(prompt: string) {
@@ -211,63 +209,105 @@ export function AiAssistantView() {
 
   const isEmpty = (active?.messages.length ?? 0) === 0 && !thinking
 
+  const sidebar = (
+    <ChatSidebar
+      grouped={grouped}
+      activeId={active.id}
+      query={query}
+      onQueryChange={setQuery}
+      onSelect={selectConversation}
+      onNewChat={startNewChat}
+      onClose={() => setSidebarOpen(false)}
+      showClose={sidebarOpen}
+    />
+  )
+
   return (
     <TooltipProvider>
       <div className="flex h-full min-h-0 overflow-hidden">
-        <aside className="hidden w-64 shrink-0 flex-col border-e bg-muted/15 lg:flex xl:w-72">
-          <HistoryPanel
-            grouped={grouped}
-            activeId={active.id}
-            query={query}
-            onQueryChange={setQuery}
-            onSelect={selectConversation}
-            onNewChat={startNewChat}
-          />
+        <aside className="hidden w-[17.5rem] shrink-0 flex-col border-e bg-muted/30 md:flex">
+          {sidebar}
         </aside>
 
-        <section className="flex min-w-0 flex-1 flex-col" aria-label="گفتگو با دستیار">
-          <header className="flex h-14 shrink-0 items-center gap-2 border-b px-3 sm:px-4">
+        <section
+          className="relative flex min-w-0 flex-1 flex-col bg-background"
+          aria-label="گفتگو با دستیار"
+        >
+          <header className="flex h-12 shrink-0 items-center gap-1 border-b px-2 sm:px-3">
             <Button
               variant="ghost"
               size="icon-sm"
-              className="lg:hidden"
-              aria-label="تاریخچه گفتگوها"
-              onClick={() => setHistoryOpen(true)}
+              className="shrink-0 md:hidden"
+              aria-label="منوی گفتگوها"
+              onClick={() => setSidebarOpen(true)}
             >
-              <HistoryIcon className="size-4" />
+              <PanelLeftIcon className="size-5" />
             </Button>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold">{active.title}</p>
-              <p className="truncate text-xs text-muted-foreground">
-                {activeModel.name} · {assistantHint}
-              </p>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="hidden shrink-0 md:inline-flex"
+              aria-label="گفتگوی جدید"
+              onClick={startNewChat}
+            >
+              <SquarePenIcon className="size-4" />
+            </Button>
+
+            <div className="flex min-w-0 flex-1 justify-center px-1">
+              <Select
+                value={modelId}
+                onValueChange={(v) => {
+                  if (!v) return
+                  setModelId(v)
+                  setItems((prev) =>
+                    prev.map((c) =>
+                      c.id === active.id ? { ...c, modelId: v } : c
+                    )
+                  )
+                }}
+                items={Object.fromEntries(models.map((m) => [m.id, m.name]))}
+              >
+                <SelectTrigger
+                  size="sm"
+                  className="h-8 max-w-[14rem] border-0 bg-transparent shadow-none"
+                  aria-label="انتخاب مدل"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {models.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <Badge variant="secondary" className="hidden sm:inline-flex">
-              {activeModel.name}
-            </Badge>
+
             <Button
               variant="ghost"
               size="icon-sm"
-              className="xl:hidden"
-              aria-label="منابع و زمینه"
-              onClick={() => setSourcesOpen(true)}
+              className="shrink-0 md:hidden"
+              aria-label="گفتگوی جدید"
+              onClick={startNewChat}
             >
-              <FileIcon className="size-4" />
+              <SquarePenIcon className="size-4" />
             </Button>
             <Button
               variant="ghost"
               size="icon-sm"
-              aria-label="تنظیمات دستیار"
+              className="shrink-0"
+              aria-label="گزینه‌های بیشتر"
               onClick={() => setSettingsOpen(true)}
             >
-              <Settings2Icon className="size-4" />
+              <MoreHorizontalIcon className="size-4" />
             </Button>
           </header>
 
           <ScrollArea className="min-h-0 flex-1">
-            <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-3 py-6 sm:px-5">
+            <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-3 py-4 sm:px-4 sm:py-6">
               {isEmpty ? (
-                <EmptyState onPick={applyPrompt} onSend={sendMessage} />
+                <EmptyState onPick={applyPrompt} />
               ) : (
                 <>
                   {active.messages.map((message, index) => (
@@ -293,38 +333,13 @@ export function AiAssistantView() {
             value={draft}
             onChange={setDraft}
             onSend={() => sendMessage()}
-            modelId={modelId}
-            onModelChange={(id) => {
-              setModelId(id)
-              setItems((prev) =>
-                prev.map((c) =>
-                  c.id === active.id ? { ...c, modelId: id } : c
-                )
-              )
-            }}
             disabled={thinking}
           />
         </section>
 
-        <aside className="hidden w-72 shrink-0 flex-col border-s xl:flex">
-          <SourcesPanel sources={conversationSources} />
-        </aside>
-
-        <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
-          <SheetContent side="right" className="w-[min(20rem,100%)] p-0">
-            <SheetHeader className="border-b p-4 text-start">
-              <SheetTitle>گفتگوها</SheetTitle>
-              <SheetDescription>{assistantName}</SheetDescription>
-            </SheetHeader>
-            <HistoryPanel
-              grouped={grouped}
-              activeId={active.id}
-              query={query}
-              onQueryChange={setQuery}
-              onSelect={selectConversation}
-              onNewChat={startNewChat}
-              compact
-            />
+        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <SheetContent side="right" className="w-[min(18rem,100%)] p-0 md:hidden">
+            {sidebar}
           </SheetContent>
         </Sheet>
 
@@ -343,25 +358,17 @@ export function AiAssistantView() {
               </SheetDescription>
             </SheetHeader>
             <div className="space-y-4 px-4 pb-6">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">مدل پیش‌فرض</p>
-                <Select
-                  value={modelId}
-                  onValueChange={(v) => v && setModelId(v)}
-                  items={Object.fromEntries(models.map((m) => [m.id, m.name]))}
-                >
-                  <SelectTrigger className="w-full" aria-label="مدل پیش‌فرض">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {models.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => {
+                  setSettingsOpen(false)
+                  setSourcesOpen(true)
+                }}
+              >
+                <FileIcon className="size-4" data-icon="inline-start" />
+                منابع گفتگو
+              </Button>
               <Separator />
               <p className="text-sm leading-relaxed text-muted-foreground">
                 پاسخ‌ها به‌صورت محلی و نمایشی تولید می‌شوند؛ اتصال به مدل واقعی
@@ -375,14 +382,15 @@ export function AiAssistantView() {
   )
 }
 
-function HistoryPanel({
+function ChatSidebar({
   grouped,
   activeId,
   query,
   onQueryChange,
   onSelect,
   onNewChat,
-  compact,
+  onClose,
+  showClose,
 }: {
   grouped: {
     group: Conversation["group"]
@@ -394,33 +402,53 @@ function HistoryPanel({
   onQueryChange: (value: string) => void
   onSelect: (id: string) => void
   onNewChat: () => void
-  compact?: boolean
+  onClose?: () => void
+  showClose?: boolean
 }) {
   return (
-    <div className={cn("flex h-full min-h-0 flex-col", compact && "h-[calc(100%-5rem)]")}>
-      <div className="space-y-3 border-b p-3">
-        <Button className="w-full justify-start gap-2" onClick={onNewChat}>
-          <PlusIcon className="size-4" />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex items-center justify-between gap-2 px-3 py-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-background">
+            <SparklesIcon className="size-4" aria-hidden />
+          </span>
+          <span className="truncate text-sm font-semibold">{assistantName}</span>
+        </div>
+        {showClose ? (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="بستن منو"
+            onClick={onClose}
+          >
+            <PanelLeftIcon className="size-4" />
+          </Button>
+        ) : null}
+      </div>
+
+      <div className="space-y-2 px-2 pb-2">
+        <Button
+          variant="outline"
+          className="h-9 w-full justify-start gap-2 rounded-lg border-border/80 bg-background/60 shadow-none"
+          onClick={onNewChat}
+        >
+          <SquarePenIcon className="size-4" />
           گفتگوی جدید
         </Button>
-        <InputGroup className="h-9">
-          <InputGroupAddon align="inline-start">
-            <SearchIcon className="size-4" />
-          </InputGroupAddon>
-          <InputGroupInput
-            placeholder="جستجوی گفتگو…"
-            aria-label="جستجوی گفتگو"
-            value={query}
-            onChange={(e) => onQueryChange(e.target.value ?? "")}
-          />
-        </InputGroup>
+        <SearchField
+          placeholder="جستجو در گفتگوها…"
+          aria-label="جستجوی گفتگو"
+          value={query}
+          onChange={(e) => onQueryChange(e.target.value ?? "")}
+        />
       </div>
+
       <ScrollArea className="min-h-0 flex-1">
-        <nav className="space-y-4 p-3" aria-label="تاریخچه گفتگوها">
+        <nav className="space-y-3 px-2 pb-2" aria-label="تاریخچه گفتگوها">
           {grouped.map(({ group, label, items }) =>
             items.length === 0 ? null : (
               <div key={group}>
-                <p className="mb-1.5 px-2 text-xs font-medium text-muted-foreground">
+                <p className="mb-1 px-2.5 text-[0.65rem] font-medium text-muted-foreground">
                   {label}
                 </p>
                 <ul className="space-y-0.5">
@@ -432,17 +460,18 @@ function HistoryPanel({
                           type="button"
                           onClick={() => onSelect(item.id)}
                           className={cn(
-                            "flex w-full flex-col gap-0.5 rounded-lg px-2.5 py-2 text-start transition-colors",
+                            "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-start text-sm transition-colors",
                             selected
-                              ? "bg-accent text-accent-foreground"
-                              : "hover:bg-muted/60"
+                              ? "bg-background shadow-xs ring-1 ring-border/60"
+                              : "hover:bg-background/70"
                           )}
                         >
-                          <span className="truncate text-sm font-medium">
+                          <MessageSquareIcon
+                            className="size-4 shrink-0 opacity-50"
+                            aria-hidden
+                          />
+                          <span className="min-w-0 flex-1 truncate">
                             {item.title}
-                          </span>
-                          <span className="line-clamp-1 text-xs text-muted-foreground">
-                            {item.preview}
                           </span>
                         </button>
                       </li>
@@ -453,47 +482,48 @@ function HistoryPanel({
             )
           )}
           {grouped.every((g) => g.items.length === 0) ? (
-            <p className="px-2 py-6 text-center text-sm text-muted-foreground">
+            <p className="px-2 py-8 text-center text-sm text-muted-foreground">
               گفتگویی پیدا نشد.
             </p>
           ) : null}
         </nav>
       </ScrollArea>
+
+      <div className="mt-auto space-y-2 border-t bg-muted/20 p-2">
+        <DesignSystemPicker className="w-full" />
+        <div className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5">
+          <div className="flex min-w-0 items-center gap-2">
+            <Avatar size="sm">
+              <AvatarFallback className="text-[0.65rem]">ن‌ک</AvatarFallback>
+            </Avatar>
+            <span className="truncate text-xs font-medium">نیما کاظمی</span>
+          </div>
+          <ModeToggle />
+        </div>
+      </div>
     </div>
   )
 }
 
-function EmptyState({
-  onPick,
-  onSend,
-}: {
-  onPick: (prompt: string) => void
-  onSend: (prompt: string) => void
-}) {
+function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
   return (
-    <div className="flex flex-col items-center gap-8 py-8 sm:py-14">
-      <div className="flex size-12 items-center justify-center rounded-2xl border bg-muted/40">
-        <SparklesIcon className="size-5 text-foreground" aria-hidden />
+    <div className="flex flex-col items-center justify-center gap-8 py-10 sm:min-h-[min(60vh,28rem)]">
+      <div className="space-y-2 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          چه کمکی از دستم برمی‌آید؟
+        </h1>
+        <p className="text-sm text-muted-foreground">{assistantHint}</p>
       </div>
-      <div className="max-w-md space-y-2 text-center">
-        <h1 className="text-xl font-semibold tracking-tight">{assistantName}</h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {assistantHint}. یک موضوع را انتخاب کنید یا همین حالا بپرسید.
-        </p>
-      </div>
-      <div className="grid w-full gap-2 sm:grid-cols-2">
+      <div className="grid w-full max-w-2xl gap-2 sm:grid-cols-2">
         {suggestedPrompts.map((item) => (
           <button
             key={item.id}
             type="button"
-            onClick={() => {
-              onPick(item.prompt)
-              onSend(item.prompt)
-            }}
-            className="rounded-xl border bg-background p-3 text-start transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={() => onPick(item.prompt)}
+            className="rounded-2xl border bg-muted/20 p-4 text-start transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span className="block text-sm font-medium">{item.title}</span>
-            <span className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+            <span className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
               {item.prompt}
             </span>
           </button>
@@ -514,49 +544,55 @@ function MessageRow({
 
   if (isUser) {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[min(100%,36rem)] rounded-2xl bg-muted px-3.5 py-2.5 text-sm leading-relaxed">
+      <div className="flex flex-col items-end gap-1">
+        <div className="max-w-[min(100%,85%)] rounded-[1.25rem] bg-muted/80 px-4 py-2.5 text-sm leading-relaxed">
           {message.blocks.map((block, i) => (
             <BlockView key={i} block={block} />
           ))}
-          <p className="mt-1.5 text-[0.65rem] text-muted-foreground tabular-nums">
-            {message.createdAt}
-          </p>
         </div>
+        <time
+          dateTime={message.createdAt}
+          className={cn("px-1 text-[0.65rem] text-muted-foreground", numericClass)}
+        >
+          {message.createdAt}
+        </time>
       </div>
     )
   }
 
   return (
-    <div className="space-y-3">
+    <article className="space-y-2 text-sm leading-relaxed">
       <div className="flex items-center gap-2">
-        <Avatar size="sm">
-          <AvatarFallback className="text-[0.65rem]">نو</AvatarFallback>
-        </Avatar>
-        <div className="min-w-0">
-          <p className="text-sm font-medium">{assistantName}</p>
-          <p className="text-[0.65rem] text-muted-foreground tabular-nums">
-            {message.createdAt}
-          </p>
-        </div>
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full border bg-background">
+          <SparklesIcon className="size-3.5" aria-hidden />
+        </span>
+        <span className="text-sm font-medium">{assistantName}</span>
       </div>
-      <div className="space-y-3 ps-10 text-sm leading-relaxed">
+      <div className="space-y-3 pe-1 ps-9">
         {message.blocks.map((block, i) => (
           <BlockView key={i} block={block} />
         ))}
         <MessageActions onRetry={onRetry} message={message} />
       </div>
-    </div>
+      <time
+        dateTime={message.createdAt}
+        className={cn("block ps-9 text-[0.65rem] text-muted-foreground", numericClass)}
+      >
+        {message.createdAt}
+      </time>
+    </article>
   )
 }
 
 function ThinkingRow() {
   return (
-    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-      <Avatar size="sm">
-        <AvatarFallback className="text-[0.65rem]">نو</AvatarFallback>
-      </Avatar>
-      <span className="animate-pulse">در حال نوشتن…</span>
+    <div className="flex items-center gap-2 ps-9 text-sm text-muted-foreground">
+      <span className="inline-flex gap-1" aria-live="polite">
+        <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/70 [animation-delay:0ms]" />
+        <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/70 [animation-delay:120ms]" />
+        <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/70 [animation-delay:240ms]" />
+      </span>
+      <span>در حال نوشتن</span>
     </div>
   )
 }
@@ -617,31 +653,29 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-muted/30">
-      <div className="flex items-center justify-between gap-2 border-b px-3 py-1.5">
-        <span className="text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
-          {language}
-        </span>
+    <div
+      dir="ltr"
+      className="overflow-hidden rounded-lg border border-[#3c3c3c] bg-[#1e1e1e] text-start shadow-md"
+    >
+      <div className="flex items-center justify-between gap-2 bg-[#2d2d2d] px-3 py-2">
+        <span className="text-xs tracking-normal text-[#cccccc]">{language}</span>
         <Button
           type="button"
           variant="ghost"
-          size="xs"
+          size="icon-sm"
+          className="size-8 text-[#cccccc] hover:bg-white/10 hover:text-white"
           onClick={copy}
-          aria-label="کپی کد"
+          aria-label={copied ? "کپی شد" : "کپی کد"}
         >
           {copied ? (
-            <CheckIcon className="size-3.5" />
+            <CheckIcon className="size-4" />
           ) : (
-            <CopyIcon className="size-3.5" />
+            <CopyIcon className="size-4" />
           )}
-          {copied ? "کپی شد" : "کپی"}
         </Button>
       </div>
-      <pre
-        dir="ltr"
-        className="overflow-x-auto p-3 text-start font-mono text-xs leading-relaxed text-foreground"
-      >
-        <code>{code}</code>
+      <pre className="overflow-x-auto p-4 [font-variant-numeric:normal]">
+        <HighlightedCode code={code} language={language} />
       </pre>
     </div>
   )
@@ -676,31 +710,29 @@ function MessageActions({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1 pt-1">
+    <div className="flex flex-wrap items-center gap-0.5 pt-1">
       <Button
         type="button"
         variant="ghost"
-        size="xs"
+        size="icon-sm"
         onClick={copyAll}
-        aria-label="کپی پاسخ"
+        aria-label={copied ? "کپی شد" : "کپی پاسخ"}
       >
         {copied ? (
-          <CheckIcon className="size-3.5" />
+          <CheckIcon className="size-4" />
         ) : (
-          <CopyIcon className="size-3.5" />
+          <CopyIcon className="size-4" />
         )}
-        {copied ? "کپی شد" : "کپی"}
       </Button>
       {onRetry ? (
         <Button
           type="button"
           variant="ghost"
-          size="xs"
+          size="icon-sm"
           onClick={onRetry}
           aria-label="تلاش دوباره"
         >
-          <RefreshCwIcon className="size-3.5" />
-          تلاش دوباره
+          <RefreshCwIcon className="size-4" />
         </Button>
       ) : null}
     </div>
@@ -711,85 +743,64 @@ function Composer({
   value,
   onChange,
   onSend,
-  modelId,
-  onModelChange,
   disabled,
 }: {
   value: string
   onChange: (value: string) => void
   onSend: () => void
-  modelId: string
-  onModelChange: (id: string) => void
   disabled?: boolean
 }) {
   return (
-    <div className="shrink-0 border-t p-3 sm:p-4">
-      <div className="mx-auto w-full max-w-3xl space-y-2">
-        <InputGroup className="items-end rounded-2xl border bg-background">
-          <InputGroupAddon align="block-start" className="w-full justify-between gap-2 pt-2">
-            <Select
-              value={modelId}
-              onValueChange={(v) => v && onModelChange(v)}
-              items={Object.fromEntries(models.map((m) => [m.id, m.name]))}
-            >
-              <SelectTrigger
-                size="sm"
-                className="h-7 w-auto min-w-28 border-0 bg-transparent shadow-none"
-                aria-label="انتخاب مدل"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {models.map((m) => (
-                  <SelectItem key={m.id} value={m.id}>
-                    {m.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <InputGroupButton
-              type="button"
-              size="icon-sm"
-              variant="ghost"
-              aria-label="پیوست فایل"
-              onClick={() =>
-                toast.message("پیوست در این نمونه فقط نمایشی است")
-              }
-            >
-              <PaperclipIcon className="size-4" />
-            </InputGroupButton>
-          </InputGroupAddon>
-          <InputGroupTextarea
-            rows={2}
-            placeholder="پیام خود را بنویسید…"
+    <div className="shrink-0 border-t bg-background/95 px-3 pb-4 pt-3 backdrop-blur sm:px-4">
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="flex min-h-11 items-center gap-2 rounded-[1.625rem] border border-input bg-background px-2 py-1.5 shadow-sm focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="size-9 shrink-0 rounded-full"
+            aria-label="پیوست فایل"
+            onClick={() =>
+              toast.message("پیوست در این نمونه فقط نمایشی است")
+            }
+          >
+            <PaperclipIcon className="size-5" />
+          </Button>
+          <Textarea
+            rows={1}
+            placeholder="پیام برای دستیار…"
             aria-label="متن پیام"
+            persianDigits={false}
             value={value}
             disabled={disabled}
-            onChange={(e) => onChange(e.target.value ?? "")}
+            onChange={(e) => onChange(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault()
                 onSend()
               }
             }}
-            className="min-h-16 max-h-40 resize-none border-0 py-2 shadow-none focus-visible:ring-0"
+            className="!min-h-9 max-h-36 flex-1 resize-none border-0 bg-transparent px-1 py-2 text-sm leading-6 shadow-none focus-visible:border-0 focus-visible:ring-0 md:py-1.5"
           />
-          <InputGroupAddon align="block-end" className="justify-between pb-2">
-            <p className="px-1 text-[0.65rem] text-muted-foreground">
-              Enter ارسال · Shift+Enter خط جدید
-            </p>
-            <InputGroupButton
-              type="button"
-              size="sm"
-              aria-label="ارسال پیام"
-              disabled={disabled || !value.trim()}
-              onClick={onSend}
-            >
-              ارسال
-              <SendIcon data-icon="inline-end" />
-            </InputGroupButton>
-          </InputGroupAddon>
-        </InputGroup>
+          <Button
+            type="button"
+            size="icon-sm"
+            className="size-9 shrink-0 rounded-full"
+            aria-label="ارسال پیام"
+            disabled={disabled || !value.trim()}
+            onClick={onSend}
+          >
+            <SendIcon className="size-4 rtl:-scale-x-100" />
+          </Button>
+        </div>
+        <p
+          className={cn(
+            "mt-2 text-center text-[0.65rem] text-muted-foreground",
+            numericClass
+          )}
+        >
+          {assistantName} ممکن است اشتباه کند. اطلاعات مهم را بررسی کنید.
+        </p>
       </div>
     </div>
   )

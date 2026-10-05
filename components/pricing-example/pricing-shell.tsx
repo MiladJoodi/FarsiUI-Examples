@@ -7,18 +7,19 @@ import {
   pricingBrandName,
   pricingBrandTagline,
 } from "@/lib/mock/pricing"
-import {
-  ExampleHeaderChrome,
-} from "@/components/design-system/design-system-picker"
+import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
+
+import "@/styles/pricing.css"
 
 const PRICING_BASE = "/examples/pricing"
 
 export function PricingShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
+    <div className="pricing-page">
       <ExampleHeaderChrome
-        innerClassName="max-w-5xl"
+        className="pricing-header"
+        innerClassName="max-w-6xl"
         start={
           <Link
             href={PRICING_BASE}
@@ -36,7 +37,7 @@ export function PricingShell({ children }: { children: ReactNode }) {
           <>
             <nav
               aria-label="بخش‌های صفحه"
-              className="me-1 hidden items-center gap-1 md:flex"
+              className="me-1 hidden items-center gap-0.5 md:flex"
             >
               <NavAnchor href="#plans">پلن‌ها</NavAnchor>
               <NavAnchor href="#compare">مقایسه</NavAnchor>
@@ -47,40 +48,9 @@ export function PricingShell({ children }: { children: ReactNode }) {
         }
       />
 
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-9">
         {children}
       </div>
-
-      <footer className="border-t py-8">
-        <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p className="text-xs text-muted-foreground">
-            همه قیمت‌ها نمایشی و به تومان است. پرداخت واقعی وجود ندارد.
-          </p>
-          <nav
-            aria-label="پاورقی"
-            className="flex flex-wrap gap-x-4 gap-y-2 text-xs"
-          >
-            <a
-              href="#plans"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              پلن‌ها
-            </a>
-            <a
-              href="#compare"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              مقایسه
-            </a>
-            <a
-              href="#faq"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              پرسش‌ها
-            </a>
-          </nav>
-        </div>
-      </footer>
     </div>
   )
 }
@@ -95,7 +65,7 @@ function NavAnchor({
   return (
     <a
       href={href}
-      className="rounded-md px-2.5 py-1.5 text-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      className="rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-[color-mix(in_oklch,var(--foreground)_5%,transparent)] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
     >
       {children}
     </a>

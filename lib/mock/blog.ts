@@ -34,7 +34,6 @@ export type BlogPost = {
   publishedAt: string
   readingMinutes: number
   featured?: boolean
-  accent: string
   blocks: ContentBlock[]
 }
 
@@ -104,7 +103,6 @@ export const posts: BlogPost[] = [
     publishedAt: "۱۴۰۵/۰۷/۰۸",
     readingMinutes: 7,
     featured: true,
-    accent: "oklch(0.78 0.04 70)",
     blocks: [
       {
         type: "p",
@@ -159,7 +157,6 @@ export const posts: BlogPost[] = [
     authorId: "a1",
     publishedAt: "۱۴۰۵/۰۷/۰۵",
     readingMinutes: 5,
-    accent: "oklch(0.82 0.05 200)",
     blocks: [
       {
         type: "p",
@@ -197,7 +194,6 @@ export const posts: BlogPost[] = [
     authorId: "a3",
     publishedAt: "۱۴۰۵/۰۶/۲۸",
     readingMinutes: 6,
-    accent: "oklch(0.8 0.06 140)",
     blocks: [
       {
         type: "p",
@@ -235,7 +231,6 @@ export const posts: BlogPost[] = [
     authorId: "a2",
     publishedAt: "۱۴۰۵/۰۶/۲۰",
     readingMinutes: 8,
-    accent: "oklch(0.75 0.05 280)",
     blocks: [
       {
         type: "p",
@@ -274,7 +269,6 @@ export const posts: BlogPost[] = [
     authorId: "a1",
     publishedAt: "۱۴۰۵/۰۶/۱۲",
     readingMinutes: 4,
-    accent: "oklch(0.84 0.04 40)",
     blocks: [
       {
         type: "p",
@@ -306,7 +300,6 @@ export const posts: BlogPost[] = [
     authorId: "a2",
     publishedAt: "۱۴۰۵/۰۵/۳۰",
     readingMinutes: 5,
-    accent: "oklch(0.79 0.07 160)",
     blocks: [
       {
         type: "p",
@@ -336,7 +329,6 @@ export const posts: BlogPost[] = [
     authorId: "a3",
     publishedAt: "۱۴۰۵/۰۵/۱۸",
     readingMinutes: 6,
-    accent: "oklch(0.77 0.05 320)",
     blocks: [
       {
         type: "p",
@@ -370,7 +362,6 @@ export const posts: BlogPost[] = [
     authorId: "a1",
     publishedAt: "۱۴۰۵/۰۵/۰۴",
     readingMinutes: 5,
-    accent: "oklch(0.81 0.03 90)",
     blocks: [
       {
         type: "p",

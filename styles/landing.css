@@ -1,0 +1,399 @@
+/* Landing — atmospheric elevations + motion (light/dark + design systems) */
+
+.landing-page {
+  --landing-ink: color-mix(in oklch, var(--foreground) 52%, transparent);
+  --landing-ink-soft: color-mix(in oklch, var(--foreground) 24%, transparent);
+  --landing-glow: color-mix(in oklch, var(--primary) 34%, transparent);
+  --landing-glow-soft: color-mix(in oklch, var(--primary) 18%, transparent);
+  --landing-sheet: var(--card, var(--surface, var(--background)));
+  --landing-veil: color-mix(in oklch, var(--background) 70%, transparent);
+
+  --landing-elev-nav: 0 1px 0 color-mix(in oklch, var(--foreground) 5%, transparent),
+    0 12px 36px -22px var(--landing-ink-soft);
+  --landing-elev-float: 0 2px 6px -2px var(--landing-ink-soft),
+    0 16px 40px -20px var(--landing-ink),
+    0 32px 64px -36px var(--landing-ink);
+  --landing-elev-panel: 0 1px 3px var(--landing-ink-soft),
+    0 14px 36px -18px var(--landing-ink),
+    var(--shadow-surface, 0 0 0 transparent);
+  --landing-elev-card: 0 1px 2px var(--landing-ink-soft),
+    0 12px 28px -16px var(--landing-ink);
+  --landing-elev-card-hover: 0 4px 10px -4px var(--landing-ink-soft),
+    0 20px 44px -20px var(--landing-ink);
+  --landing-elev-featured: 0 2px 6px -2px var(--landing-ink-soft),
+    0 18px 44px -18px var(--landing-ink),
+    0 12px 36px -20px var(--landing-glow);
+  --landing-elev-cta: 0 8px 20px -12px var(--landing-ink-soft),
+    0 22px 52px -24px var(--landing-ink),
+    0 0 48px -16px var(--landing-glow-soft);
+
+  --landing-ambient: radial-gradient(
+      ellipse 85% 65% at 78% -8%,
+      var(--landing-glow-soft),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 8% 88%,
+      color-mix(in oklch, var(--muted-foreground) 12%, transparent),
+      transparent 52%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in oklch, var(--background) 72%, var(--foreground) 10%) 0%,
+      var(--background) 48%,
+      color-mix(in oklch, var(--background) 92%, var(--primary) 4%) 100%
+    );
+}
+
+.dark .landing-page {
+  --landing-ink: rgb(0 0 0 / 0.78);
+  --landing-ink-soft: rgb(0 0 0 / 0.45);
+  --landing-glow: color-mix(in oklch, var(--primary) 44%, transparent);
+  --landing-glow-soft: color-mix(in oklch, var(--primary) 26%, transparent);
+  --landing-veil: color-mix(in oklch, var(--background) 55%, transparent);
+  --landing-elev-nav: 0 1px 0 rgb(255 255 255 / 0.045),
+    0 16px 44px -18px rgb(0 0 0 / 0.7);
+  --landing-elev-float: 0 4px 12px -4px rgb(0 0 0 / 0.5),
+    0 22px 48px -20px rgb(0 0 0 / 0.65),
+    0 48px 88px -40px rgb(0 0 0 / 0.5);
+  --landing-elev-panel: 0 2px 8px rgb(0 0 0 / 0.35),
+    0 18px 44px -18px rgb(0 0 0 / 0.6),
+    var(--shadow-surface, 0 0 0 transparent);
+  --landing-elev-card: 0 2px 6px rgb(0 0 0 / 0.32),
+    0 16px 40px -16px rgb(0 0 0 / 0.5);
+  --landing-elev-card-hover: 0 6px 14px -6px rgb(0 0 0 / 0.42),
+    0 24px 52px -18px rgb(0 0 0 / 0.65);
+  --landing-elev-featured: 0 4px 12px -4px rgb(0 0 0 / 0.5),
+    0 24px 56px -18px rgb(0 0 0 / 0.68),
+    0 0 40px -12px var(--landing-glow);
+  --landing-elev-cta: 0 10px 28px -12px rgb(0 0 0 / 0.5),
+    0 28px 64px -22px rgb(0 0 0 / 0.65),
+    0 0 56px -10px var(--landing-glow-soft);
+}
+
+.style-vega .landing-page,
+.style-nova .landing-page {
+  --landing-elev-panel: var(--shadow-surface), 0 28px 64px -32px var(--landing-ink);
+}
+
+.style-glass .landing-page {
+  --landing-sheet: color-mix(in oklch, var(--background) 48%, transparent);
+  --landing-elev-float: 0 10px 36px -12px var(--landing-ink-soft),
+    0 34px 88px -36px var(--landing-ink),
+    inset 0 1px 0 color-mix(in oklch, white 20%, transparent);
+  --landing-elev-panel: 0 14px 44px -16px var(--landing-ink),
+    inset 0 1px 0 color-mix(in oklch, white 14%, transparent);
+  --landing-elev-card: 0 10px 32px -14px var(--landing-ink),
+    inset 0 1px 0 color-mix(in oklch, white 10%, transparent);
+}
+
+.style-khesht .landing-page {
+  --landing-elev-float: 12px 12px 0 0 var(--khesht-offset, var(--primary)),
+    0 30px 64px -30px var(--landing-ink);
+  --landing-elev-panel: 7px 7px 0 0 var(--khesht-offset, var(--primary));
+  --landing-elev-card: 5px 5px 0 0 var(--khesht-offset, var(--primary));
+  --landing-elev-card-hover: 8px 8px 0 0 var(--khesht-offset, var(--primary));
+  --landing-elev-featured: 10px 10px 0 0 var(--khesht-offset, var(--primary)),
+    0 26px 54px -28px var(--landing-ink);
+  --landing-elev-cta: 10px 10px 0 0 var(--khesht-offset, var(--primary));
+}
+
+.style-rose .landing-page {
+  --landing-glow: color-mix(in oklch, var(--primary) 42%, transparent);
+  --landing-elev-featured: 0 20px 54px -22px var(--landing-ink),
+    0 14px 44px -16px var(--landing-glow);
+}
+
+.style-nili .landing-page {
+  --landing-elev-float: 0 24px 56px -24px var(--landing-ink),
+    0 14px 44px -28px var(--landing-glow-soft);
+}
+
+.landing-elev-nav {
+  box-shadow: var(--landing-elev-nav);
+}
+.landing-elev-float {
+  box-shadow: var(--landing-elev-float);
+}
+.landing-elev-panel {
+  box-shadow: var(--landing-elev-panel);
+}
+.landing-elev-card {
+  box-shadow: var(--landing-elev-card);
+  transition: box-shadow 320ms var(--ease-standard, ease),
+    transform 320ms var(--ease-standard, ease);
+}
+.landing-elev-card:hover {
+  box-shadow: var(--landing-elev-card-hover);
+  transform: translateY(-1.5px);
+}
+.landing-elev-featured {
+  box-shadow: var(--landing-elev-featured);
+}
+.landing-elev-cta {
+  box-shadow: var(--landing-elev-cta);
+}
+
+.landing-ambient {
+  background: var(--landing-ambient);
+}
+
+.landing-sheet {
+  background: var(--landing-sheet);
+  border: none;
+}
+
+.landing-orb {
+  background: radial-gradient(circle, var(--landing-glow) 0%, transparent 70%);
+  filter: blur(36px);
+  animation: landing-breathe 11s ease-in-out infinite;
+}
+
+.dark .landing-orb {
+  filter: blur(40px);
+  opacity: 0.75;
+}
+
+.landing-orb-slow {
+  animation-duration: 14s;
+  animation-direction: reverse;
+}
+
+.landing-brand {
+  letter-spacing: -0.03em;
+  text-shadow: 0 8px 28px color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+
+.dark .landing-brand {
+  text-shadow: 0 10px 32px rgb(0 0 0 / 0.4);
+}
+
+.landing-float {
+  animation: landing-float 8s ease-in-out infinite;
+}
+
+.landing-reveal {
+  animation: landing-rise 0.9s var(--ease-standard, cubic-bezier(0.22, 1, 0.36, 1))
+    both;
+}
+
+.landing-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dark .landing-grain {
+  opacity: 0.07;
+  mix-blend-mode: soft-light;
+}
+
+.landing-manifesto {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--foreground) 6%, transparent) 20%,
+    color-mix(in oklch, var(--foreground) 6%, transparent) 80%,
+    transparent
+  );
+}
+
+.landing-quote-mark {
+  font-size: 2rem;
+  line-height: 0.85;
+  font-weight: 600;
+  color: color-mix(in oklch, var(--primary) 40%, var(--foreground) 20%);
+  opacity: 0.3;
+  user-select: none;
+}
+
+@keyframes landing-breathe {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.06) translate(1%, -1.5%);
+    opacity: 0.8;
+  }
+}
+
+@keyframes landing-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-orb,
+  .landing-float,
+  .landing-reveal {
+    animation: none !important;
+  }
+  .landing-elev-card:hover {
+    transform: none;
+  }
+  .landing-btn:hover,
+  .landing-btn-primary:hover,
+  .landing-btn-soft:hover {
+    transform: none;
+  }
+  .landing-btn-primary:hover [data-icon="inline-end"] {
+    transform: none;
+  }
+}
+
+/* Landing CTAs — compact, intentional */
+.landing-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  transition:
+    transform 220ms var(--ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow 220ms var(--ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.landing-btn-primary {
+  border: none;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 22%, transparent),
+    0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent),
+    0 10px 24px -12px color-mix(in oklch, var(--primary) 48%, transparent);
+}
+
+.landing-btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, white 14%, transparent) 0%,
+    transparent 48%
+  );
+  pointer-events: none;
+}
+
+.landing-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 28%, transparent),
+    0 2px 4px color-mix(in oklch, var(--foreground) 10%, transparent),
+    0 14px 28px -12px color-mix(in oklch, var(--primary) 58%, transparent);
+}
+
+.landing-btn-primary:active {
+  transform: translateY(0);
+  box-shadow:
+    inset 0 1px 2px color-mix(in oklch, var(--foreground) 14%, transparent),
+    0 4px 12px -8px color-mix(in oklch, var(--primary) 40%, transparent);
+}
+
+.landing-btn-primary [data-icon="inline-end"] {
+  transition: transform 220ms var(--ease-standard, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.landing-btn-primary:hover [data-icon="inline-end"] {
+  transform: translateX(-2px);
+}
+
+.landing-btn-soft {
+  border-color: color-mix(in oklch, var(--foreground) 12%, transparent);
+  background: color-mix(in oklch, var(--background) 55%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
+    0 1px 2px color-mix(in oklch, var(--foreground) 5%, transparent);
+}
+
+.landing-btn-soft:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklch, var(--foreground) 20%, transparent);
+  background: color-mix(in oklch, var(--background) 72%, var(--muted) 18%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 14%, transparent),
+    0 8px 20px -14px color-mix(in oklch, var(--foreground) 22%, transparent);
+}
+
+.dark .landing-btn-primary {
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 12%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.35),
+    0 12px 28px -12px color-mix(in oklch, var(--primary) 55%, transparent);
+}
+
+.dark .landing-btn-primary:hover {
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 16%, transparent),
+    0 2px 6px rgb(0 0 0 / 0.4),
+    0 16px 32px -10px color-mix(in oklch, var(--primary) 65%, transparent);
+}
+
+.dark .landing-btn-soft {
+  border-color: color-mix(in oklch, white 12%, transparent);
+  background: color-mix(in oklch, var(--background) 40%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 8%, transparent),
+    0 1px 3px rgb(0 0 0 / 0.35);
+}
+
+.dark .landing-btn-soft:hover {
+  border-color: color-mix(in oklch, white 18%, transparent);
+  background: color-mix(in oklch, var(--background) 55%, var(--muted) 20%);
+}
+
+.style-khesht .landing-btn-primary {
+  box-shadow: 3px 3px 0 0 var(--khesht-offset, var(--primary));
+}
+
+.style-khesht .landing-btn-primary:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 0 var(--khesht-offset, var(--primary));
+}
+
+.style-khesht .landing-btn-primary:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 var(--khesht-offset, var(--primary));
+}
+
+.style-khesht .landing-btn-soft {
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--foreground) 28%, transparent);
+}
+
+.style-khesht .landing-btn-soft:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 color-mix(in oklch, var(--foreground) 28%, transparent);
+}
+
+.style-glass .landing-btn-primary {
+  backdrop-filter: blur(8px);
+}
+
+.style-glass .landing-btn-soft {
+  backdrop-filter: blur(14px);
+  background: color-mix(in oklch, var(--background) 35%, transparent);
+}

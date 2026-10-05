@@ -2,13 +2,20 @@
 
 import {
   BellIcon,
+  Building2Icon,
+  EyeIcon,
+  EyeOffIcon,
   LockIcon,
   MenuIcon,
+  MonitorIcon,
   PaletteIcon,
+  SearchIcon,
   Settings2Icon,
+  ShieldCheckIcon,
   ShieldIcon,
   UserIcon,
   UserRoundIcon,
+  UsersIcon,
 } from "lucide-react"
 import * as React from "react"
 import { toast } from "sonner"
@@ -43,7 +50,6 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -54,7 +60,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
   SheetContent,
@@ -82,6 +87,107 @@ function settingsEqual(a: SettingsState, b: SettingsState) {
   return JSON.stringify(a) === JSON.stringify(b)
 }
 
+function SettingsIcon({
+  icon: Icon,
+  active,
+  large,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  active?: boolean
+  large?: boolean
+}) {
+  return (
+    <span
+      className={cn(
+        "settings-icon",
+        large && "settings-icon-lg",
+        active && "settings-icon-active"
+      )}
+    >
+      <Icon />
+    </span>
+  )
+}
+
+function SettingsCard({
+  title,
+  description,
+  icon,
+  children,
+  className,
+  danger,
+}: {
+  title?: string
+  description?: string
+  icon?: React.ComponentType<{ className?: string }>
+  children: React.ReactNode
+  className?: string
+  danger?: boolean
+}) {
+  return (
+    <section
+      className={cn(
+        "settings-card",
+        danger && "settings-card-danger",
+        className
+      )}
+    >
+      {(title || description) && (
+        <div className="settings-card-head">
+          {icon ? <SettingsIcon icon={icon} /> : null}
+          <div className="min-w-0 space-y-0.5">
+            {title ? (
+              <h3 className="text-[0.8125rem] font-semibold tracking-tight">
+                {title}
+              </h3>
+            ) : null}
+            {description ? (
+              <p className="text-[0.7rem] leading-relaxed text-muted-foreground">
+                {description}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      )}
+      <div className="settings-card-body">{children}</div>
+    </section>
+  )
+}
+
+function ToggleRow({
+  title,
+  description,
+  checked,
+  onCheckedChange,
+  icon: Icon,
+}: {
+  title: string
+  description: string
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+  icon?: React.ComponentType<{ className?: string }>
+}) {
+  return (
+    <div className="settings-row">
+      <div className="flex min-w-0 items-start gap-2.5">
+        {Icon ? <SettingsIcon icon={Icon} /> : null}
+        <div className="min-w-0 space-y-0.5">
+          <p className="text-[0.8125rem] font-medium leading-none">{title}</p>
+          <p className="text-[0.7rem] leading-relaxed text-muted-foreground">
+            {description}
+          </p>
+        </div>
+      </div>
+      <Switch
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        aria-label={title}
+        className="shrink-0 scale-90"
+      />
+    </div>
+  )
+}
+
 export function SettingsView({
   initialSection = "profile",
 }: {
@@ -103,6 +209,7 @@ export function SettingsView({
 
   const dirty = !settingsEqual(draft, saved)
   const meta = settingsSections.find((s) => s.id === section)!
+  const SectionIcon = SECTION_ICONS[section]
 
   function update<K extends keyof SettingsState>(
     key: K,
@@ -171,73 +278,49 @@ export function SettingsView({
   }
 
   return (
-    <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          تنظیمات
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          حساب، ظاهر، اعلان‌ها و امنیت فضای کاری را از اینجا مدیریت کنید. همه
-          تغییرات محلی و نمایشی هستند.
-        </p>
+    <div className="space-y-5 pb-20">
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="max-w-lg space-y-1">
+          <h1 className="text-xl font-semibold tracking-tight sm:text-[1.35rem]">
+            تنظیمات
+          </h1>
+          <p className="text-[0.8rem] leading-relaxed text-muted-foreground">
+            حساب، ظاهر، حریم خصوصی و امنیت — تغییرات فقط در این نمونه است.
+          </p>
+        </div>
+        {dirty ? (
+          <span className="rounded-[var(--st-radius)] border border-[color-mix(in_oklch,var(--foreground)_14%,transparent)] px-2 py-0.5 text-[0.65rem] text-muted-foreground">
+            ذخیره‌نشده
+          </span>
+        ) : null}
       </header>
 
-      {dirty && (
-        <Alert className="border-primary/25 bg-primary/5">
-          <AlertTitle>تغییرات ذخیره‌نشده</AlertTitle>
-          <AlertDescription className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <span>قبل از ترک این صفحه، ذخیره یا لغو را انتخاب کنید.</span>
-            <span className="flex shrink-0 flex-wrap gap-2">
-              <Button size="sm" type="button" onClick={handleSave}>
-                ذخیره
-              </Button>
-              <Button
-                size="sm"
-                type="button"
-                variant="outline"
-                onClick={handleCancel}
-              >
-                لغو
-              </Button>
-            </span>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <div className="grid gap-8 lg:grid-cols-[13.5rem_minmax(0,1fr)] lg:gap-10">
-        {/* Desktop nav */}
-        <nav
-          aria-label="بخش‌های تنظیمات"
-          className="hidden lg:block"
-        >
-          <ul className="sticky top-20 space-y-0.5">
-            {settingsSections.map((item) => {
-              const Icon = SECTION_ICONS[item.id]
-              const active = item.id === section
-              return (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => selectSection(item.id)}
-                    className={cn(
-                      "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-start text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      active
-                        ? "bg-muted font-medium text-foreground"
-                        : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                    )}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    <Icon className="size-4 shrink-0 opacity-70" />
-                    {item.title}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
+      <div className="grid gap-5 lg:grid-cols-[12.5rem_minmax(0,1fr)] lg:gap-6">
+        <nav aria-label="بخش‌های تنظیمات" className="hidden lg:block">
+          <div className="settings-nav sticky top-20">
+            <ul className="space-y-px">
+              {settingsSections.map((item) => {
+                const Icon = SECTION_ICONS[item.id]
+                const active = item.id === section
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => selectSection(item.id)}
+                      className="settings-nav-item"
+                      aria-current={active ? "page" : undefined}
+                    >
+                      <Icon />
+                      <span className="truncate">{item.title}</span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </nav>
 
-        {/* Mobile / tablet nav */}
-        <div className="flex flex-wrap items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1.5 lg:hidden">
           <Select
             value={section}
             onValueChange={(v) => {
@@ -247,7 +330,10 @@ export function SettingsView({
               settingsSections.map((item) => [item.id, item.title])
             )}
           >
-            <SelectTrigger className="min-w-[12rem] flex-1" aria-label="بخش تنظیمات">
+            <SelectTrigger
+              className="settings-input min-w-0 flex-1"
+              aria-label="بخش تنظیمات"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -261,50 +347,57 @@ export function SettingsView({
           <Button
             type="button"
             variant="outline"
-            size="icon"
+            size="icon-sm"
+            className="settings-btn settings-btn-soft shrink-0 !px-0"
             aria-label="فهرست بخش‌ها"
             onClick={() => setNavOpen(true)}
           >
-            <MenuIcon className="size-4" />
+            <MenuIcon className="size-3.5" />
           </Button>
         </div>
 
         <Sheet open={navOpen} onOpenChange={setNavOpen}>
-          <SheetContent side="right" className="w-[min(20rem,100%)]">
+          <SheetContent side="right" className="w-[min(17rem,100%)]">
             <SheetHeader className="text-start">
-              <SheetTitle>بخش‌های تنظیمات</SheetTitle>
-              <SheetDescription>
-                بخش مورد نظر را انتخاب کنید.
-              </SheetDescription>
+              <SheetTitle>بخش‌ها</SheetTitle>
+              <SheetDescription>یکی را انتخاب کنید.</SheetDescription>
             </SheetHeader>
-            <nav className="flex flex-col gap-1 px-4 pb-6" aria-label="فهرست موبایل">
-              {settingsSections.map((item) => {
-                const Icon = SECTION_ICONS[item.id]
-                const active = item.id === section
-                return (
-                  <Button
-                    key={item.id}
-                    type="button"
-                    variant="ghost"
-                    className={cn("justify-start gap-2", active && "bg-muted")}
-                    onClick={() => selectSection(item.id)}
-                  >
-                    <Icon className="size-4 opacity-70" />
-                    {item.title}
-                  </Button>
-                )
-              })}
+            <nav className="settings-nav mx-4 mb-6" aria-label="فهرست موبایل">
+              <ul className="space-y-px">
+                {settingsSections.map((item) => {
+                  const Icon = SECTION_ICONS[item.id]
+                  const active = item.id === section
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        className="settings-nav-item"
+                        aria-current={active ? "page" : undefined}
+                        onClick={() => selectSection(item.id)}
+                      >
+                        <Icon />
+                        <span className="truncate">{item.title}</span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
             </nav>
           </SheetContent>
         </Sheet>
 
-        <div className="min-w-0 space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-lg font-semibold tracking-tight">{meta.title}</h2>
-            <p className="text-sm text-muted-foreground">{meta.description}</p>
+        <div className="min-w-0 space-y-4">
+          <div className="flex items-center gap-2.5">
+            <SettingsIcon icon={SectionIcon} large />
+            <div className="min-w-0 space-y-0.5">
+              <h2 className="text-[0.95rem] font-semibold tracking-tight">
+                {meta.title}
+              </h2>
+              <p className="text-[0.75rem] leading-relaxed text-muted-foreground">
+                {meta.description}
+              </p>
+            </div>
           </div>
-
-          <Separator />
 
           {section === "profile" && (
             <ProfileSection
@@ -355,18 +448,38 @@ export function SettingsView({
               onChange={(patch) => update("preferences", patch)}
             />
           )}
+        </div>
+      </div>
 
-          <div className="flex flex-wrap gap-2 border-t pt-5">
-            <Button type="button" onClick={handleSave} disabled={!dirty}>
-              ذخیره تغییرات
-            </Button>
+      <div
+        className={cn(
+          "settings-savebar transition-all duration-200",
+          dirty
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-3 opacity-0"
+        )}
+        aria-hidden={!dirty}
+      >
+        <div className="settings-savebar-inner">
+          <p className="text-[0.75rem] text-muted-foreground">
+            تغییرات ذخیره‌نشده
+          </p>
+          <div className="flex shrink-0 gap-1.5">
             <Button
               type="button"
-              variant="outline"
+              className="settings-btn settings-btn-sm settings-btn-soft"
               onClick={handleCancel}
               disabled={!dirty}
             >
               لغو
+            </Button>
+            <Button
+              type="button"
+              className="settings-btn settings-btn-sm settings-btn-primary"
+              onClick={handleSave}
+              disabled={!dirty}
+            >
+              ذخیره
             </Button>
           </div>
         </div>
@@ -378,7 +491,7 @@ export function SettingsView({
             <AlertDialogTitle>حذف حساب کاربری؟</AlertDialogTitle>
             <AlertDialogDescription>
               این عمل در محصول واقعی غیرقابل بازگشت است. در این نمونه فقط پیام
-              نمایشی نشان داده می‌شود و داده‌ای پاک نمی‌شود.
+              نمایشی نشان داده می‌شود.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -413,26 +526,169 @@ export function SettingsView({
   )
 }
 
-function SettingRow({
-  title,
-  description,
-  control,
+function privacyScore(value: SettingsState["privacy"]) {
+  let score = 0
+  if (value.profileVisibility === "private") score += 2
+  else if (value.profileVisibility === "team") score += 1
+  if (!value.showOnlineStatus) score += 1
+  if (!value.shareActivity) score += 1
+  if (!value.searchable) score += 1
+  if (!value.showEmail) score += 1
+  if (!value.allowMentions) score += 1
+  const max = 7
+  const pct = Math.round((score / max) * 100)
+  if (score >= 5) {
+    return { label: "محافظه‌کار", hint: "دیده شدن کم برای همکاران.", pct }
+  }
+  if (score >= 3) {
+    return { label: "متعادل", hint: "تعادل همکاری و کنترل.", pct }
+  }
+  return { label: "باز", hint: "پروفایل بیشتر دیده می‌شود.", pct }
+}
+
+function PrivacySection({
+  value,
+  onChange,
 }: {
-  title: string
-  description: string
-  control: React.ReactNode
+  value: SettingsState["privacy"]
+  onChange: (patch: Partial<SettingsState["privacy"]>) => void
 }) {
+  const level = privacyScore(value)
+  const visibilityOptions = [
+    {
+      id: "workspace" as const,
+      title: "کل فضای کاری",
+      description: "همه اعضای سازمان پروفایل شما را می‌بینند.",
+      icon: Building2Icon,
+    },
+    {
+      id: "team" as const,
+      title: "فقط تیم من",
+      description: "محدود به تیم‌هایی که عضو آن‌ها هستید.",
+      icon: UsersIcon,
+    },
+    {
+      id: "private" as const,
+      title: "خصوصی",
+      description: "فقط نام نمایشی در منشن‌ها دیده می‌شود.",
+      icon: LockIcon,
+    },
+  ]
+
   return (
-    <Field
-      orientation="horizontal"
-      className="items-start justify-between gap-4 py-1 sm:items-center"
-    >
-      <div className="min-w-0 space-y-0.5">
-        <FieldLabel className="text-sm font-medium">{title}</FieldLabel>
-        <FieldDescription>{description}</FieldDescription>
+    <div className="space-y-3.5">
+      <div className="settings-meter">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex gap-2.5">
+            <SettingsIcon icon={ShieldCheckIcon} large />
+            <div className="space-y-0.5">
+              <p className="text-[0.65rem] tracking-[0.12em] text-muted-foreground">
+                وضعیت فعلی
+              </p>
+              <p className="text-[0.9rem] font-semibold tracking-tight">
+                {level.label}
+              </p>
+              <p className="text-[0.7rem] text-muted-foreground">{level.hint}</p>
+            </div>
+          </div>
+        </div>
+        <div className="settings-meter-bar" aria-hidden>
+          <div
+            className="settings-meter-fill"
+            style={{ width: `${level.pct}%` }}
+          />
+        </div>
       </div>
-      <div className="shrink-0">{control}</div>
-    </Field>
+
+      <SettingsCard
+        title="دیده شدن پروفایل"
+        description="چه کسانی جزئیات پروفایل را می‌بینند."
+        icon={EyeIcon}
+      >
+        <RadioGroup
+          value={value.profileVisibility}
+          onValueChange={(v) => {
+            if (v === "team" || v === "workspace" || v === "private") {
+              onChange({ profileVisibility: v })
+            }
+          }}
+          className="grid gap-2 sm:grid-cols-3"
+        >
+          {visibilityOptions.map((option) => {
+            const selected = value.profileVisibility === option.id
+            return (
+              <label
+                key={option.id}
+                data-selected={selected ? "true" : "false"}
+                className="settings-choice"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <SettingsIcon icon={option.icon} active={selected} />
+                  <RadioGroupItem value={option.id} className="sr-only" />
+                </div>
+                <span>
+                  <span className="block text-[0.8125rem] font-medium">
+                    {option.title}
+                  </span>
+                  <span className="mt-1 block text-[0.68rem] leading-relaxed text-muted-foreground">
+                    {option.description}
+                  </span>
+                </span>
+              </label>
+            )
+          })}
+        </RadioGroup>
+      </SettingsCard>
+
+      <SettingsCard
+        title="تعامل و حضور"
+        description="چطور در زمان واقعی دیده می‌شوید."
+        icon={MonitorIcon}
+      >
+        <ToggleRow
+          icon={MonitorIcon}
+          title="وضعیت آنلاین"
+          description="نشان دهید که الان در دسترس هستید."
+          checked={value.showOnlineStatus}
+          onCheckedChange={(c) => onChange({ showOnlineStatus: c })}
+        />
+        <ToggleRow
+          icon={UsersIcon}
+          title="اجازه منشن"
+          description="دیگران بتوانند با @ شما را صدا بزنند."
+          checked={value.allowMentions}
+          onCheckedChange={(c) => onChange({ allowMentions: c })}
+        />
+        <ToggleRow
+          icon={EyeIcon}
+          title="اشتراک فعالیت"
+          description="خلاصه فعالیت برای همکاران تیم."
+          checked={value.shareActivity}
+          onCheckedChange={(c) => onChange({ shareActivity: c })}
+        />
+      </SettingsCard>
+
+      <SettingsCard
+        title="کشف‌پذیری"
+        description="آیا دیگران بتوانند شما را پیدا کنند."
+        icon={SearchIcon}
+      >
+        <ToggleRow
+          icon={SearchIcon}
+          title="جستجو در فهرست اعضا"
+          description="نام شما در دایرکتوری سازمان ظاهر شود."
+          checked={value.searchable}
+          onCheckedChange={(c) => onChange({ searchable: c })}
+        />
+        <ToggleRow
+          icon={EyeOffIcon}
+          title="نمایش ایمیل به تیم"
+          description="ایمیل ورود برای اعضای تیم قابل‌مشاهده باشد."
+          checked={value.showEmail}
+          onCheckedChange={(c) => onChange({ showEmail: c })}
+        />
+      </SettingsCard>
+    </div>
   )
 }
 
@@ -444,60 +700,65 @@ function ProfileSection({
   onChange: (patch: Partial<SettingsState["profile"]>) => void
 }) {
   return (
-    <FieldGroup>
-      <div className="grid gap-4 sm:grid-cols-2">
+    <SettingsCard
+      title="اطلاعات نمایشی"
+      description="در پیام‌ها و فهرست اعضا دیده می‌شود."
+      icon={UserRoundIcon}
+    >
+      <FieldGroup className="gap-3.5">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field>
+            <FieldLabel htmlFor="settings-first-name">نام</FieldLabel>
+            <Input
+              id="settings-first-name"
+              className="settings-input"
+              value={value.firstName}
+              onChange={(e) => onChange({ firstName: e.target.value })}
+              autoComplete="given-name"
+            />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="settings-last-name">نام خانوادگی</FieldLabel>
+            <Input
+              id="settings-last-name"
+              className="settings-input"
+              value={value.lastName}
+              onChange={(e) => onChange({ lastName: e.target.value })}
+              autoComplete="family-name"
+            />
+          </Field>
+        </div>
         <Field>
-          <FieldLabel htmlFor="settings-first-name">نام</FieldLabel>
+          <FieldLabel htmlFor="settings-display-name">نام نمایشی</FieldLabel>
           <Input
-            id="settings-first-name"
-            value={value.firstName}
-            onChange={(e) => onChange({ firstName: e.target.value })}
-            autoComplete="given-name"
+            id="settings-display-name"
+            className="settings-input max-w-md"
+            value={value.displayName}
+            onChange={(e) => onChange({ displayName: e.target.value })}
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="settings-last-name">نام خانوادگی</FieldLabel>
+          <FieldLabel htmlFor="settings-role">سمت</FieldLabel>
           <Input
-            id="settings-last-name"
-            value={value.lastName}
-            onChange={(e) => onChange({ lastName: e.target.value })}
-            autoComplete="family-name"
+            id="settings-role"
+            className="settings-input max-w-md"
+            value={value.role}
+            onChange={(e) => onChange({ role: e.target.value })}
           />
         </Field>
-      </div>
-      <Field>
-        <FieldLabel htmlFor="settings-display-name">نام نمایشی</FieldLabel>
-        <Input
-          id="settings-display-name"
-          value={value.displayName}
-          onChange={(e) => onChange({ displayName: e.target.value })}
-          className="max-w-md"
-        />
-        <FieldDescription>
-          این نام در پیام‌ها و فهرست اعضا دیده می‌شود.
-        </FieldDescription>
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="settings-role">سمت</FieldLabel>
-        <Input
-          id="settings-role"
-          value={value.role}
-          onChange={(e) => onChange({ role: e.target.value })}
-          className="max-w-md"
-        />
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="settings-bio">معرفی کوتاه</FieldLabel>
-        <Textarea
-          id="settings-bio"
-          rows={4}
-          value={value.bio}
-          onChange={(e) => onChange({ bio: e.target.value })}
-          className="max-w-xl"
-          persianDigits={false}
-        />
-      </Field>
-    </FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="settings-bio">معرفی کوتاه</FieldLabel>
+          <Textarea
+            id="settings-bio"
+            rows={3}
+            className="settings-input max-w-xl"
+            value={value.bio}
+            onChange={(e) => onChange({ bio: e.target.value })}
+            persianDigits={false}
+          />
+        </Field>
+      </FieldGroup>
+    </SettingsCard>
   )
 }
 
@@ -511,60 +772,73 @@ function AccountSection({
   onRequestDelete: () => void
 }) {
   return (
-    <FieldGroup>
-      <Field>
-        <FieldLabel htmlFor="settings-email">ایمیل ورود</FieldLabel>
-        <Input
-          id="settings-email"
-          type="email"
-          dir="ltr"
-          className="max-w-md text-start"
-          value={value.email}
-          onChange={(e) => onChange({ email: e.target.value })}
-          autoComplete="email"
-        />
-        <FieldDescription>
-          برای بازیابی حساب و اعلان‌های امنیتی استفاده می‌شود.
-        </FieldDescription>
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="settings-phone">شماره موبایل</FieldLabel>
-        <Input
-          id="settings-phone"
-          inputMode="tel"
-          value={value.phone}
-          onChange={(e) => onChange({ phone: e.target.value })}
-          className="max-w-md"
-          autoComplete="tel"
-        />
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="settings-username">نام کاربری</FieldLabel>
-        <Input
-          id="settings-username"
-          dir="ltr"
-          className="max-w-md text-start"
-          value={value.username}
-          onChange={(e) => onChange({ username: e.target.value })}
-          autoComplete="username"
-        />
-      </Field>
-      <FieldSeparator />
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-destructive">منطقه خطر</p>
-        <p className="text-sm text-muted-foreground">
-          حذف حساب همه داده‌های نمایشی مرتبط را در محصول واقعی پاک می‌کند.
-        </p>
-        <Button
-          type="button"
-          variant="destructive"
-          size="sm"
-          onClick={onRequestDelete}
-        >
-          حذف حساب کاربری
-        </Button>
-      </div>
-    </FieldGroup>
+    <div className="space-y-3.5">
+      <SettingsCard
+        title="ورود و تماس"
+        description="اطلاعات حساب برای ورود و بازیابی."
+        icon={UserIcon}
+      >
+        <FieldGroup className="gap-3.5">
+          <Field>
+            <FieldLabel htmlFor="settings-email">ایمیل ورود</FieldLabel>
+            <Input
+              id="settings-email"
+              type="email"
+              dir="ltr"
+              className="settings-input max-w-md text-start"
+              value={value.email}
+              onChange={(e) => onChange({ email: e.target.value })}
+              autoComplete="email"
+            />
+            <FieldDescription>
+              برای بازیابی حساب و اعلان‌های امنیتی.
+            </FieldDescription>
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="settings-phone">شماره موبایل</FieldLabel>
+            <Input
+              id="settings-phone"
+              inputMode="tel"
+              className="settings-input max-w-md"
+              value={value.phone}
+              onChange={(e) => onChange({ phone: e.target.value })}
+              autoComplete="tel"
+            />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="settings-username">نام کاربری</FieldLabel>
+            <Input
+              id="settings-username"
+              dir="ltr"
+              className="settings-input max-w-md text-start"
+              value={value.username}
+              onChange={(e) => onChange({ username: e.target.value })}
+              autoComplete="username"
+            />
+          </Field>
+        </FieldGroup>
+      </SettingsCard>
+
+      <SettingsCard danger>
+        <div className="space-y-2.5">
+          <div className="space-y-0.5">
+            <p className="text-[0.8125rem] font-semibold text-destructive">
+              منطقه خطر
+            </p>
+            <p className="text-[0.7rem] leading-relaxed text-muted-foreground">
+              حذف حساب در محصول واقعی غیرقابل بازگشت است.
+            </p>
+          </div>
+          <Button
+            type="button"
+            className="settings-btn settings-btn-sm settings-btn-danger"
+            onClick={onRequestDelete}
+          >
+            حذف حساب کاربری
+          </Button>
+        </div>
+      </SettingsCard>
+    </div>
   )
 }
 
@@ -576,83 +850,85 @@ function AppearanceSection({
   onChange: (patch: Partial<SettingsState["appearance"]>) => void
 }) {
   return (
-    <FieldGroup>
-      <Alert>
-        <AlertTitle>تم روشن و تاریک</AlertTitle>
-        <AlertDescription>
-          تغییر تم کلی از دکمهٔ ظاهر در نوار بالا انجام می‌شود. دیزاین‌سیستم هم
-          از همان‌جا قابل تعویض است.
+    <div className="space-y-3.5">
+      <Alert className="settings-card !shadow-none">
+        <AlertTitle className="text-[0.8125rem]">تم روشن و تاریک</AlertTitle>
+        <AlertDescription className="text-[0.75rem]">
+          تم و دیزاین‌سیستم از نوار بالای صفحه عوض می‌شود.
         </AlertDescription>
       </Alert>
 
-      <Field>
-        <FieldLabel>تراکم رابط</FieldLabel>
-        <RadioGroup
-          value={value.density}
-          onValueChange={(v) => {
-            if (v === "comfortable" || v === "compact") {
-              onChange({ density: v })
-            }
-          }}
-          className="mt-2 gap-2"
-        >
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 has-data-checked:border-primary">
-            <RadioGroupItem value="comfortable" className="mt-0.5" />
-            <span>
-              <span className="block text-sm font-medium">راحت</span>
-              <span className="text-xs text-muted-foreground">
-                فاصله بیشتر؛ مناسب صفحات خواندنی.
-              </span>
-            </span>
-          </label>
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 has-data-checked:border-primary">
-            <RadioGroupItem value="compact" className="mt-0.5" />
-            <span>
-              <span className="block text-sm font-medium">فشرده</span>
-              <span className="text-xs text-muted-foreground">
-                برای فهرست‌های شلوغ و مانیتورهای کوچک‌تر.
-              </span>
-            </span>
-          </label>
-        </RadioGroup>
-      </Field>
+      <SettingsCard title="تراکم و فهرست" icon={PaletteIcon}>
+        <FieldGroup className="gap-3.5">
+          <Field>
+            <FieldLabel>تراکم رابط</FieldLabel>
+            <RadioGroup
+              value={value.density}
+              onValueChange={(v) => {
+                if (v === "comfortable" || v === "compact") {
+                  onChange({ density: v })
+                }
+              }}
+              className="mt-2 grid gap-2 sm:grid-cols-2"
+            >
+              {(
+                [
+                  ["comfortable", "راحت", "فاصله بیشتر؛ مناسب خواندن."],
+                  ["compact", "فشرده", "برای فهرست‌های شلوغ."],
+                ] as const
+              ).map(([id, title, desc]) => (
+                <label
+                  key={id}
+                  data-selected={value.density === id ? "true" : "false"}
+                  className="settings-choice !flex-row !items-start"
+                >
+                  <RadioGroupItem value={id} className="mt-0.5" />
+                  <span>
+                    <span className="block text-[0.8125rem] font-medium">
+                      {title}
+                    </span>
+                    <span className="text-[0.68rem] text-muted-foreground">
+                      {desc}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </RadioGroup>
+          </Field>
 
-      <Field>
-        <FieldLabel>سبک فهرست</FieldLabel>
-        <Select
-          value={value.listStyle}
-          onValueChange={(v) => {
-            if (v === "comfortable" || v === "dense") {
-              onChange({ listStyle: v })
-            }
-          }}
-          items={{
-            comfortable: "با فاصله استاندارد",
-            dense: "ردیف‌های متراکم",
-          }}
-        >
-          <SelectTrigger className="max-w-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="comfortable">با فاصله استاندارد</SelectItem>
-            <SelectItem value="dense">ردیف‌های متراکم</SelectItem>
-          </SelectContent>
-        </Select>
-      </Field>
+          <Field>
+            <FieldLabel>سبک فهرست</FieldLabel>
+            <Select
+              value={value.listStyle}
+              onValueChange={(v) => {
+                if (v === "comfortable" || v === "dense") {
+                  onChange({ listStyle: v })
+                }
+              }}
+              items={{
+                comfortable: "با فاصله استاندارد",
+                dense: "ردیف‌های متراکم",
+              }}
+            >
+              <SelectTrigger className="settings-input max-w-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="comfortable">با فاصله استاندارد</SelectItem>
+                <SelectItem value="dense">ردیف‌های متراکم</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
 
-      <SettingRow
-        title="نمایش آواتار"
-        description="آواتار اعضا در فهرست‌ها و پیام‌ها نشان داده شود."
-        control={
-          <Switch
+          <ToggleRow
+            title="نمایش آواتار"
+            description="آواتار اعضا در فهرست‌ها نشان داده شود."
             checked={value.showAvatars}
-            onCheckedChange={(checked) => onChange({ showAvatars: checked })}
-            aria-label="نمایش آواتار"
+            onCheckedChange={(c) => onChange({ showAvatars: c })}
           />
-        }
-      />
-    </FieldGroup>
+        </FieldGroup>
+      </SettingsCard>
+    </div>
   )
 }
 
@@ -664,156 +940,67 @@ function NotificationsSection({
   onChange: (patch: Partial<SettingsState["notifications"]>) => void
 }) {
   return (
-    <FieldGroup>
-      <p className="text-sm font-medium">کانال‌ها</p>
-      <SettingRow
-        title="ایمیل"
-        description="خلاصه و هشدارها به صندوق ورودی شما."
-        control={
-          <Switch
-            checked={value.email}
-            onCheckedChange={(c) => onChange({ email: c })}
-            aria-label="اعلان ایمیلی"
-          />
-        }
-      />
-      <SettingRow
-        title="اعلان مرورگر"
-        description="پیام فوری وقتی پنجره باز است."
-        control={
-          <Switch
-            checked={value.push}
-            onCheckedChange={(c) => onChange({ push: c })}
-            aria-label="اعلان مرورگر"
-          />
-        }
-      />
-      <SettingRow
-        title="پیامک"
-        description="فقط برای هشدارهای امنیتی مهم."
-        control={
-          <Switch
-            checked={value.sms}
-            onCheckedChange={(c) => onChange({ sms: c })}
-            aria-label="اعلان پیامکی"
-          />
-        }
-      />
+    <div className="space-y-3.5">
+      <SettingsCard
+        title="کانال‌ها"
+        description="از کدام مسیرها خبردار شوید."
+        icon={BellIcon}
+      >
+        <ToggleRow
+          title="ایمیل"
+          description="خلاصه و هشدارها به صندوق ورودی."
+          checked={value.email}
+          onCheckedChange={(c) => onChange({ email: c })}
+        />
+        <ToggleRow
+          title="اعلان مرورگر"
+          description="پیام فوری وقتی پنجره باز است."
+          checked={value.push}
+          onCheckedChange={(c) => onChange({ push: c })}
+        />
+        <ToggleRow
+          title="پیامک"
+          description="فقط برای هشدارهای امنیتی مهم."
+          checked={value.sms}
+          onCheckedChange={(c) => onChange({ sms: c })}
+        />
+      </SettingsCard>
 
-      <FieldSeparator />
-      <p className="text-sm font-medium">موضوع‌ها</p>
-      <div className="space-y-3">
-        {(
-          [
-            ["productUpdates", "به‌روزرسانی محصول", "ویژگی‌های جدید و تغییرات مهم"],
-            ["securityAlerts", "هشدار امنیتی", "ورود مشکوک و تغییر رمز"],
-            ["weeklyDigest", "خلاصه هفتگی", "یک‌شنبه صبح، خلاصه فعالیت‌ها"],
-            ["mentions", "منشن و پاسخ", "وقتی کسی شما را صدا می‌زند"],
-          ] as const
-        ).map(([key, title, desc]) => (
-          <label key={key} className="flex cursor-pointer items-start gap-3">
-            <Checkbox
-              className="mt-0.5"
-              checked={value[key]}
-              onCheckedChange={(checked) =>
-                onChange({ [key]: checked === true })
-              }
-            />
-            <span className="min-w-0">
-              <span className="block text-sm font-medium">{title}</span>
-              <span className="text-xs text-muted-foreground">{desc}</span>
-            </span>
-          </label>
-        ))}
-      </div>
-    </FieldGroup>
-  )
-}
-
-function PrivacySection({
-  value,
-  onChange,
-}: {
-  value: SettingsState["privacy"]
-  onChange: (patch: Partial<SettingsState["privacy"]>) => void
-}) {
-  return (
-    <FieldGroup>
-      <Field>
-        <FieldLabel>دیده شدن پروفایل</FieldLabel>
-        <RadioGroup
-          value={value.profileVisibility}
-          onValueChange={(v) => {
-            if (v === "team" || v === "workspace" || v === "private") {
-              onChange({ profileVisibility: v })
-            }
-          }}
-          className="mt-2 gap-2"
-        >
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 has-data-checked:border-primary">
-            <RadioGroupItem value="workspace" className="mt-0.5" />
-            <span>
-              <span className="block text-sm font-medium">کل فضای کاری</span>
-              <span className="text-xs text-muted-foreground">
-                همه اعضای سازمان پروفایل شما را می‌بینند.
+      <SettingsCard title="موضوع‌ها" icon={BellIcon}>
+        <div className="space-y-0">
+          {(
+            [
+              [
+                "productUpdates",
+                "به‌روزرسانی محصول",
+                "ویژگی‌های جدید و تغییرات مهم",
+              ],
+              ["securityAlerts", "هشدار امنیتی", "ورود مشکوک و تغییر رمز"],
+              ["weeklyDigest", "خلاصه هفتگی", "یک‌شنبه صبح، خلاصه فعالیت‌ها"],
+              ["mentions", "منشن و پاسخ", "وقتی کسی شما را صدا می‌زند"],
+            ] as const
+          ).map(([key, title, desc]) => (
+            <label key={key} className="settings-row cursor-pointer">
+              <span className="min-w-0">
+                <span className="block text-[0.8125rem] font-medium">
+                  {title}
+                </span>
+                <span className="text-[0.7rem] text-muted-foreground">
+                  {desc}
+                </span>
               </span>
-            </span>
-          </label>
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 has-data-checked:border-primary">
-            <RadioGroupItem value="team" className="mt-0.5" />
-            <span>
-              <span className="block text-sm font-medium">فقط تیم من</span>
-              <span className="text-xs text-muted-foreground">
-                محدود به اعضای تیم‌هایی که در آن عضو هستید.
-              </span>
-            </span>
-          </label>
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 has-data-checked:border-primary">
-            <RadioGroupItem value="private" className="mt-0.5" />
-            <span>
-              <span className="block text-sm font-medium">خصوصی</span>
-              <span className="text-xs text-muted-foreground">
-                فقط نام نمایشی در منشن‌ها دیده می‌شود.
-              </span>
-            </span>
-          </label>
-        </RadioGroup>
-      </Field>
-
-      <SettingRow
-        title="وضعیت آنلاین"
-        description="نشان دهید که الان در دسترس هستید."
-        control={
-          <Switch
-            checked={value.showOnlineStatus}
-            onCheckedChange={(c) => onChange({ showOnlineStatus: c })}
-            aria-label="وضعیت آنلاین"
-          />
-        }
-      />
-      <SettingRow
-        title="اجازه منشن"
-        description="دیگران بتوانند با @ شما را صدا بزنند."
-        control={
-          <Switch
-            checked={value.allowMentions}
-            onCheckedChange={(c) => onChange({ allowMentions: c })}
-            aria-label="اجازه منشن"
-          />
-        }
-      />
-      <SettingRow
-        title="اشتراک فعالیت"
-        description="خلاصه فعالیت شما برای همکاران تیم نمایش داده شود."
-        control={
-          <Switch
-            checked={value.shareActivity}
-            onCheckedChange={(c) => onChange({ shareActivity: c })}
-            aria-label="اشتراک فعالیت"
-          />
-        }
-      />
-    </FieldGroup>
+              <Checkbox
+                className="shrink-0"
+                checked={value[key]}
+                onCheckedChange={(checked) =>
+                  onChange({ [key]: checked === true })
+                }
+              />
+            </label>
+          ))}
+        </div>
+      </SettingsCard>
+    </div>
   )
 }
 
@@ -841,117 +1028,128 @@ function SecuritySection({
   onRevokeOthers: () => void
 }) {
   return (
-    <FieldGroup>
-      <SettingRow
-        title="تأیید دو مرحله‌ای"
-        description="پس از ورود، کد یک‌بارمصرف درخواست شود."
-        control={
-          <Switch
-            checked={value.twoFactor}
-            onCheckedChange={(c) => onChange({ twoFactor: c })}
-            aria-label="تأیید دو مرحله‌ای"
-          />
-        }
-      />
-      <SettingRow
-        title="هشدار ورود جدید"
-        description="ورود از دستگاه یا مکان تازه را ایمیل کنید."
-        control={
-          <Switch
-            checked={value.loginAlerts}
-            onCheckedChange={(c) => onChange({ loginAlerts: c })}
-            aria-label="هشدار ورود جدید"
-          />
-        }
-      />
+    <div className="space-y-3.5">
+      <SettingsCard title="لایه‌های محافظت" icon={ShieldIcon}>
+        <ToggleRow
+          icon={LockIcon}
+          title="تأیید دو مرحله‌ای"
+          description="پس از ورود، کد یک‌بارمصرف درخواست شود."
+          checked={value.twoFactor}
+          onCheckedChange={(c) => onChange({ twoFactor: c })}
+        />
+        <ToggleRow
+          icon={BellIcon}
+          title="هشدار ورود جدید"
+          description="ورود از دستگاه یا مکان تازه را ایمیل کنید."
+          checked={value.loginAlerts}
+          onCheckedChange={(c) => onChange({ loginAlerts: c })}
+        />
+      </SettingsCard>
 
-      <FieldSeparator>تغییر رمز عبور</FieldSeparator>
-
-      <form onSubmit={onPasswordSubmit} className="space-y-4">
-        <Field>
-          <FieldLabel htmlFor="settings-pass-current">رمز فعلی</FieldLabel>
-          <Input
-            id="settings-pass-current"
-            type="password"
-            dir="ltr"
-            className="max-w-md text-start"
-            autoComplete="current-password"
-            value={password.current}
-            onChange={(e) =>
-              onPasswordChange({ ...password, current: e.target.value })
-            }
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="settings-pass-next">رمز جدید</FieldLabel>
-          <Input
-            id="settings-pass-next"
-            type="password"
-            dir="ltr"
-            className="max-w-md text-start"
-            autoComplete="new-password"
-            value={password.next}
-            onChange={(e) =>
-              onPasswordChange({ ...password, next: e.target.value })
-            }
-          />
-        </Field>
-        <Field data-invalid={passwordError ? true : undefined}>
-          <FieldLabel htmlFor="settings-pass-confirm">تکرار رمز جدید</FieldLabel>
-          <Input
-            id="settings-pass-confirm"
-            type="password"
-            dir="ltr"
-            className="max-w-md text-start"
-            autoComplete="new-password"
-            aria-invalid={passwordError ? true : undefined}
-            value={password.confirm}
-            onChange={(e) =>
-              onPasswordChange({ ...password, confirm: e.target.value })
-            }
-          />
-          {passwordError ? (
-            <p role="alert" className="text-sm text-destructive">
-              {passwordError}
-            </p>
-          ) : null}
-        </Field>
-        <Button type="submit" variant="outline" size="sm">
-          به‌روزرسانی رمز
-        </Button>
-      </form>
-
-      <FieldSeparator>نشست‌های فعال</FieldSeparator>
-
-      <ul className="space-y-3">
-        {sessions.map((session) => (
-          <li
-            key={session.id}
-            className="flex flex-wrap items-start justify-between gap-2 border-b pb-3 last:border-0 last:pb-0"
-          >
-            <div className="min-w-0 space-y-0.5">
-              <p className="text-sm font-medium">{session.device}</p>
-              <p className="text-xs text-muted-foreground">
-                {session.location} · {session.lastActive}
+      <SettingsCard
+        title="تغییر رمز عبور"
+        description="رمز جدید حداقل ۸ نویسه."
+        icon={LockIcon}
+      >
+        <form onSubmit={onPasswordSubmit} className="space-y-3">
+          <Field>
+            <FieldLabel htmlFor="settings-pass-current">رمز فعلی</FieldLabel>
+            <Input
+              id="settings-pass-current"
+              type="password"
+              dir="ltr"
+              className="settings-input max-w-md text-start"
+              autoComplete="current-password"
+              value={password.current}
+              onChange={(e) =>
+                onPasswordChange({ ...password, current: e.target.value })
+              }
+            />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="settings-pass-next">رمز جدید</FieldLabel>
+            <Input
+              id="settings-pass-next"
+              type="password"
+              dir="ltr"
+              className="settings-input max-w-md text-start"
+              autoComplete="new-password"
+              value={password.next}
+              onChange={(e) =>
+                onPasswordChange({ ...password, next: e.target.value })
+              }
+            />
+          </Field>
+          <Field data-invalid={passwordError ? true : undefined}>
+            <FieldLabel htmlFor="settings-pass-confirm">
+              تکرار رمز جدید
+            </FieldLabel>
+            <Input
+              id="settings-pass-confirm"
+              type="password"
+              dir="ltr"
+              className="settings-input max-w-md text-start"
+              autoComplete="new-password"
+              aria-invalid={passwordError ? true : undefined}
+              value={password.confirm}
+              onChange={(e) =>
+                onPasswordChange({ ...password, confirm: e.target.value })
+              }
+            />
+            {passwordError ? (
+              <p role="alert" className="text-[0.75rem] text-destructive">
+                {passwordError}
               </p>
-            </div>
-            {session.current ? (
-              <Badge variant="secondary">نشست فعلی</Badge>
             ) : null}
-          </li>
-        ))}
-      </ul>
+          </Field>
+          <Button
+            type="submit"
+            className="settings-btn settings-btn-sm settings-btn-soft"
+          >
+            به‌روزرسانی رمز
+          </Button>
+        </form>
+      </SettingsCard>
 
-      {sessions.some((s) => !s.current) ? (
-        <Button type="button" variant="outline" size="sm" onClick={onRevokeOthers}>
-          خروج از بقیه نشست‌ها
-        </Button>
-      ) : (
-        <p className="text-xs text-muted-foreground">
-          فقط همین نشست فعال است.
-        </p>
-      )}
-    </FieldGroup>
+      <SettingsCard title="نشست‌های فعال" icon={MonitorIcon}>
+        <ul className="space-y-1.5">
+          {sessions.map((session) => (
+            <li key={session.id} className="settings-session">
+              <div className="min-w-0 space-y-0.5">
+                <p className="truncate text-[0.8125rem] font-medium">
+                  {session.device}
+                </p>
+                <p className="text-[0.68rem] text-muted-foreground">
+                  {session.location} · {session.lastActive}
+                </p>
+              </div>
+              {session.current ? (
+                <Badge
+                  variant="secondary"
+                  className="h-5 shrink-0 rounded-[var(--st-radius)] px-1.5 text-[0.65rem] font-normal"
+                >
+                  فعلی
+                </Badge>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+
+        {sessions.some((s) => !s.current) ? (
+          <Button
+            type="button"
+            className="settings-btn settings-btn-sm settings-btn-soft mt-3"
+            onClick={onRevokeOthers}
+          >
+            خروج از بقیه نشست‌ها
+          </Button>
+        ) : (
+          <p className="mt-2.5 text-[0.7rem] text-muted-foreground">
+            فقط همین نشست فعال است.
+          </p>
+        )}
+      </SettingsCard>
+    </div>
   )
 }
 
@@ -963,105 +1161,104 @@ function PreferencesSection({
   onChange: (patch: Partial<SettingsState["preferences"]>) => void
 }) {
   return (
-    <FieldGroup>
-      <Field>
-        <FieldLabel>زبان رابط</FieldLabel>
-        <Select
-          value={value.language}
-          onValueChange={(v) => {
-            if (v === "fa") onChange({ language: v })
-          }}
-          items={{ fa: "فارسی" }}
-        >
-          <SelectTrigger className="max-w-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="fa">فارسی</SelectItem>
-          </SelectContent>
-        </Select>
-        <FieldDescription>
-          این نمونه فقط رابط فارسی را پشتیبانی می‌کند.
-        </FieldDescription>
-      </Field>
+    <SettingsCard
+      title="زبان، زمان و نمایش"
+      description="ترجیحات محلی این نمونه."
+      icon={Settings2Icon}
+    >
+      <FieldGroup className="gap-3.5">
+        <Field>
+          <FieldLabel>زبان رابط</FieldLabel>
+          <Select
+            value={value.language}
+            onValueChange={(v) => {
+              if (v === "fa") onChange({ language: v })
+            }}
+            items={{ fa: "فارسی" }}
+          >
+            <SelectTrigger className="settings-input max-w-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="fa">فارسی</SelectItem>
+            </SelectContent>
+          </Select>
+          <FieldDescription>فقط فارسی در این نمونه.</FieldDescription>
+        </Field>
 
-      <Field>
-        <FieldLabel>منطقه زمانی</FieldLabel>
-        <Select
-          value={value.timezone}
-          onValueChange={(v) => {
-            if (v === "tehran" || v === "utc") onChange({ timezone: v })
-          }}
-          items={{
-            tehran: "تهران (ایران)",
-            utc: "زمان جهانی (UTC)",
-          }}
-        >
-          <SelectTrigger className="max-w-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tehran">تهران (ایران)</SelectItem>
-            <SelectItem value="utc">زمان جهانی (UTC)</SelectItem>
-          </SelectContent>
-        </Select>
-      </Field>
+        <Field>
+          <FieldLabel>منطقه زمانی</FieldLabel>
+          <Select
+            value={value.timezone}
+            onValueChange={(v) => {
+              if (v === "tehran" || v === "utc") onChange({ timezone: v })
+            }}
+            items={{
+              tehran: "تهران (ایران)",
+              utc: "زمان جهانی (UTC)",
+            }}
+          >
+            <SelectTrigger className="settings-input max-w-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tehran">تهران (ایران)</SelectItem>
+              <SelectItem value="utc">زمان جهانی (UTC)</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
 
-      <Field>
-        <FieldLabel>تقویم</FieldLabel>
-        <RadioGroup
-          value={value.calendar}
-          onValueChange={(v) => {
-            if (v === "jalali" || v === "gregorian") onChange({ calendar: v })
-          }}
-          className="mt-2 gap-2"
-        >
-          <label className="flex cursor-pointer items-center gap-3">
-            <RadioGroupItem value="jalali" />
-            <span className="text-sm">شمسی (جلالی)</span>
-          </label>
-          <label className="flex cursor-pointer items-center gap-3">
-            <RadioGroupItem value="gregorian" />
-            <span className="text-sm">میلادی</span>
-          </label>
-        </RadioGroup>
-      </Field>
+        <Field>
+          <FieldLabel>تقویم</FieldLabel>
+          <RadioGroup
+            value={value.calendar}
+            onValueChange={(v) => {
+              if (v === "jalali" || v === "gregorian") onChange({ calendar: v })
+            }}
+            className="mt-2 flex flex-wrap gap-4"
+          >
+            <label className="flex cursor-pointer items-center gap-2">
+              <RadioGroupItem value="jalali" />
+              <span className="text-[0.8125rem]">شمسی (جلالی)</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2">
+              <RadioGroupItem value="gregorian" />
+              <span className="text-[0.8125rem]">میلادی</span>
+            </label>
+          </RadioGroup>
+        </Field>
 
-      <Field>
-        <FieldLabel>شروع هفته</FieldLabel>
-        <Select
-          value={value.weekStartsOn}
-          onValueChange={(v) => {
-            if (v === "saturday" || v === "sunday") {
-              onChange({ weekStartsOn: v })
-            }
-          }}
-          items={{
-            saturday: "شنبه",
-            sunday: "یکشنبه",
-          }}
-        >
-          <SelectTrigger className="max-w-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="saturday">شنبه</SelectItem>
-            <SelectItem value="sunday">یکشنبه</SelectItem>
-          </SelectContent>
-        </Select>
-      </Field>
+        <Field>
+          <FieldLabel>شروع هفته</FieldLabel>
+          <Select
+            value={value.weekStartsOn}
+            onValueChange={(v) => {
+              if (v === "saturday" || v === "sunday") {
+                onChange({ weekStartsOn: v })
+              }
+            }}
+            items={{
+              saturday: "شنبه",
+              sunday: "یکشنبه",
+            }}
+          >
+            <SelectTrigger className="settings-input max-w-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="saturday">شنبه</SelectItem>
+              <SelectItem value="sunday">یکشنبه</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
 
-      <SettingRow
-        title="ارقام فارسی"
-        description="اعداد در رابط با ارقام فارسی نمایش داده شوند."
-        control={
-          <Switch
-            checked={value.persianDigits}
-            onCheckedChange={(c) => onChange({ persianDigits: c })}
-            aria-label="ارقام فارسی"
-          />
-        }
-      />
-    </FieldGroup>
+        <ToggleRow
+          title="ارقام فارسی"
+          description="اعداد در رابط با ارقام فارسی."
+          checked={value.persianDigits}
+          onCheckedChange={(c) => onChange({ persianDigits: c })}
+        />
+      </FieldGroup>
+    </SettingsCard>
   )
 }

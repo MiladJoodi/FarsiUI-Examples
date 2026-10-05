@@ -140,7 +140,7 @@ export function CategoryShareChart() {
                 style={{ background: item.fill }}
               />
               <span className="text-muted-foreground">{item.name}</span>
-              <span className="ms-auto font-medium">
+              <span className="ms-auto font-medium tabular-nums">
                 {formatPersianNumber(item.value)}٪
               </span>
             </li>
@@ -189,7 +189,10 @@ export function ChannelSalesChart() {
               axisLine={false}
               tickMargin={8}
             />
-            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartTooltip
+              wrapperStyle={{ direction: "rtl", unicodeBidi: "isolate" }}
+              content={<ChartTooltipContent />}
+            />
             <Bar
               dataKey="sales"
               fill="var(--color-sales)"

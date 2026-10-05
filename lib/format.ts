@@ -5,6 +5,11 @@ export function formatToman(value: number): string {
   return `${formatPersianNumber(value)} تومان`
 }
 
+/** درصد فارسی: عدد سپس٪ (نه برعکس) */
+export function formatPercent(value: number): string {
+  return `${formatPersianNumber(value)}٪`
+}
+
 /** نمایش تاریخ جلالی نمونه‌ای مثل ۱۴۰۵/۰۷/۱۲ */
 export function formatJalaliDate(value: string): string {
   return toPersianDigits(value)

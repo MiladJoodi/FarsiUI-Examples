@@ -11,7 +11,7 @@ import {
   PRICE_MIN,
   type ProductCategory,
 } from "@/lib/mock/ecommerce"
-import { toPersianDigits } from "@/lib/digits"
+import { formatPersianNumber } from "@/lib/digits"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -23,8 +23,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { Slider } from "@/components/ui/slider"
-
 export type CatalogFiltersState = {
   category: ProductCategory | "all"
   brands: string[]
@@ -39,6 +37,33 @@ export const defaultFilters: CatalogFiltersState = {
   priceRange: [PRICE_MIN, PRICE_MAX],
   minRating: 0,
   inStockOnly: false,
+}
+
+const PRICE_PRESETS: {
+  id: string
+  label: string
+  range: [number, number]
+}[] = [
+  { id: "all", label: "همه قیمت‌ها", range: [PRICE_MIN, PRICE_MAX] },
+  { id: "under1m", label: "تا ۱ میلیون تومان", range: [PRICE_MIN, 1_000_000] },
+  {
+    id: "1m-3m",
+    label: "۱ تا ۳ میلیون تومان",
+    range: [1_000_000, 3_000_000],
+  },
+  {
+    id: "3m-max",
+    label: "۳ تا ۵ میلیون تومان",
+    range: [3_000_000, PRICE_MAX],
+  },
+]
+
+function activePricePresetId(range: [number, number]) {
+  return (
+    PRICE_PRESETS.find(
+      (preset) => preset.range[0] === range[0] && preset.range[1] === range[1]
+    )?.id ?? "custom"
+  )
 }
 
 export function FiltersSidebar({
@@ -135,7 +160,7 @@ function FiltersPanel({
       {showCount ? (
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm font-medium">فیلترها</p>
-          <p className="text-xs text-muted-foreground tabular-nums">
+          <p className="text-xs tracking-normal text-muted-foreground">
             {formatCount(resultCount)} کالا
           </p>
         </div>
@@ -171,26 +196,32 @@ function FiltersPanel({
 
       <Separator />
 
-      <section className="space-y-3">
+      <section className="space-y-2">
         <p className="text-xs font-medium text-muted-foreground">بازه قیمت</p>
-        <Slider
-          min={PRICE_MIN}
-          max={PRICE_MAX}
-          step={50_000}
-          value={value.priceRange}
+        <RadioGroup
+          value={activePricePresetId(value.priceRange)}
           onValueChange={(next) => {
-            if (!Array.isArray(next) || next.length < 2) return
-            onChange({
-              ...value,
-              priceRange: [next[0], next[1]] as [number, number],
-            })
+            const preset = PRICE_PRESETS.find((item) => item.id === next)
+            if (!preset) return
+            onChange({ ...value, priceRange: [...preset.range] })
           }}
-          aria-label="بازه قیمت"
-        />
-        <div className="flex justify-between gap-2 text-xs tabular-nums text-muted-foreground">
-          <span>{formatToman(value.priceRange[0])}</span>
-          <span>{formatToman(value.priceRange[1])}</span>
-        </div>
+          className="gap-2"
+        >
+          {PRICE_PRESETS.map((preset) => (
+            <label
+              key={preset.id}
+              className="flex cursor-pointer items-center gap-2 text-sm leading-snug"
+            >
+              <RadioGroupItem value={preset.id} />
+              {preset.label}
+            </label>
+          ))}
+        </RadioGroup>
+        {activePricePresetId(value.priceRange) === "custom" ? (
+          <p className="rounded-lg border bg-muted/30 px-2.5 py-2 text-xs tracking-normal text-muted-foreground">
+            {formatToman(value.priceRange[0])} تا {formatToman(value.priceRange[1])}
+          </p>
+        ) : null}
       </section>
 
       <Separator />
@@ -232,7 +263,7 @@ function FiltersPanel({
               <RadioGroupItem value={String(rating)} />
               {rating === 0
                 ? "همه امتیازها"
-                : `از ${toPersianDigits(rating)} به بالا`}
+                : `از ${formatPersianNumber(rating, { useGrouping: false })} به بالا`}
             </label>
           ))}
         </RadioGroup>

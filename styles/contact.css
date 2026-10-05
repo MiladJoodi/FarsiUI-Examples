@@ -1,0 +1,118 @@
+/* Contact — simple form, thin border only */
+
+.contact-page {
+  --cx-line: color-mix(in oklch, var(--foreground) 12%, transparent);
+  --cx-mute: color-mix(in oklch, var(--foreground) 55%, transparent);
+  min-height: 100dvh;
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.contact-page .contact-header {
+  border-bottom: 1px solid var(--cx-line) !important;
+  background: color-mix(in oklch, var(--background) 92%, transparent) !important;
+  backdrop-filter: blur(10px);
+}
+
+.contact-main {
+  max-width: 28rem;
+  margin-inline: auto;
+  padding-block: 2rem 3rem;
+}
+
+.contact-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.contact-lead {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--cx-mute);
+}
+
+.contact-form {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  border: 1px solid var(--cx-line);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  background: var(--background);
+}
+
+.contact-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cx-mute);
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  border: 1px solid var(--cx-line);
+  border-radius: 0.35rem;
+  background: var(--background);
+  padding: 0.55rem 0.65rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 140ms ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: color-mix(in oklch, var(--foreground) 28%, transparent);
+}
+
+.contact-form textarea {
+  min-height: 6.5rem;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.contact-submit {
+  height: 2.5rem !important;
+  border-radius: 0.35rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+.contact-toast {
+  display: flex;
+  width: min(22rem, calc(100vw - 2rem));
+  gap: 0.65rem;
+  border: 1px solid var(--cx-line);
+  border-radius: 0.5rem;
+  background: var(--background);
+  padding: 0.75rem 0.85rem;
+  direction: rtl;
+}
+
+.contact-toast-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.contact-toast-desc {
+  margin-top: 0.1rem;
+  font-size: 0.72rem;
+  color: var(--cx-mute);
+}
+
+/* Keep form flat across design systems — no heavy offset frames */
+.style-khesht .contact-form,
+.style-khesht .contact-form input,
+.style-khesht .contact-form textarea {
+  box-shadow: none !important;
+}
+
+.style-glass .contact-form {
+  backdrop-filter: none;
+  background: var(--background);
+}

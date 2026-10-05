@@ -145,7 +145,7 @@ export function CheckoutView() {
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center justify-between gap-2">
                       <span className="text-sm font-medium">{method.title}</span>
-                      <span className="text-sm tabular-nums">
+                      <span className="text-sm tracking-normal">
                         {method.price === 0
                           ? "رایگان"
                           : formatToman(method.price)}
@@ -203,7 +203,7 @@ export function CheckoutView() {
                   <span className="min-w-0 truncate text-muted-foreground">
                     {product.name} × {toPersianDigits(line.quantity)}
                   </span>
-                  <span className="shrink-0 tabular-nums">
+                  <span className="shrink-0 tracking-normal">
                     {formatToman(product.price * line.quantity)}
                   </span>
                 </li>
@@ -214,17 +214,17 @@ export function CheckoutView() {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between gap-3">
               <span className="text-muted-foreground">جمع جزء</span>
-              <span className="tabular-nums">{formatToman(subtotal)}</span>
+              <span className="tracking-normal">{formatToman(subtotal)}</span>
             </div>
             <div className="flex justify-between gap-3">
               <span className="text-muted-foreground">هزینه ارسال</span>
-              <span className="tabular-nums">
+              <span className="tracking-normal">
                 {shipping === 0 ? "رایگان" : formatToman(shipping)}
               </span>
             </div>
             <div className="flex justify-between gap-3 font-medium">
               <span>مبلغ نهایی</span>
-              <span className="tabular-nums">{formatToman(total)}</span>
+              <span className="tracking-normal">{formatToman(total)}</span>
             </div>
           </div>
           <Button type="submit" className="w-full" disabled={submitting}>

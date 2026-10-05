@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ImageIcon } from "lucide-react"
 
 import { toPersianDigits } from "@/lib/digits"
 import {
@@ -30,22 +31,31 @@ export function PostMeta({
     >
       <Link
         href={`${BLOG_BASE}/categories/${category.slug}`}
-        className="hover:text-foreground"
+        className="text-foreground/70 transition-colors hover:text-foreground"
       >
         {category.name}
       </Link>
-      <span aria-hidden>·</span>
+      <span aria-hidden className="text-foreground/20">
+        ·
+      </span>
       <span>{author.name}</span>
-      <span aria-hidden>·</span>
-      <time dateTime={post.publishedAt}>{toPersianDigits(post.publishedAt)}</time>
-      <span aria-hidden>·</span>
-      <span className="tabular-nums">
+      <span aria-hidden className="text-foreground/20">
+        ·
+      </span>
+      <time dateTime={post.publishedAt}>
+        {toPersianDigits(post.publishedAt)}
+      </time>
+      <span aria-hidden className="text-foreground/20">
+        ·
+      </span>
+      <span>
         {toPersianDigits(post.readingMinutes)} دقیقه مطالعه
       </span>
     </div>
   )
 }
 
+/** Neutral gray wireframe cover — solid gray so it reads in light mode. */
 export function PostCover({
   post,
   className,
@@ -55,20 +65,33 @@ export function PostCover({
   className?: string
   large?: boolean
 }) {
+  const category = getCategory(post.categoryId)
+
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border",
-        large ? "aspect-[21/9] sm:aspect-[2.4/1]" : "aspect-[16/10]",
+        "blog-cover relative flex items-center justify-center overflow-hidden",
+        large ? "aspect-[21/9] sm:aspect-[2.35/1]" : "aspect-[16/10]",
         className
       )}
-      style={{ backgroundColor: post.accent }}
       role="img"
       aria-label={`پوشش مطلب: ${post.title}`}
     >
-      <div className="absolute inset-0 flex items-end p-4 sm:p-5">
-        <span className="text-2xl font-semibold tracking-tight text-foreground/50 sm:text-3xl">
-          {post.title.slice(0, 1)}
+      <div
+        className={cn(
+          "blog-cover-frame relative z-[1] flex flex-col items-center rounded-lg",
+          large ? "gap-2 px-6 py-5 sm:px-8 sm:py-6" : "gap-1.5 px-4 py-3.5"
+        )}
+      >
+        <ImageIcon
+          className={cn(
+            "text-foreground/45 stroke-[1.25]",
+            large ? "size-8 sm:size-9" : "size-6"
+          )}
+          aria-hidden
+        />
+        <span className="text-[0.65rem] font-medium tracking-wide text-foreground/55">
+          {category.name}
         </span>
       </div>
     </div>
@@ -85,20 +108,23 @@ export function PostListItem({
   const category = getCategory(post.categoryId)
 
   return (
-    <article className="group grid gap-3 border-b py-5 last:border-0 sm:grid-cols-[minmax(0,1fr)_9.5rem] sm:gap-6 sm:py-6">
-      <div className="min-w-0 space-y-2 order-2 sm:order-1">
-        <Badge variant="secondary" className="font-normal">
+    <article className="group grid gap-3 border-b border-foreground/8 py-5 last:border-0 sm:grid-cols-[minmax(0,1fr)_8.5rem] sm:items-start sm:gap-5 sm:py-5">
+      <div className="order-2 min-w-0 space-y-2 sm:order-1">
+        <Badge
+          variant="secondary"
+          className="font-normal tracking-normal text-muted-foreground"
+        >
           {category.name}
         </Badge>
         <h3
           className={cn(
             "text-balance font-semibold tracking-tight",
-            emphasize ? "text-lg sm:text-xl" : "text-base sm:text-lg"
+            emphasize ? "text-base sm:text-lg" : "text-sm sm:text-base"
           )}
         >
           <Link
             href={`${BLOG_BASE}/posts/${post.slug}`}
-            className="outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+            className="outline-none transition-colors hover:text-foreground/75 focus-visible:ring-2 focus-visible:ring-ring"
           >
             {post.title}
           </Link>
@@ -110,9 +136,9 @@ export function PostListItem({
       </div>
       <Link
         href={`${BLOG_BASE}/posts/${post.slug}`}
-        className="order-1 block outline-none focus-visible:ring-2 focus-visible:ring-ring sm:order-2"
+        className="order-1 block overflow-hidden rounded-lg outline-none ring-offset-background transition-opacity group-hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring sm:order-2"
       >
-        <PostCover post={post} className="sm:aspect-square" />
+        <PostCover post={post} className="rounded-lg sm:aspect-square" />
       </Link>
     </article>
   )
@@ -133,7 +159,7 @@ function renderInline(text: string) {
         <code
           key={i}
           dir="ltr"
-          className="rounded-md border bg-muted/50 px-1.5 py-0.5 font-mono text-[0.85em]"
+          className="rounded-md bg-muted/70 px-1.5 py-0.5 font-mono text-[0.85em]"
         >
           {part.slice(1, -1)}
         </code>
@@ -149,7 +175,7 @@ export function ArticleBlocks({
   blocks: BlogPost["blocks"]
 }) {
   return (
-    <div className="space-y-5 text-[0.9375rem] leading-8 text-foreground sm:text-base sm:leading-8">
+    <div className="space-y-5 text-[0.9375rem] leading-8 text-foreground/90 sm:text-[0.975rem] sm:leading-8">
       {blocks.map((block, index) => {
         if (block.type === "p") {
           return (
@@ -162,7 +188,7 @@ export function ArticleBlocks({
           return (
             <h2
               key={index}
-              className="scroll-mt-20 pt-2 text-lg font-semibold tracking-tight sm:text-xl"
+              className="scroll-mt-20 pt-3 text-lg font-semibold tracking-tight text-foreground sm:text-xl"
             >
               {block.text}
             </h2>
@@ -170,9 +196,11 @@ export function ArticleBlocks({
         }
         if (block.type === "ul") {
           return (
-            <ul key={index} className="list-disc space-y-2 ps-5">
+            <ul key={index} className="list-disc space-y-2 ps-5 marker:text-muted-foreground">
               {block.items.map((item) => (
-                <li key={item}>{item}</li>
+                <li key={item} className="ps-1">
+                  {item}
+                </li>
               ))}
             </ul>
           )
@@ -181,7 +209,7 @@ export function ArticleBlocks({
           return (
             <blockquote
               key={index}
-              className="border-s-2 border-foreground/25 ps-4 text-muted-foreground"
+              className="border-s-2 border-foreground/15 bg-muted/30 py-3 ps-4 pe-3 text-[0.95em] leading-relaxed text-muted-foreground"
             >
               {block.text}
             </blockquote>
@@ -191,14 +219,14 @@ export function ArticleBlocks({
           return (
             <div
               key={index}
-              className="overflow-hidden rounded-xl border bg-muted/30"
+              className="overflow-hidden rounded-xl bg-[oklch(0.22_0.02_260)] text-[oklch(0.92_0.01_100)] shadow-sm dark:bg-[oklch(0.18_0.02_260)]"
             >
-              <div className="border-b px-3 py-1.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
+              <div className="border-b border-white/8 px-3 py-1.5 text-[0.65rem] font-medium tracking-wide text-white/45 uppercase">
                 {block.language}
               </div>
               <pre
                 dir="ltr"
-                className="overflow-x-auto p-3 text-start font-mono text-xs leading-relaxed"
+                className="overflow-x-auto p-3.5 text-start font-mono text-xs leading-relaxed"
               >
                 <code>{block.code}</code>
               </pre>

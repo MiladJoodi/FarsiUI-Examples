@@ -4,14 +4,17 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react"
 
-import { toPersianDigits } from "@/lib/digits"
 import { formatCount, formatToman } from "@/lib/format"
 import { useCart } from "@/components/ecommerce/cart-context"
 import { ProductThumb } from "@/components/ecommerce/product-card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
 
 const SHIPPING_ESTIMATE = 45_000
+
+const numericClass =
+  "tracking-normal [font-variant-numeric:normal] [font-feature-settings:normal]"
 
 export function CartView() {
   const router = useRouter()
@@ -40,7 +43,7 @@ export function CartView() {
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-semibold tracking-tight">سبد خرید</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className={cn("text-sm text-muted-foreground", numericClass)}>
           {formatCount(lines.reduce((s, l) => s + l.quantity, 0))} کالا
         </p>
       </div>
@@ -105,8 +108,13 @@ export function CartView() {
                       >
                         <MinusIcon className="size-4" />
                       </Button>
-                      <span className="min-w-8 text-center text-sm tabular-nums">
-                        {toPersianDigits(line.quantity)}
+                      <span
+                        className={cn(
+                          "min-w-7 px-1 text-center text-sm",
+                          numericClass
+                        )}
+                      >
+                        {formatCount(line.quantity)}
                       </span>
                       <Button
                         type="button"
@@ -121,7 +129,12 @@ export function CartView() {
                         <PlusIcon className="size-4" />
                       </Button>
                     </div>
-                    <p className="text-sm font-medium tabular-nums">
+                    <p
+                      className={cn(
+                        "text-sm font-medium whitespace-nowrap",
+                        numericClass
+                      )}
+                    >
                       {formatToman(product.price * line.quantity)}
                     </p>
                   </div>
@@ -133,19 +146,25 @@ export function CartView() {
 
         <aside className="h-fit space-y-4 rounded-xl border p-4 lg:sticky lg:top-24">
           <p className="text-sm font-medium">خلاصه سفارش</p>
-          <div className="space-y-2 text-sm">
+          <div className={cn("space-y-2 text-sm", numericClass)}>
             <div className="flex justify-between gap-3">
               <span className="text-muted-foreground">جمع جزء</span>
-              <span className="tabular-nums">{formatToman(subtotal)}</span>
+              <span className="shrink-0 whitespace-nowrap">
+                {formatToman(subtotal)}
+              </span>
             </div>
             <div className="flex justify-between gap-3">
               <span className="text-muted-foreground">ارسال (تخمینی)</span>
-              <span className="tabular-nums">{formatToman(shipping)}</span>
+              <span className="shrink-0 whitespace-nowrap">
+                {formatToman(shipping)}
+              </span>
             </div>
             <Separator />
             <div className="flex justify-between gap-3 font-medium">
               <span>مبلغ قابل پرداخت</span>
-              <span className="tabular-nums">{formatToman(total)}</span>
+              <span className="shrink-0 whitespace-nowrap">
+                {formatToman(total)}
+              </span>
             </div>
           </div>
           <Button className="w-full" onClick={() => router.push("/examples/ecommerce/checkout")}>

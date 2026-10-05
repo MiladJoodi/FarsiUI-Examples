@@ -9,11 +9,14 @@ import {
 import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
 
+import "@/styles/settings.css"
+
 export function SettingsShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
+    <div className="settings-page flex min-h-dvh flex-col bg-background text-foreground">
       <ExampleHeaderChrome
         innerClassName="max-w-5xl"
+        className="border-[color-mix(in_oklch,var(--foreground)_12%,transparent)]"
         start={
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold tracking-tight">
@@ -27,7 +30,7 @@ export function SettingsShell({ children }: { children: ReactNode }) {
         end={<ModeToggle />}
       />
 
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-7">
         {children}
       </div>
     </div>

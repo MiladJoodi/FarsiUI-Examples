@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   PackageIcon,
-  SearchIcon,
   TriangleAlertIcon,
 } from "lucide-react"
 
@@ -15,6 +14,7 @@ import {
   type Product,
 } from "@/lib/mock/products"
 import { EntityActionsMenu } from "@/components/shared/entity-actions-menu"
+import { SearchField } from "@/components/shared/search-field"
 import { ProductStatusBadge } from "@/components/shared/status-badges"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -37,11 +37,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
 
 export function ProductsCatalog() {
@@ -61,7 +56,7 @@ export function ProductsCatalog() {
   })
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {lowStock > 0 ? (
         <Alert>
           <TriangleAlertIcon />
@@ -74,41 +69,40 @@ export function ProductsCatalog() {
         </Alert>
       ) : null}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Button className="w-full shrink-0 sm:w-auto">افزودن محصول</Button>
-        <InputGroup className="h-9 w-full min-w-0 flex-1 sm:max-w-md">
-          <InputGroupAddon align="inline-start">
-            <SearchIcon className="size-4" />
-          </InputGroupAddon>
-          <InputGroupInput
-            placeholder="جستجوی نام محصول…"
-            aria-label="جستجوی محصولات"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </InputGroup>
-      </div>
-
-      <div
-        className="flex flex-wrap gap-2"
-        role="group"
-        aria-label="فیلتر دسته‌بندی"
-      >
-        {productCategories.map((item) => (
-          <Button
-            key={item}
-            size="sm"
-            variant={category === item ? "default" : "outline"}
-            aria-pressed={category === item}
-            onClick={() => setCategory(item)}
-          >
-            {item}
+      {/* RTL: start (راست) = افزودن + فیلترها · end (چپ) = جستجو */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div
+          className="flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label="اقدامات و فیلتر دسته‌بندی"
+        >
+          <Button size="sm" className="shrink-0">
+            افزودن محصول
           </Button>
-        ))}
+          {productCategories.map((item) => (
+            <Button
+              key={item}
+              size="sm"
+              variant={category === item ? "default" : "outline"}
+              aria-pressed={category === item}
+              onClick={() => setCategory(item)}
+            >
+              {item}
+            </Button>
+          ))}
+        </div>
+
+        <SearchField
+          wrapperClassName="sm:max-w-xs"
+          placeholder="جستجوی نام محصول…"
+          aria-label="جستجوی محصولات"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </div>
 
       {filtered.length === 0 ? (
-        <Empty className="border border-dashed py-14">
+        <Empty className="border border-dashed py-10">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <PackageIcon />
@@ -120,7 +114,7 @@ export function ProductsCatalog() {
           </EmptyHeader>
         </Empty>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -132,17 +126,29 @@ export function ProductsCatalog() {
 
 function ProductCard({ product }: { product: Product }) {
   const stockPercent = Math.round((product.stock / product.maxStock) * 100)
+  const initial = product.name.trim().charAt(0)
 
   return (
-    <Card className="overflow-hidden bg-card">
-      <div className={`flex h-24 items-end px-4 pb-3 ${product.tone}`}>
-        <span className="text-sm font-medium">{product.category}</span>
+    <Card size="sm" className="gap-3 overflow-hidden bg-card py-0">
+      <div
+        className="relative flex aspect-[16/9] items-center justify-center bg-muted/60"
+        aria-hidden
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-foreground)_0%,transparent_68%)] opacity-[0.04]" />
+        <span className="relative flex size-11 items-center justify-center rounded-xl border border-border/70 bg-background/80 text-base font-semibold text-muted-foreground shadow-xs">
+          {initial}
+        </span>
+        <span className="absolute start-2.5 bottom-2 rounded-md border border-border/60 bg-background/90 px-1.5 py-0.5 text-[0.65rem] text-muted-foreground backdrop-blur-sm">
+          {product.category}
+        </span>
       </div>
-      <CardHeader className="pt-4 pb-3">
+      <CardHeader className="px-3 pt-0 pb-0">
         <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 space-y-1">
-            <CardTitle className="leading-snug">{product.name}</CardTitle>
-            <CardDescription>{formatToman(product.price)}</CardDescription>
+          <div className="min-w-0 space-y-0.5">
+            <CardTitle className="text-sm leading-snug">{product.name}</CardTitle>
+            <CardDescription className="tracking-normal whitespace-nowrap">
+              {formatToman(product.price)}
+            </CardDescription>
           </div>
           <EntityActionsMenu label={`عملیات محصول ${product.name}`}>
             <DropdownMenuItem>ویرایش</DropdownMenuItem>
@@ -152,15 +158,15 @@ function ProductCard({ product }: { product: Product }) {
           </EntityActionsMenu>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-2 px-3">
         <div className="flex items-center justify-between gap-2">
           <ProductStatusBadge status={product.status} />
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs tracking-normal text-muted-foreground">
             فروش: {formatCount(product.sold)}
           </span>
         </div>
-        <Progress value={stockPercent} className="gap-2">
-          <div className="flex w-full items-center justify-between gap-2 text-xs">
+        <Progress value={stockPercent} className="gap-1.5">
+          <div className="flex w-full items-center justify-between gap-2 text-[0.7rem] tracking-normal">
             <ProgressLabel>
               موجودی {toPersianDigits(product.stock)} از{" "}
               {toPersianDigits(product.maxStock)}
@@ -169,8 +175,8 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         </Progress>
       </CardContent>
-      <CardFooter className="pt-0">
-        <Button variant="outline" size="sm" className="w-full">
+      <CardFooter className="border-t-0 bg-transparent px-3 pt-2 pb-3">
+        <Button variant="outline" size="sm" className="h-8 w-full">
           جزئیات
         </Button>
       </CardFooter>

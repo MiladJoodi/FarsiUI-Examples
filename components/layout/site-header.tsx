@@ -7,6 +7,7 @@ import { BellIcon, SearchIcon } from "lucide-react"
 import { DASHBOARD_BASE, getPageMeta } from "@/lib/navigation"
 import { ModeToggle } from "@/components/layout/mode-toggle"
 import { DesignSystemPicker } from "@/components/design-system/design-system-picker"
+import { SearchField } from "@/components/shared/search-field"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,11 +26,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -37,6 +33,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { cn } from "@/lib/utils"
 
 function HeaderSearchField({
   id,
@@ -46,16 +43,13 @@ function HeaderSearchField({
   className?: string
 }) {
   return (
-    <InputGroup className={className}>
-      <InputGroupAddon align="inline-start">
-        <SearchIcon className="size-4" />
-      </InputGroupAddon>
-      <InputGroupInput
-        id={id}
-        placeholder="جستجو در پنل…"
-        aria-label="جستجو در پنل"
-      />
-    </InputGroup>
+    <SearchField
+      id={id}
+      placeholder="جستجو در پنل…"
+      aria-label="جستجو در پنل"
+      wrapperClassName={cn("w-auto", className)}
+      className="h-8 text-sm"
+    />
   )
 }
 

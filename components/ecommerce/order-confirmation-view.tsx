@@ -39,7 +39,7 @@ export function OrderConfirmationView() {
       <dl className="space-y-3 rounded-xl border p-4 text-start text-sm">
         <div className="flex justify-between gap-3">
           <dt className="text-muted-foreground">شماره سفارش</dt>
-          <dd className="font-medium tabular-nums">
+          <dd className="font-medium tracking-normal">
             {toPersianDigits(orderId)}
           </dd>
         </div>
@@ -58,7 +58,7 @@ export function OrderConfirmationView() {
         {Number.isFinite(total) && total > 0 ? (
           <div className="flex justify-between gap-3 border-t pt-3 font-medium">
             <dt>مبلغ</dt>
-            <dd className="tabular-nums">{formatToman(total)}</dd>
+            <dd className="tracking-normal">{formatToman(total)}</dd>
           </div>
         ) : null}
       </dl>

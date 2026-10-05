@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import * as React from "react"
-import { SearchIcon, ShoppingBagIcon, UserIcon } from "lucide-react"
+import { ShoppingBagIcon, UserIcon } from "lucide-react"
 
 import { formatCount } from "@/lib/format"
 import {
@@ -13,15 +13,11 @@ import {
   type ProductCategory,
 } from "@/lib/mock/ecommerce"
 import { useCart } from "@/components/ecommerce/cart-context"
-import { DesignSystemPicker } from "@/components/design-system/design-system-picker"
+import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
+import { SearchField } from "@/components/shared/search-field"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import { cn } from "@/lib/utils"
 
 const categories = Object.entries(categoryLabels) as [
@@ -62,12 +58,14 @@ export function StoreHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6">
-        <div className="relative flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+      <ExampleHeaderChrome
+        className="static z-auto border-b-0 bg-transparent backdrop-blur-none"
+        innerClassName="max-w-7xl"
+        start={
           <Link
             href="/examples/ecommerce"
-            className="min-w-0 flex-1 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="min-w-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <p className="truncate text-sm font-semibold tracking-tight">
               {storeName}
@@ -76,31 +74,9 @@ export function StoreHeader() {
               {storeTagline}
             </p>
           </Link>
-
-          <div className="pointer-events-none absolute inset-x-0 flex justify-center px-2">
-            <div className="pointer-events-auto max-w-[min(100%,16rem)] sm:max-w-none">
-              <DesignSystemPicker />
-            </div>
-          </div>
-
-          <form
-            onSubmit={handleSearchSubmit}
-            className="hidden min-w-0 max-w-xs flex-1 justify-center lg:flex xl:max-w-md"
-          >
-            <InputGroup className="h-9 w-full">
-              <InputGroupAddon align="inline-start">
-                <SearchIcon className="size-4" />
-              </InputGroupAddon>
-              <InputGroupInput
-                placeholder="جستجوی محصول…"
-                aria-label="جستجوی محصول"
-                value={localQuery}
-                onChange={(e) => setDraftQuery(e.target.value ?? "")}
-              />
-            </InputGroup>
-          </form>
-
-          <div className="flex flex-1 shrink-0 items-center justify-end gap-1">
+        }
+        end={
+          <>
             <Button
               variant="ghost"
               size="icon-sm"
@@ -123,27 +99,25 @@ export function StoreHeader() {
             >
               <ShoppingBagIcon className="size-4" />
               {itemCount > 0 ? (
-                <Badge className="absolute -top-1 -start-1 h-4 min-w-4 justify-center px-1 text-[0.6rem] tabular-nums">
+                <Badge className="absolute -top-1 -start-1 h-4 min-w-4 justify-center px-1 text-[0.6rem] tracking-normal">
                   {formatCount(itemCount)}
                 </Badge>
               ) : null}
             </Button>
             <ModeToggle />
-          </div>
-        </div>
+          </>
+        }
+      />
 
-        <form onSubmit={handleSearchSubmit} className="md:hidden">
-          <InputGroup className="h-9 w-full">
-            <InputGroupAddon align="inline-start">
-              <SearchIcon className="size-4" />
-            </InputGroupAddon>
-            <InputGroupInput
-              placeholder="جستجوی محصول…"
-              aria-label="جستجوی محصول"
-              value={localQuery}
-              onChange={(e) => setDraftQuery(e.target.value ?? "")}
-            />
-          </InputGroup>
+      <div className="mx-auto max-w-7xl space-y-2 px-4 pb-3 pt-0 sm:px-6">
+        <form onSubmit={handleSearchSubmit} className="w-full">
+          <SearchField
+            wrapperClassName="w-full"
+            placeholder="جستجوی محصول…"
+            aria-label="جستجوی محصول"
+            value={localQuery}
+            onChange={(e) => setDraftQuery(e.target.value ?? "")}
+          />
         </form>
 
         <nav

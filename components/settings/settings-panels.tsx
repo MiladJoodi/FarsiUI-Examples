@@ -23,6 +23,8 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 
+const fieldControlClass = "h-9 max-w-sm"
+
 export function SettingsPanels() {
   const { theme, setTheme } = useTheme()
   const [emailNotif, setEmailNotif] = React.useState(true)
@@ -30,9 +32,12 @@ export function SettingsPanels() {
   const [stockNotif, setStockNotif] = React.useState(false)
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-2xl space-y-4">
       <Tabs defaultValue="account" className="gap-4">
-        <TabsList variant="line" className="h-auto w-full flex-wrap justify-start gap-1">
+        <TabsList
+          variant="line"
+          className="h-auto w-fit max-w-full flex-wrap justify-start gap-1 [&_[data-slot=tabs-trigger]]:flex-none [&_[data-slot=tabs-trigger]]:px-2.5"
+        >
           <TabsTrigger value="account">حساب کاربری</TabsTrigger>
           <TabsTrigger value="profile">اطلاعات شخصی</TabsTrigger>
           <TabsTrigger value="notifications">اعلان‌ها</TabsTrigger>
@@ -40,16 +45,16 @@ export function SettingsPanels() {
           <TabsTrigger value="system">سیستم</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="account" className="rounded-xl border p-4 sm:p-6">
-          <FieldGroup>
+        <TabsContent value="account" className="rounded-xl border p-4">
+          <FieldGroup className="gap-4">
             <Field>
               <FieldLabel htmlFor="account-email">ایمیل ورود</FieldLabel>
               <Input
                 id="account-email"
                 type="email"
-                defaultValue="nima.kazemi@hamyar.ir"
+                defaultValue="info@farsiui.ir"
                 dir="ltr"
-                className="max-w-md text-start"
+                className={`${fieldControlClass} text-start`}
               />
               <FieldDescription>
                 برای ورود به پنل از این ایمیل استفاده می‌شود.
@@ -60,53 +65,70 @@ export function SettingsPanels() {
               <Input
                 id="account-phone"
                 defaultValue="۰۹۱۲۱۲۳۴۵۶۷"
-                className="max-w-md"
+                className={fieldControlClass}
               />
             </Field>
             <FieldSeparator />
             <div className="flex flex-wrap gap-2">
-              <Button type="button">ذخیره تغییرات</Button>
-              <Button type="button" variant="outline">
+              <Button type="button" size="sm">
+                ذخیره تغییرات
+              </Button>
+              <Button type="button" size="sm" variant="outline">
                 تغییر رمز عبور
               </Button>
             </div>
           </FieldGroup>
         </TabsContent>
 
-        <TabsContent value="profile" className="rounded-xl border p-4 sm:p-6">
-          <FieldGroup>
+        <TabsContent value="profile" className="rounded-xl border p-4">
+          <FieldGroup className="gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field>
                 <FieldLabel htmlFor="first-name">نام</FieldLabel>
-                <Input id="first-name" defaultValue="نیما" />
+                <Input
+                  id="first-name"
+                  defaultValue="نیما"
+                  className="h-9"
+                />
               </Field>
               <Field>
                 <FieldLabel htmlFor="last-name">نام خانوادگی</FieldLabel>
-                <Input id="last-name" defaultValue="کاظمی" />
+                <Input
+                  id="last-name"
+                  defaultValue="کاظمی"
+                  className="h-9"
+                />
               </Field>
             </div>
             <Field>
               <FieldLabel htmlFor="role-title">سمت سازمانی</FieldLabel>
-              <Input id="role-title" defaultValue="مدیر فروش" className="max-w-md" />
+              <Input
+                id="role-title"
+                defaultValue="مدیر فروش"
+                className={fieldControlClass}
+              />
             </Field>
             <Field>
               <FieldLabel htmlFor="bio">درباره</FieldLabel>
               <Textarea
                 id="bio"
                 defaultValue="مسئول پیگیری فروش و هماهنگی تیم پشتیبانی در همیار."
-                className="max-w-xl"
+                className="min-h-20 max-w-md text-sm"
               />
             </Field>
-            <Button type="button" className="w-fit">
+            <Button type="button" size="sm" className="w-fit">
               به‌روزرسانی پروفایل
             </Button>
           </FieldGroup>
         </TabsContent>
 
-        <TabsContent value="notifications" className="rounded-xl border p-4 sm:p-6">
-          <FieldGroup>
-            <Field orientation="horizontal" className="items-center justify-between gap-4">
-              <div className="space-y-1">
+        <TabsContent value="notifications" className="rounded-xl border p-4">
+          <FieldGroup className="gap-4">
+            <Field
+              orientation="horizontal"
+              className="items-center justify-between gap-4"
+            >
+              <div className="space-y-0.5">
                 <FieldLabel>اعلان ایمیلی</FieldLabel>
                 <FieldDescription>
                   خلاصه روزانه فعالیت‌ها به ایمیل ارسال شود.
@@ -118,8 +140,11 @@ export function SettingsPanels() {
                 aria-label="اعلان ایمیلی"
               />
             </Field>
-            <Field orientation="horizontal" className="items-center justify-between gap-4">
-              <div className="space-y-1">
+            <Field
+              orientation="horizontal"
+              className="items-center justify-between gap-4"
+            >
+              <div className="space-y-0.5">
                 <FieldLabel>سفارش‌های جدید</FieldLabel>
                 <FieldDescription>
                   هنگام ثبت سفارش تازه، اعلان فوری دریافت کنید.
@@ -131,8 +156,11 @@ export function SettingsPanels() {
                 aria-label="اعلان سفارش"
               />
             </Field>
-            <Field orientation="horizontal" className="items-center justify-between gap-4">
-              <div className="space-y-1">
+            <Field
+              orientation="horizontal"
+              className="items-center justify-between gap-4"
+            >
+              <div className="space-y-0.5">
                 <FieldLabel>هشدار موجودی</FieldLabel>
                 <FieldDescription>
                   وقتی موجودی محصول کمتر از حد شود اطلاع دهید.
@@ -147,8 +175,8 @@ export function SettingsPanels() {
           </FieldGroup>
         </TabsContent>
 
-        <TabsContent value="appearance" className="rounded-xl border p-4 sm:p-6">
-          <FieldGroup>
+        <TabsContent value="appearance" className="rounded-xl border p-4">
+          <FieldGroup className="gap-4">
             <Field>
               <FieldLabel>تم ظاهری</FieldLabel>
               <Select
@@ -160,7 +188,7 @@ export function SettingsPanels() {
                   system: "سیستم",
                 }}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="h-9 w-[160px]">
                   <SelectValue placeholder="انتخاب تم" />
                 </SelectTrigger>
                 <SelectContent>
@@ -176,8 +204,8 @@ export function SettingsPanels() {
           </FieldGroup>
         </TabsContent>
 
-        <TabsContent value="system" className="rounded-xl border p-4 sm:p-6">
-          <FieldGroup>
+        <TabsContent value="system" className="rounded-xl border p-4">
+          <FieldGroup className="gap-4">
             <Field>
               <FieldLabel>منطقه زمانی</FieldLabel>
               <Select
@@ -187,7 +215,7 @@ export function SettingsPanels() {
                   utc: "زمان جهانی",
                 }}
               >
-                <SelectTrigger className="w-[220px]">
+                <SelectTrigger className="h-9 w-[180px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -199,7 +227,7 @@ export function SettingsPanels() {
             <Field>
               <FieldLabel>زبان رابط</FieldLabel>
               <Select defaultValue="fa" items={{ fa: "فارسی" }}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="h-9 w-[140px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -211,7 +239,7 @@ export function SettingsPanels() {
               </FieldDescription>
             </Field>
             <FieldSeparator />
-            <Button type="button" variant="outline" className="w-fit">
+            <Button type="button" size="sm" variant="outline" className="w-fit">
               ذخیره تنظیمات سیستم
             </Button>
           </FieldGroup>

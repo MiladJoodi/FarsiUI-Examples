@@ -2,10 +2,13 @@
 
 import * as React from "react"
 import {
+  AlignLeftIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ClockIcon,
+  MapPinIcon,
   PlusIcon,
-  SearchIcon,
+  UsersIcon,
 } from "lucide-react"
 
 import {
@@ -24,12 +27,16 @@ import {
   WEEKDAY_HEADERS,
 } from "@/lib/calendar-date"
 import { toPersianDigits } from "@/lib/digits"
+import { formatCount } from "@/lib/format"
 import {
   buildEventsAround,
   calendarCategories,
   type CalendarEvent,
   type EventCategory,
 } from "@/lib/mock/calendar"
+import { teamMembers } from "@/lib/mock/tasks"
+import { SearchField } from "@/components/shared/search-field"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -41,11 +48,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
@@ -65,6 +67,35 @@ function categoryTone(category: EventCategory) {
       return "bg-amber-500/15 text-amber-800 ring-1 ring-amber-500/25 dark:text-amber-300"
     default:
       return "bg-muted text-muted-foreground ring-1 ring-border"
+  }
+}
+
+function categoryPanelTone(category: EventCategory) {
+  switch (category) {
+    case "جلسه":
+      return "border-primary/15 bg-primary/5"
+    case "ددلاین":
+      return "border-destructive/15 bg-destructive/5"
+    case "یادآوری":
+      return "border-amber-500/20 bg-amber-500/10"
+    default:
+      return "border-border bg-muted/40"
+  }
+}
+
+function getAttendeeProfile(name: string) {
+  const member = teamMembers.find((m) => m.name === name)
+  if (member) {
+    return {
+      name: member.name,
+      initials: member.initials,
+      role: member.role,
+    }
+  }
+  return {
+    name,
+    initials: name.length > 3 ? name.slice(0, 2) : name,
+    role: "گروه / مهمان",
   }
 }
 
@@ -237,17 +268,13 @@ export function CalendarExampleView() {
           </TabsList>
         </Tabs>
 
-        <InputGroup className="h-9 w-full min-w-0 lg:ms-auto lg:max-w-xs">
-          <InputGroupAddon align="inline-start">
-            <SearchIcon className="size-4" />
-          </InputGroupAddon>
-          <InputGroupInput
-            placeholder="جستجوی رویداد، مکان یا شرکت‌کننده…"
-            aria-label="جستجوی رویدادها"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </InputGroup>
+        <SearchField
+          wrapperClassName="lg:ms-auto lg:max-w-xs"
+          placeholder="جستجوی رویداد، مکان یا شرکت‌کننده…"
+          aria-label="جستجوی رویدادها"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_17.5rem]">
@@ -677,7 +704,7 @@ function AgendaView({
                 onClick={() => onOpenEvent(event)}
                 className="grid w-full gap-1 rounded-xl border px-3 py-3 text-start hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:grid-cols-[7rem_1fr_auto] sm:items-center"
               >
-                <span className="text-xs tabular-nums text-muted-foreground sm:text-sm">
+                <span className="text-xs tracking-normal text-muted-foreground sm:text-sm">
                   {formatJalaliFull(new Date(event.dateKey + "T12:00:00"))}
                 </span>
                 <span className="min-w-0">
@@ -705,61 +732,148 @@ function EventDialog({
   event: CalendarEvent | null
   onOpenChange: (open: boolean) => void
 }) {
+  const attendees = event?.attendees.map(getAttendeeProfile) ?? []
+  const hasLocation = Boolean(event?.location && event.location !== "—")
+  const eventDate = event
+    ? formatJalaliFull(new Date(event.dateKey + "T12:00:00"))
+    : ""
+
   return (
     <Dialog open={Boolean(event)} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" dir="rtl">
+      <DialogContent
+        className="gap-0 overflow-hidden p-0 sm:max-w-lg"
+        dir="rtl"
+      >
         {event ? (
           <>
-            <DialogHeader>
-              <DialogTitle>{event.title}</DialogTitle>
-              <DialogDescription>
-                {formatJalaliFull(new Date(event.dateKey + "T12:00:00"))} ·{" "}
-                {event.startTime} تا {event.endTime}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-3 text-sm">
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline">{event.category}</Badge>
-                <StatusBadge status={event.status} />
-              </div>
-              <p>
-                <span className="text-muted-foreground">مکان: </span>
-                {event.location}
-              </p>
-              <p className="leading-relaxed text-muted-foreground">
-                {event.description}
-              </p>
-              <div>
-                <p className="mb-1.5 text-muted-foreground">شرکت‌کنندگان</p>
-                <ul className="flex flex-wrap gap-1.5">
-                  {event.attendees.map((name) => (
-                    <li key={name}>
-                      <Badge variant="secondary">{name}</Badge>
-                    </li>
-                  ))}
-                </ul>
+        <div
+          className={cn(
+            "border-b px-5 pt-5 pb-4",
+            categoryPanelTone(event.category)
+          )}
+        >
+          <DialogHeader className="space-y-3 text-start">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                variant="outline"
+                className={cn("border-0", categoryTone(event.category))}
+              >
+                {event.category}
+              </Badge>
+              <StatusBadge status={event.status} />
+            </div>
+            <DialogTitle className="text-xl leading-snug sm:text-2xl">
+              {event.title}
+            </DialogTitle>
+            <DialogDescription className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+              <span className="inline-flex items-center gap-1.5 tracking-normal text-foreground/80">
+                <ClockIcon className="size-4 shrink-0 opacity-70" aria-hidden />
+                {eventDate}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-background/70 px-2 py-1 text-xs font-medium tracking-normal ring-1 ring-border/60">
+                {event.startTime}
+                <span className="text-muted-foreground" aria-hidden>
+                  –
+                </span>
+                {event.endTime}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        <div className="space-y-4 px-5 py-4 text-sm">
+          {hasLocation ? (
+            <div className="flex gap-3 rounded-xl border bg-card px-3 py-3 shadow-xs">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <MapPinIcon className="size-4 text-muted-foreground" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-muted-foreground">مکان</p>
+                <p className="mt-0.5 font-medium leading-snug">{event.location}</p>
               </div>
             </div>
-            <DialogFooter className="gap-2 sm:justify-start">
-              <Button
-                variant="outline"
-                onClick={() => toast.message("ویرایش در این نمونه فعال نیست")}
-              >
-                ویرایش
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  toast.message("حذف فقط نمایشی است")
-                  onOpenChange(false)
-                }}
-              >
-                حذف
-              </Button>
-              <Button variant="secondary" onClick={() => onOpenChange(false)}>
-                بستن
-              </Button>
-            </DialogFooter>
+          ) : null}
+
+          {event.description ? (
+            <div className="flex gap-3 rounded-xl border bg-muted/25 px-3 py-3">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-background">
+                <AlignLeftIcon
+                  className="size-4 text-muted-foreground"
+                  aria-hidden
+                />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-muted-foreground">
+                  توضیحات
+                </p>
+                <p className="mt-1 leading-relaxed text-foreground/90">
+                  {event.description}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          <div>
+            <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+              <UsersIcon className="size-3.5" aria-hidden />
+              شرکت‌کنندگان
+              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[0.65rem] tracking-normal text-foreground">
+                {formatCount(attendees.length)}
+              </span>
+            </p>
+            <ul className="divide-y overflow-hidden rounded-xl border bg-card shadow-xs">
+              {attendees.map((person) => (
+                <li
+                  key={person.name}
+                  className="flex items-center gap-3 px-3 py-2.5"
+                >
+                  <Avatar size="sm">
+                    <AvatarFallback className="text-[0.65rem]">
+                      {person.initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium leading-snug">{person.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {person.role}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <DialogFooter className="-mx-0 -mb-0 flex-col gap-2 bg-muted/20 px-5 py-4 sm:flex-row sm:justify-between">
+          <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 sm:flex-none"
+              onClick={() => toast.message("ویرایش در این نمونه فعال نیست")}
+            >
+              ویرایش
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex-1 text-destructive hover:bg-destructive/10 hover:text-destructive sm:flex-none"
+              onClick={() => {
+                toast.message("حذف فقط نمایشی است")
+                onOpenChange(false)
+              }}
+            >
+              حذف
+            </Button>
+          </div>
+          <Button
+            size="sm"
+            className="w-full sm:w-auto"
+            onClick={() => onOpenChange(false)}
+          >
+            بستن
+          </Button>
+        </DialogFooter>
           </>
         ) : null}
       </DialogContent>

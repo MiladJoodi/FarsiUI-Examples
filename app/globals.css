@@ -268,4 +268,9 @@
   [disabled] {
     cursor: not-allowed;
   }
+
+  /* Sonner injects ui-sans-serif on the toaster; inherit project font */
+  [data-sonner-toaster] {
+    font-family: var(--font-sans) !important;
+  }
 }

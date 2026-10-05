@@ -2,17 +2,15 @@
 
 import * as React from "react"
 import {
+  ChevronLeftIcon,
   FileIcon,
-  HashIcon,
   InfoIcon,
-  MenuIcon,
   PaperclipIcon,
-  SearchIcon,
   SendIcon,
   UsersIcon,
 } from "lucide-react"
 
-import { toPersianDigits } from "@/lib/digits"
+import { formatCount } from "@/lib/format"
 import {
   conversations as initialConversations,
   CURRENT_USER_ID,
@@ -22,8 +20,8 @@ import {
   type ChatMessage,
   type Conversation,
 } from "@/lib/mock/team-chat"
+import { SearchField } from "@/components/shared/search-field"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Attachment,
@@ -37,13 +35,7 @@ import {
   BubbleContent,
   BubbleReactions,
 } from "@/components/ui/bubble"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-  InputGroupTextarea,
-} from "@/components/ui/input-group"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Message,
   MessageAvatar,
@@ -71,7 +63,6 @@ export function TeamChatView() {
   const [query, setQuery] = React.useState("")
   const [draft, setDraft] = React.useState("")
   const [mobilePane, setMobilePane] = React.useState<MobilePane>("list")
-  const [navOpen, setNavOpen] = React.useState(false)
   const [detailsOpen, setDetailsOpen] = React.useState(false)
   const bottomRef = React.useRef<HTMLDivElement>(null)
 
@@ -100,7 +91,6 @@ export function TeamChatView() {
       prev.map((c) => (c.id === id ? { ...c, unread: 0 } : c))
     )
     setMobilePane("chat")
-    setNavOpen(false)
   }
 
   function sendMessage() {
@@ -132,79 +122,50 @@ export function TeamChatView() {
   }
 
   return (
-    <div className="flex h-full min-h-0 overflow-hidden">
-      <aside className="hidden w-52 shrink-0 flex-col border-e bg-muted/20 lg:flex xl:w-56">
-        <WorkspaceHeader />
+    <div className="flex h-full min-h-0 overflow-hidden bg-background">
+      <section
+        className={cn(
+          "flex w-full min-w-0 flex-col border-e bg-muted/10 md:w-80 md:max-w-[36vw] lg:w-[22rem]",
+          mobilePane === "list" ? "flex" : "hidden md:flex"
+        )}
+        aria-label="فهرست گفتگوها"
+      >
+        <div className="shrink-0 space-y-2 border-b px-3 py-3">
+          <div className="min-w-0">
+            <p className="truncate text-base font-semibold">{workspaceName}</p>
+            <p className="truncate text-xs text-muted-foreground">
+              {workspaceHint}
+            </p>
+          </div>
+          <SearchField
+            wrapperClassName="min-w-0 w-full"
+            placeholder="جستجو…"
+            aria-label="جستجوی گفتگو"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
         <ScrollArea className="min-h-0 flex-1">
-          <nav className="space-y-4 p-3" aria-label="ناوبری فضای کاری">
+          <nav className="p-1" aria-label="گفتگوها">
             <ConversationSection
-              title="کانال‌ها"
+              title="گروه‌ها"
               items={channels}
               activeId={active.id}
               onSelect={openConversation}
             />
             <ConversationSection
-              title="پیام مستقیم"
+              title="پیام خصوصی"
               items={dms}
               activeId={active.id}
               onSelect={openConversation}
             />
           </nav>
         </ScrollArea>
-      </aside>
-
-      <section
-        className={cn(
-          "w-full min-w-0 flex-col border-e md:flex md:w-72 lg:w-80",
-          mobilePane === "list" ? "flex" : "hidden md:flex"
-        )}
-        aria-label="فهرست گفتگوها"
-      >
-        <div className="flex items-center gap-2 border-b p-3">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="lg:hidden"
-            aria-label="منوی فضای کاری"
-            onClick={() => setNavOpen(true)}
-          >
-            <MenuIcon className="size-4" />
-          </Button>
-          <InputGroup className="h-9 min-w-0 flex-1">
-            <InputGroupAddon align="inline-start">
-              <SearchIcon className="size-4" />
-            </InputGroupAddon>
-            <InputGroupInput
-              placeholder="جستجوی گفتگو…"
-              aria-label="جستجوی گفتگو"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </InputGroup>
-        </div>
-        <ScrollArea className="min-h-0 flex-1">
-          <div className="space-y-4 p-2">
-            <ConversationSection
-              title="کانال‌ها"
-              items={channels}
-              activeId={active.id}
-              onSelect={openConversation}
-              detailed
-            />
-            <ConversationSection
-              title="پیام مستقیم"
-              items={dms}
-              activeId={active.id}
-              onSelect={openConversation}
-              detailed
-            />
-          </div>
-        </ScrollArea>
       </section>
 
       <section
         className={cn(
-          "min-w-0 flex-1 flex-col",
+          "min-w-0 flex-1 flex-col bg-[linear-gradient(180deg,var(--background)_0%,color-mix(in_oklch,var(--muted)_35%,var(--background))_100%)]",
           mobilePane === "chat" ? "flex" : "hidden md:flex"
         )}
         aria-label="گفتگوی فعال"
@@ -215,10 +176,10 @@ export function TeamChatView() {
           onDetails={() => setDetailsOpen(true)}
         />
         <ScrollArea className="min-h-0 flex-1">
-          <div className="mx-auto flex max-w-3xl flex-col gap-4 px-3 py-4 sm:px-5">
+          <div className="mx-auto flex w-full max-w-2xl flex-col gap-1 px-3 py-3 sm:px-4">
             {active.topic ? (
-              <p className="rounded-lg border border-dashed px-3 py-2 text-center text-xs text-muted-foreground">
-                موضوع کانال: {active.topic}
+              <p className="mb-2 rounded-lg bg-background/80 px-3 py-2 text-center text-xs text-muted-foreground ring-1 ring-border/60">
+                {active.topic}
               </p>
             ) : null}
             {active.messages.map((message, index) => {
@@ -240,46 +201,8 @@ export function TeamChatView() {
             <div ref={bottomRef} />
           </div>
         </ScrollArea>
-        <Composer
-          value={draft}
-          onChange={setDraft}
-          onSend={sendMessage}
-          placeholder={
-            active.kind === "channel"
-              ? `پیام به #${active.name}`
-              : `پیام به ${active.name}`
-          }
-        />
+        <Composer value={draft} onChange={setDraft} onSend={sendMessage} />
       </section>
-
-      <aside className="hidden w-64 shrink-0 flex-col border-s xl:flex">
-        <DetailsPanel conversation={active} />
-      </aside>
-
-      <Sheet open={navOpen} onOpenChange={setNavOpen}>
-        <SheetContent side="right" className="w-[min(20rem,100%)] p-0">
-          <SheetHeader className="border-b p-4 text-start">
-            <SheetTitle>{workspaceName}</SheetTitle>
-            <SheetDescription>{workspaceHint}</SheetDescription>
-          </SheetHeader>
-          <ScrollArea className="h-[calc(100%-5rem)]">
-            <nav className="space-y-4 p-3">
-              <ConversationSection
-                title="کانال‌ها"
-                items={items.filter((c) => c.kind === "channel")}
-                activeId={active.id}
-                onSelect={openConversation}
-              />
-              <ConversationSection
-                title="پیام مستقیم"
-                items={items.filter((c) => c.kind === "dm")}
-                activeId={active.id}
-                onSelect={openConversation}
-              />
-            </nav>
-          </ScrollArea>
-        </SheetContent>
-      </Sheet>
 
       <Sheet open={detailsOpen} onOpenChange={setDetailsOpen}>
         <SheetContent side="left" className="w-[min(22rem,100%)] p-0">
@@ -290,12 +213,47 @@ export function TeamChatView() {
   )
 }
 
-function WorkspaceHeader() {
+function ConversationAvatar({
+  conversation,
+  size = "list",
+}: {
+  conversation: Conversation
+  size?: "list" | "header"
+}) {
+  const avatarSize = size === "list" ? "size-12" : "size-10"
+  const textSize = size === "list" ? "text-base" : "text-sm"
+
+  if (conversation.kind === "dm") {
+    const peerId =
+      conversation.memberIds.find((id) => id !== CURRENT_USER_ID) ??
+      conversation.memberIds[0]
+    const peer = getChatMember(peerId)
+    return (
+      <span className="relative shrink-0">
+        <Avatar className={avatarSize}>
+          <AvatarFallback className={textSize}>{peer.initials}</AvatarFallback>
+        </Avatar>
+        <span
+          className={cn(
+            "absolute inset-e-0 bottom-0 size-2.5 rounded-full ring-2 ring-background",
+            peer.online ? "bg-emerald-500" : "bg-muted-foreground/40"
+          )}
+          aria-hidden
+        />
+      </span>
+    )
+  }
+
   return (
-    <div className="border-b px-3 py-3">
-      <p className="truncate text-sm font-semibold">{workspaceName}</p>
-      <p className="truncate text-xs text-muted-foreground">{workspaceHint}</p>
-    </div>
+    <span
+      className={cn(
+        "flex shrink-0 items-center justify-center rounded-full bg-primary/15 font-semibold text-primary",
+        avatarSize,
+        textSize
+      )}
+    >
+      {conversation.name.slice(0, 1)}
+    </span>
   )
 }
 
@@ -304,27 +262,21 @@ function ConversationSection({
   items,
   activeId,
   onSelect,
-  detailed,
 }: {
   title: string
   items: Conversation[]
   activeId: string
   onSelect: (id: string) => void
-  detailed?: boolean
 }) {
   if (items.length === 0) return null
   return (
-    <div>
-      <p className="mb-1.5 px-2 text-xs font-medium text-muted-foreground">
+    <div className="py-1">
+      <p className="sticky top-0 z-[1] bg-muted/10 px-3 py-1.5 text-xs font-medium text-muted-foreground">
         {title}
       </p>
-      <ul className="space-y-0.5">
+      <ul>
         {items.map((item) => {
           const selected = item.id === activeId
-          const peerId =
-            item.memberIds.find((id) => id !== CURRENT_USER_ID) ??
-            item.memberIds[0]
-          const peer = getChatMember(peerId)
 
           return (
             <li key={item.id}>
@@ -332,56 +284,29 @@ function ConversationSection({
                 type="button"
                 onClick={() => onSelect(item.id)}
                 className={cn(
-                  "flex w-full items-start gap-2 rounded-lg px-2 py-2 text-start text-sm transition-colors",
-                  selected
-                    ? "bg-accent text-accent-foreground"
-                    : "hover:bg-muted/60"
+                  "flex w-full items-center gap-3 px-2 py-2.5 text-start transition-colors",
+                  selected ? "bg-primary/10" : "hover:bg-muted/50"
                 )}
               >
-                <span className="relative mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                  {item.kind === "channel" ? (
-                    <HashIcon className="size-3.5" />
-                  ) : (
-                    <>
-                      <Avatar size="sm">
-                        <AvatarFallback className="text-[0.65rem]">
-                          {peer.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span
-                        className={cn(
-                          "absolute inset-e-0 bottom-0 size-2 rounded-full ring-2 ring-background",
-                          peer.online
-                            ? "bg-emerald-500"
-                            : "bg-muted-foreground/40"
-                        )}
-                        aria-hidden
-                      />
-                    </>
-                  )}
-                </span>
+                <ConversationAvatar conversation={item} />
                 <span className="min-w-0 flex-1">
-                  <span className="flex items-center justify-between gap-2">
-                    <span className="truncate font-medium">
-                      {item.kind === "channel" ? `# ${item.name}` : item.name}
+                  <span className="flex items-baseline justify-between gap-2">
+                    <span className="truncate font-medium">{item.name}</span>
+                    <span className="shrink-0 text-[0.65rem] tracking-normal text-muted-foreground">
+                      {item.lastTime}
                     </span>
-                    {detailed ? (
-                      <span className="shrink-0 text-[0.65rem] text-muted-foreground">
-                        {item.lastTime}
+                  </span>
+                  <span className="mt-0.5 flex items-center gap-2">
+                    <span className="line-clamp-1 min-w-0 flex-1 text-xs text-muted-foreground">
+                      {item.lastPreview}
+                    </span>
+                    {item.unread > 0 ? (
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[0.65rem] font-medium tracking-normal text-primary-foreground">
+                        {formatCount(item.unread)}
                       </span>
                     ) : null}
                   </span>
-                  {detailed ? (
-                    <span className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
-                      {item.lastPreview}
-                    </span>
-                  ) : null}
                 </span>
-                {item.unread > 0 ? (
-                  <Badge className="ms-auto shrink-0 tabular-nums">
-                    {toPersianDigits(item.unread)}
-                  </Badge>
-                ) : null}
               </button>
             </li>
           )
@@ -400,32 +325,42 @@ function ChatHeader({
   onBack: () => void
   onDetails: () => void
 }) {
+  const subtitle =
+    conversation.kind === "dm"
+      ? (() => {
+          const peerId =
+            conversation.memberIds.find((id) => id !== CURRENT_USER_ID) ??
+            conversation.memberIds[0]
+          return getChatMember(peerId).online ? "آنلاین" : "اخیراً"
+        })()
+      : `${formatCount(conversation.memberIds.length)} عضو`
+
   return (
-    <div className="flex h-14 shrink-0 items-center gap-2 border-b px-3 sm:px-4">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="md:hidden"
-        onClick={onBack}
-        aria-label="بازگشت به فهرست"
-      >
-        بازگشت
-      </Button>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold">
-          {conversation.kind === "channel"
-            ? `# ${conversation.name}`
-            : conversation.name}
-        </p>
-        <p className="truncate text-xs text-muted-foreground">
-          {toPersianDigits(conversation.memberIds.length)} عضو
-          {conversation.topic ? ` · ${conversation.topic}` : null}
-        </p>
-      </div>
+    <div className="flex h-[3.25rem] shrink-0 items-center gap-2 border-b bg-background/90 px-2 sm:px-3">
       <Button
         variant="ghost"
         size="icon-sm"
-        className="xl:hidden"
+        className="shrink-0 md:hidden"
+        onClick={onBack}
+        aria-label="بازگشت به فهرست"
+      >
+        <ChevronLeftIcon className="size-5 rtl:-scale-x-100" />
+      </Button>
+      <button
+        type="button"
+        onClick={onDetails}
+        className="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-1 text-start outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      >
+        <ConversationAvatar conversation={conversation} size="header" />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">{conversation.name}</p>
+          <p className="truncate text-xs text-muted-foreground">{subtitle}</p>
+        </div>
+      </button>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        className="shrink-0"
         aria-label="جزئیات گفتگو"
         onClick={onDetails}
       >
@@ -461,7 +396,7 @@ function ChatMessageRow({
     : undefined
 
   return (
-    <Message align={mine ? "end" : "start"} className="pb-2">
+    <Message align={mine ? "end" : "start"} className="py-0.5">
       {!mine ? (
         <MessageAvatar>
           <Avatar size="sm">
@@ -480,7 +415,7 @@ function ChatMessageRow({
         <Bubble
           variant={mine ? "default" : "muted"}
           align={mine ? "end" : "start"}
-          className="relative mb-2"
+          className="relative max-w-[min(85%,28rem)]"
         >
           {reply ? (
             <div className="mx-3 mt-2 rounded-md border-s-2 border-primary/50 bg-background/40 px-2 py-1 text-xs text-muted-foreground">
@@ -518,8 +453,8 @@ function ChatMessageRow({
                   className="inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs"
                 >
                   <span aria-hidden>{r.emoji}</span>
-                  <span className="tabular-nums text-muted-foreground">
-                    {toPersianDigits(r.count)}
+                  <span className="tracking-normal text-muted-foreground">
+                    {formatCount(r.count)}
                   </span>
                 </span>
               ))}
@@ -536,59 +471,54 @@ function Composer({
   value,
   onChange,
   onSend,
-  placeholder,
 }: {
   value: string
   onChange: (value: string) => void
   onSend: () => void
-  placeholder: string
 }) {
   return (
-    <div className="shrink-0 border-t p-3 sm:p-4">
-      <InputGroup className="items-end rounded-xl border bg-background">
-        <InputGroupAddon align="block-start" className="pt-2">
-          <InputGroupButton
-            type="button"
-            size="icon-sm"
-            variant="ghost"
-            aria-label="پیوست فایل"
-            onClick={() =>
-              toast.message("انتخاب فایل در این نمونه فقط نمایشی است")
-            }
-          >
-            <PaperclipIcon className="size-4" />
-          </InputGroupButton>
-        </InputGroupAddon>
-        <InputGroupTextarea
-          rows={1}
-          placeholder={placeholder}
-          aria-label="متن پیام"
-          value={value}
-          onChange={(e) => onChange(e.target.value ?? "")}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault()
-              onSend()
-            }
-          }}
-          className="min-h-10 max-h-32 resize-none border-0 py-2.5 shadow-none focus-visible:ring-0"
-        />
-        <InputGroupAddon align="block-end" className="pb-2">
-          <InputGroupButton
-            type="button"
-            size="sm"
-            aria-label="ارسال پیام"
-            onClick={onSend}
-            disabled={!value.trim()}
-          >
-            ارسال
-            <SendIcon data-icon="inline-end" />
-          </InputGroupButton>
-        </InputGroupAddon>
-      </InputGroup>
-      <p className="mt-1.5 text-[0.65rem] text-muted-foreground">
-        Enter برای ارسال · Shift+Enter خط جدید
-      </p>
+    <div className="shrink-0 border-t bg-background/95 px-2 py-2 sm:px-3 sm:py-2.5">
+      <div className="mx-auto flex max-w-2xl items-end gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className="mb-0.5 shrink-0 rounded-full"
+          aria-label="پیوست فایل"
+          onClick={() =>
+            toast.message("انتخاب فایل در این نمونه فقط نمایشی است")
+          }
+        >
+          <PaperclipIcon className="size-5" />
+        </Button>
+        <div className="flex min-w-0 flex-1 items-end rounded-2xl border border-input bg-muted/30 px-3 py-2 shadow-xs focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+          <Textarea
+            rows={1}
+            placeholder="پیام بنویسید…"
+            aria-label="متن پیام"
+            persianDigits={false}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault()
+                onSend()
+              }
+            }}
+            className="max-h-32 min-h-[1.5rem] flex-1 resize-none border-0 bg-transparent p-0 text-sm leading-normal shadow-none focus-visible:ring-0"
+          />
+        </div>
+        <Button
+          type="button"
+          size="icon-sm"
+          className="mb-0.5 size-9 shrink-0 rounded-full"
+          aria-label="ارسال پیام"
+          onClick={onSend}
+          disabled={!value.trim()}
+        >
+          <SendIcon className="size-4 rtl:-scale-x-100" />
+        </Button>
+      </div>
     </div>
   )
 }
@@ -610,11 +540,7 @@ function DetailsPanel({
       {inSheet ? (
         <SheetHeader className="border-b p-4 text-start">
           <SheetTitle>جزئیات گفتگو</SheetTitle>
-          <SheetDescription>
-            {conversation.kind === "channel"
-              ? `# ${conversation.name}`
-              : conversation.name}
-          </SheetDescription>
+          <SheetDescription>{conversation.name}</SheetDescription>
         </SheetHeader>
       ) : (
         <div className="border-b px-4 py-3">

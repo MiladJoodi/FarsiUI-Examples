@@ -4,7 +4,6 @@ import * as React from "react"
 import {
   MailIcon,
   MapPinIcon,
-  SearchIcon,
   UserPlusIcon,
   UsersIcon,
 } from "lucide-react"
@@ -36,11 +35,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
+import { SearchField } from "@/components/shared/search-field"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -81,17 +76,13 @@ export function UsersDirectory() {
           <UserPlusIcon data-icon="inline-start" />
           دعوت کاربر
         </Button>
-        <InputGroup className="h-9 w-full min-w-0 flex-1 sm:max-w-md">
-          <InputGroupAddon align="inline-start">
-            <SearchIcon className="size-4" />
-          </InputGroupAddon>
-          <InputGroupInput
-            placeholder="جستجو بر اساس نام، ایمیل یا شهر…"
-            aria-label="جستجوی کاربران"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </InputGroup>
+        <SearchField
+          wrapperClassName="flex-1 sm:max-w-md"
+          placeholder="جستجو بر اساس نام، ایمیل یا شهر…"
+          aria-label="جستجوی کاربران"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </div>
 
       <Tabs
@@ -134,7 +125,9 @@ function SummaryTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border px-4 py-3">
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-0.5 text-xl font-semibold tracking-tight">{value}</p>
+      <p className="mt-0.5 text-xl font-semibold tracking-tight tabular-nums">
+        {value}
+      </p>
     </div>
   )
 }
@@ -177,11 +170,15 @@ function UserCard({ user }: { user: User }) {
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
             <p className="text-muted-foreground">عضویت</p>
-            <p className="font-medium">{formatJalaliDate(user.joinedAt)}</p>
+            <p className="font-medium tabular-nums">
+              {formatJalaliDate(user.joinedAt)}
+            </p>
           </div>
           <div>
             <p className="text-muted-foreground">سفارش‌ها</p>
-            <p className="font-medium">{toPersianDigits(user.orders)}</p>
+            <p className="font-medium tabular-nums">
+              {toPersianDigits(user.orders)}
+            </p>
           </div>
         </div>
       </CardContent>

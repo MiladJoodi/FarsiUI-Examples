@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
+import { ArrowLeftIcon } from "lucide-react"
 
 import { toPersianDigits } from "@/lib/digits"
 import { formatCount } from "@/lib/format"
@@ -24,7 +25,6 @@ import {
 } from "@/components/blog/blog-parts"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 
 const BLOG_BASE = "/examples/blog"
 
@@ -44,23 +44,25 @@ export function BlogHome() {
     : getRecentPosts(featured.id)
 
   return (
-    <div className="space-y-12">
-      <header className="max-w-2xl space-y-3">
-        <p className="text-sm text-muted-foreground">{blogTagline}</p>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+    <div className="space-y-10">
+      <header className="max-w-2xl space-y-2.5">
+        <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground">
+          {blogTagline}
+        </p>
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           {blogName}
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           یادداشت‌های کوتاه درباره طراحی محصول، دسترس‌پذیری و ساخت رابط‌های
-          فارسی — بدون شعار اضافه.
+          فارسی.
         </p>
       </header>
 
       {q ? (
         <section className="space-y-4" aria-label="نتایج جستجو">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold tracking-tight">
+            <div className="space-y-1">
+              <h2 className="text-base font-semibold tracking-tight">
                 نتایج جستجو
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -70,15 +72,16 @@ export function BlogHome() {
             <Button
               variant="outline"
               size="sm"
+              className="blog-btn blog-btn-soft"
               nativeButton={false}
               render={<Link href={BLOG_BASE} />}
             >
               پاک کردن جستجو
             </Button>
           </div>
-          <div>
+          <div className="rounded-xl border border-foreground/8 bg-card/40 px-4 sm:px-5">
             {filtered.length === 0 ? (
-              <p className="border border-dashed px-4 py-12 text-center text-sm text-muted-foreground">
+              <p className="px-1 py-12 text-center text-sm text-muted-foreground">
                 مطلبی با این عبارت پیدا نشد.
               </p>
             ) : (
@@ -90,59 +93,65 @@ export function BlogHome() {
         </section>
       ) : (
         <>
-          <section aria-labelledby="featured-heading" className="space-y-5">
-            <div className="flex items-baseline justify-between gap-3">
-              <h2
-                id="featured-heading"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                مطلب ویژه
-              </h2>
-            </div>
-            <article className="space-y-5">
+          <section aria-labelledby="featured-heading" className="space-y-4">
+            <h2
+              id="featured-heading"
+              className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
+            >
+              مطلب ویژه
+            </h2>
+            <article className="overflow-hidden rounded-2xl border border-foreground/8 bg-card/50 shadow-xs">
               <Link
                 href={`${BLOG_BASE}/posts/${featured.slug}`}
-                className="block outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="block outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
               >
-                <PostCover post={featured} large />
+                <PostCover
+                  post={featured}
+                  large
+                  className="rounded-none border-0"
+                />
               </Link>
-              <div className="max-w-3xl space-y-3">
+              <div className="space-y-3 p-5 sm:p-6">
                 <PostMeta post={featured} />
-                <h3 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
+                <h3 className="max-w-3xl text-balance text-xl font-semibold tracking-tight sm:text-2xl">
                   <Link
                     href={`${BLOG_BASE}/posts/${featured.slug}`}
-                    className="outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                    className="outline-none transition-colors hover:text-foreground/80 focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     {featured.title}
                   </Link>
                 </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   {featured.excerpt}
                 </p>
                 <Button
-                  variant="outline"
                   size="sm"
+                  className="blog-btn blog-btn-primary gap-1.5"
                   nativeButton={false}
                   render={
                     <Link href={`${BLOG_BASE}/posts/${featured.slug}`} />
                   }
                 >
                   خواندن مطلب
+                  <ArrowLeftIcon className="size-3.5" data-icon="inline-end" />
                 </Button>
               </div>
             </article>
           </section>
 
-          <Separator />
-
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_13.5rem] lg:gap-12">
             <section aria-labelledby="recent-heading">
-              <h2
-                id="recent-heading"
-                className="mb-2 text-lg font-semibold tracking-tight"
-              >
-                تازه‌ها
-              </h2>
+              <div className="mb-1 flex items-baseline justify-between gap-3">
+                <h2
+                  id="recent-heading"
+                  className="text-base font-semibold tracking-tight"
+                >
+                  تازه‌ها
+                </h2>
+                <span className="text-xs text-muted-foreground">
+                  {formatCount(filtered.length)} مطلب
+                </span>
+              </div>
               <div>
                 {filtered.map((post) => (
                   <PostListItem key={post.id} post={post} />
@@ -150,26 +159,26 @@ export function BlogHome() {
               </div>
             </section>
 
-            <aside className="space-y-8 lg:pt-1">
+            <aside className="space-y-8 lg:sticky lg:top-20 lg:self-start">
               <section
                 aria-labelledby="recommended-heading"
                 className="space-y-3"
               >
                 <h2
                   id="recommended-heading"
-                  className="text-sm font-medium text-muted-foreground"
+                  className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
                 >
                   پیشنهاد سردبیر
                 </h2>
-                <ol className="space-y-3">
+                <ol className="space-y-0.5">
                   {recommended.map((post, index) => (
-                    <li key={post.id} className="flex gap-2">
-                      <span className="w-5 shrink-0 tabular-nums text-sm text-muted-foreground">
+                    <li key={post.id} className="flex h-8 items-center gap-2">
+                      <span className="w-4 shrink-0 text-xs text-muted-foreground/70">
                         {toPersianDigits(index + 1)}
                       </span>
                       <Link
                         href={`${BLOG_BASE}/posts/${post.slug}`}
-                        className="text-sm font-medium leading-snug hover:underline"
+                        className="truncate text-sm font-medium whitespace-nowrap transition-colors hover:text-foreground/75"
                       >
                         {post.title}
                       </Link>
@@ -181,11 +190,11 @@ export function BlogHome() {
               <section aria-labelledby="topics-heading" className="space-y-3">
                 <h2
                   id="topics-heading"
-                  className="text-sm font-medium text-muted-foreground"
+                  className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
                 >
                   موضوع‌ها
                 </h2>
-                <ul className="space-y-2">
+                <ul className="space-y-0.5">
                   {categories.map((cat) => {
                     const count = posts.filter(
                       (p) => p.categoryId === cat.id
@@ -194,10 +203,10 @@ export function BlogHome() {
                       <li key={cat.id}>
                         <Link
                           href={`${BLOG_BASE}/categories/${cat.slug}`}
-                          className="flex items-baseline justify-between gap-3 text-sm hover:underline"
+                          className="flex h-8 items-center justify-between gap-3 truncate rounded-md px-2 text-sm whitespace-nowrap transition-colors hover:bg-foreground/4"
                         >
-                          <span>{cat.name}</span>
-                          <span className="tabular-nums text-muted-foreground">
+                          <span className="truncate">{cat.name}</span>
+                          <span className="shrink-0 text-xs text-muted-foreground">
                             {toPersianDigits(count)}
                           </span>
                         </Link>
@@ -210,22 +219,24 @@ export function BlogHome() {
               <section aria-labelledby="authors-heading" className="space-y-3">
                 <h2
                   id="authors-heading"
-                  className="text-sm font-medium text-muted-foreground"
+                  className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
                 >
                   نویسندگان
                 </h2>
-                <ul className="space-y-3">
+                <ul className="space-y-0.5">
                   {authors.map((author) => (
-                    <li key={author.id} className="flex gap-2">
-                      <Avatar size="sm">
-                        <AvatarFallback className="text-[0.65rem]">
+                    <li
+                      key={author.id}
+                      className="flex h-8 items-center gap-2 truncate px-0.5"
+                    >
+                      <Avatar size="sm" className="size-6 shrink-0">
+                        <AvatarFallback className="bg-muted text-[0.6rem] text-muted-foreground">
                           {author.initials}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium">{author.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {author.role}
+                      <div className="min-w-0 truncate">
+                        <p className="truncate text-sm font-medium leading-none">
+                          {author.name}
                         </p>
                       </div>
                     </li>
@@ -235,7 +246,7 @@ export function BlogHome() {
 
               <section
                 aria-labelledby="newsletter-heading"
-                className="space-y-2 border-t pt-6"
+                className="space-y-2.5 rounded-xl border border-foreground/8 bg-muted/25 p-4"
               >
                 <h2
                   id="newsletter-heading"
@@ -244,10 +255,13 @@ export function BlogHome() {
                   خبرنامهٔ حاشیه
                 </h2>
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  هفته‌ای یک یادداشت کوتاه دربارهٔ طراحی محصول فارسی. در این
-                  نمونه فقط نمایشی است.
+                  هفته‌ای یک یادداشت کوتاه. در این نمونه فقط نمایشی است.
                 </p>
-                <Button size="sm" className="w-full" type="button">
+                <Button
+                  size="sm"
+                  className="blog-btn blog-btn-primary w-full"
+                  type="button"
+                >
                   عضویت نمایشی
                 </Button>
               </section>

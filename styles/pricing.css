@@ -1,0 +1,898 @@
+/* Pricing — tariff rail atelier (distinct from auth/landing/settings) */
+
+.pricing-page {
+  --px-ink: color-mix(in oklch, var(--foreground) 88%, transparent);
+  --px-mute: color-mix(in oklch, var(--foreground) 55%, transparent);
+  --px-line: color-mix(in oklch, var(--foreground) 10%, transparent);
+  --px-line-strong: color-mix(in oklch, var(--foreground) 18%, transparent);
+  --px-fill: color-mix(in oklch, var(--foreground) 3.5%, var(--background));
+  --px-fill-hot: color-mix(in oklch, var(--primary) 10%, var(--background));
+  --px-radius: 0.35rem;
+  --px-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --px-control-h: 2.55rem;
+  position: relative;
+  min-height: 100dvh;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: clip;
+}
+
+.pricing-page::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.55;
+  background:
+    radial-gradient(
+      ellipse 90% 50% at 100% -10%,
+      color-mix(in oklch, var(--primary) 12%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 55% 40% at 0% 40%,
+      color-mix(in oklch, var(--foreground) 4%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 0%,
+      transparent 48%,
+      color-mix(in oklch, var(--foreground) 3%, transparent) 48.5%,
+      transparent 49%
+    ),
+    repeating-linear-gradient(
+      -18deg,
+      transparent,
+      transparent 72px,
+      color-mix(in oklch, var(--foreground) 2.8%, transparent) 72px,
+      color-mix(in oklch, var(--foreground) 2.8%, transparent) 73px
+    );
+}
+
+.dark .pricing-page::before {
+  opacity: 0.7;
+}
+
+.pricing-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pricing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pricing-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes pricing-pulse-soft {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* Header chrome */
+.pricing-page .pricing-header {
+  border-bottom: 1px solid var(--px-line) !important;
+  background: color-mix(in oklch, var(--background) 82%, transparent) !important;
+  backdrop-filter: blur(14px);
+}
+
+/* Hero */
+.pricing-hero {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: 1.25rem 0.5rem;
+  animation: pricing-rise 0.7s var(--px-ease) both;
+}
+
+@media (min-width: 900px) {
+  .pricing-hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.85fr);
+    align-items: end;
+    gap: 2.5rem;
+  }
+}
+
+.pricing-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--px-mute);
+}
+
+.pricing-kicker::before {
+  content: "";
+  width: 1.4rem;
+  height: 1px;
+  background: color-mix(in oklch, var(--primary) 55%, var(--foreground));
+  animation: pricing-pulse-soft 3.2s ease-in-out infinite;
+}
+
+.pricing-title {
+  position: relative;
+  margin-top: 0.55rem;
+  font-size: clamp(1.35rem, 3.2vw, 2.55rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+  color: var(--px-ink);
+  white-space: nowrap;
+}
+
+.pricing-title em {
+  position: relative;
+  font-style: normal;
+  color: color-mix(in oklch, var(--primary) 75%, var(--foreground));
+}
+
+.pricing-title em::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.05em;
+  height: 0.18em;
+  z-index: 0;
+  transform-origin: right center;
+  background: color-mix(in oklch, var(--primary) 22%, transparent);
+  animation: pricing-draw 0.9s var(--px-ease) 0.25s both;
+}
+
+.pricing-lead {
+  margin-top: 0.85rem;
+  max-width: 28rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--px-mute);
+}
+
+/* Relative ladder meter */
+.pricing-ladder {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.35rem;
+  max-width: 22rem;
+}
+
+.pricing-ladder-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--px-mute);
+}
+
+.pricing-ladder-track {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 1.85fr;
+  gap: 0.35rem;
+  align-items: end;
+  height: 2.6rem;
+}
+
+.pricing-ladder-step {
+  position: relative;
+  height: 100%;
+  border-radius: 0.2rem 0.2rem 0 0;
+  background: color-mix(in oklch, var(--foreground) 8%, transparent);
+  overflow: hidden;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  transition:
+    background-color 200ms ease,
+    transform 200ms var(--px-ease);
+}
+
+.pricing-ladder-step:nth-child(1) {
+  height: 45%;
+  align-self: end;
+}
+.pricing-ladder-step:nth-child(2) {
+  height: 72%;
+  align-self: end;
+}
+.pricing-ladder-step:nth-child(3) {
+  height: 100%;
+}
+
+.pricing-ladder-step::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: color-mix(in oklch, var(--foreground) 25%, transparent);
+}
+
+.pricing-ladder-step[data-active="true"] {
+  background: color-mix(in oklch, var(--primary) 35%, transparent);
+  transform: translateY(-2px);
+}
+
+.pricing-ladder-step[data-active="true"]::after {
+  background: var(--primary);
+}
+
+.pricing-ladder-cap {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--px-mute);
+}
+
+/* Magnetic billing switch */
+.pricing-bill {
+  justify-self: start;
+}
+
+@media (min-width: 900px) {
+  .pricing-bill {
+    justify-self: end;
+    margin-bottom: 0.35rem;
+  }
+}
+
+.pricing-bill-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(100%, 17.5rem);
+  padding: 0.22rem;
+  border: 1px solid var(--px-line-strong);
+  border-radius: 999px;
+  background: var(--px-fill);
+}
+
+.pricing-bill-thumb {
+  position: absolute;
+  top: 0.22rem;
+  bottom: 0.22rem;
+  width: calc(50% - 0.22rem);
+  border-radius: 999px;
+  background: var(--foreground);
+  transition: inset-inline-start 320ms var(--px-ease);
+  inset-inline-start: 0.22rem;
+  pointer-events: none;
+}
+
+.pricing-bill-switch[data-period="yearly"] .pricing-bill-thumb {
+  inset-inline-start: calc(50%);
+}
+
+.pricing-bill-btn {
+  position: relative;
+  z-index: 1;
+  height: 2.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--px-mute);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+.pricing-bill-btn[aria-pressed="true"] {
+  color: var(--background);
+}
+
+.pricing-bill-note {
+  margin-top: 0.55rem;
+  font-size: 0.72rem;
+  color: var(--px-mute);
+  text-align: start;
+}
+
+@media (min-width: 900px) {
+  .pricing-bill-note {
+    text-align: end;
+  }
+}
+
+.pricing-save-pill {
+  display: inline-flex;
+  margin-inline-start: 0.4rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.16rem 0.55rem;
+  background: oklch(0.72 0.16 145);
+  color: oklch(0.22 0.05 145);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px oklch(0.55 0.12 145 / 0.35);
+}
+
+.pricing-bill-btn[aria-pressed="true"] .pricing-save-pill {
+  background: oklch(0.84 0.18 145);
+  color: oklch(0.2 0.06 145);
+  box-shadow: none;
+}
+
+.dark .pricing-save-pill {
+  background: oklch(0.78 0.17 145);
+  color: oklch(0.18 0.05 145);
+}
+
+/* Tariff rail */
+.pricing-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1.75rem;
+}
+
+.pricing-band {
+  --band-i: 0;
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--px-line);
+  border-radius: calc(var(--px-radius) + 0.35rem);
+  background: var(--background);
+  padding: 1.1rem 1.1rem 1.15rem;
+  animation: pricing-rise 0.65s var(--px-ease) both;
+  animation-delay: calc(0.08s + var(--band-i) * 0.08s);
+  transition:
+    border-color 240ms ease,
+    background-color 240ms ease,
+    transform 240ms var(--px-ease),
+    box-shadow 240ms ease;
+}
+
+.pricing-band::before {
+  content: attr(data-index);
+  position: absolute;
+  inset-inline-end: 0.55rem;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: clamp(3.2rem, 8vw, 4.6rem);
+  font-weight: 800;
+  letter-spacing: -0.08em;
+  line-height: 1;
+  color: color-mix(in oklch, var(--foreground) 5.5%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (min-width: 800px) {
+  .pricing-band {
+    grid-template-columns: 8.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.15rem 1.25rem;
+  }
+
+  .pricing-band::before {
+    inset-inline-end: 11rem;
+  }
+}
+
+.pricing-band:hover {
+  border-color: var(--px-line-strong);
+}
+
+.pricing-band[data-featured="true"] {
+  border-color: color-mix(in oklch, var(--primary) 35%, var(--px-line-strong));
+  background:
+    linear-gradient(
+      115deg,
+      color-mix(in oklch, var(--primary) 14%, transparent) 0%,
+      transparent 42%
+    ),
+    var(--px-fill-hot);
+  box-shadow:
+    0 1px 0 color-mix(in oklch, var(--primary) 18%, transparent) inset,
+    0 22px 48px -28px color-mix(in oklch, var(--primary) 28%, transparent);
+}
+
+.pricing-band[data-featured="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: -1.2rem;
+  top: -40%;
+  width: 2.2rem;
+  height: 180%;
+  rotate: 18deg;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in oklch, var(--primary) 18%, transparent),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.pricing-band[data-selected="true"] {
+  border-color: color-mix(in oklch, var(--foreground) 35%, transparent);
+  box-shadow: inset 3px 0 0 var(--foreground);
+}
+
+.pricing-band-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  z-index: 1;
+}
+
+.pricing-band-name {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.pricing-band-badge {
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.pricing-band-desc {
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--px-mute);
+}
+
+.pricing-band-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.4rem;
+  row-gap: 0.35rem;
+  position: relative;
+  z-index: 1;
+}
+
+.pricing-band-amount {
+  font-size: clamp(1.55rem, 3.2vw, 2.05rem);
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.pricing-band-unit {
+  font-size: 0.75rem;
+  color: var(--px-mute);
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.pricing-band-unit.w-full,
+.pricing-band-saving {
+  flex: 1 0 100%;
+}
+
+.pricing-band-saving {
+  font-size: 0.7rem;
+  color: color-mix(in oklch, var(--primary) 65%, var(--foreground));
+}
+
+.pricing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  position: relative;
+  z-index: 1;
+}
+
+.pricing-chip {
+  border: 1px solid var(--px-line);
+  border-radius: 999px;
+  padding: 0.28rem 0.55rem;
+  background: color-mix(in oklch, var(--background) 70%, transparent);
+  font-size: 0.7rem;
+  color: var(--px-ink);
+}
+
+.pricing-chip-mute {
+  color: var(--px-mute);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklch, var(--foreground) 25%, transparent);
+}
+
+.pricing-band-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 800px) {
+  .pricing-band-actions {
+    align-items: stretch;
+    min-width: 9.5rem;
+  }
+}
+
+.pricing-btn {
+  height: var(--px-control-h) !important;
+  min-height: var(--px-control-h) !important;
+  border-radius: var(--px-radius) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+  box-shadow: none !important;
+  transition:
+    transform 180ms var(--px-ease),
+    background-color 160ms ease,
+    border-color 160ms ease !important;
+}
+
+.pricing-btn-primary {
+  border: 1px solid color-mix(in oklch, var(--primary) 50%, transparent) !important;
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 18%, transparent),
+    0 12px 28px -14px color-mix(in oklch, var(--primary) 45%, transparent) !important;
+}
+
+.pricing-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.pricing-btn-soft {
+  border: 1px solid var(--px-line-strong) !important;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+.pricing-btn-soft:hover:not(:disabled) {
+  background: var(--px-fill) !important;
+}
+
+/* Section heads */
+.pricing-section {
+  margin-top: 3.25rem;
+}
+
+.pricing-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--px-line);
+}
+
+.pricing-section-head h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.pricing-section-head p {
+  font-size: 0.8rem;
+  color: var(--px-mute);
+}
+
+/* Comparison matrix */
+.pricing-matrix {
+  overflow: hidden;
+  border: 1px solid var(--px-line);
+  border-radius: calc(var(--px-radius) + 0.35rem);
+  background: var(--background);
+}
+
+.pricing-matrix-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.pricing-matrix table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+}
+
+.pricing-matrix th,
+.pricing-matrix td {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--px-line);
+  text-align: start;
+  vertical-align: middle;
+  font-size: 0.8125rem;
+}
+
+.pricing-matrix thead th {
+  background: var(--px-fill);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.pricing-matrix thead th[data-active="true"] {
+  background: color-mix(in oklch, var(--primary) 12%, var(--background));
+  color: color-mix(in oklch, var(--primary) 55%, var(--foreground));
+}
+
+.pricing-matrix tbody tr:hover td {
+  background: color-mix(in oklch, var(--foreground) 2.5%, transparent);
+}
+
+.pricing-matrix .group-row td {
+  padding-top: 1rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 0;
+  background: transparent;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--px-mute);
+}
+
+.pricing-matrix td[data-active="true"] {
+  background: color-mix(in oklch, var(--primary) 6%, transparent);
+}
+
+.pricing-ok {
+  color: color-mix(in oklch, var(--primary) 55%, var(--foreground));
+}
+
+.pricing-no {
+  color: color-mix(in oklch, var(--foreground) 28%, transparent);
+}
+
+/* FAQ index */
+.pricing-faq {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .pricing-faq {
+    grid-template-columns: minmax(12rem, 0.7fr) minmax(0, 1.3fr);
+    gap: 2rem;
+  }
+}
+
+.pricing-faq-list {
+  border: 1px solid var(--px-line);
+  border-radius: calc(var(--px-radius) + 0.35rem);
+  overflow: hidden;
+}
+
+.pricing-faq-item {
+  border-bottom: 1px solid var(--px-line);
+}
+
+.pricing-faq-item:last-child {
+  border-bottom: 0;
+}
+
+.pricing-faq-trigger {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.9rem 1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.pricing-faq-trigger:hover {
+  background: var(--px-fill);
+}
+
+.pricing-faq-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--px-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.pricing-faq-q {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.pricing-faq-body {
+  padding: 0 1rem 1rem 3.85rem;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--px-mute);
+}
+
+/* Closing strip */
+.pricing-close {
+  margin-top: 3.25rem;
+  display: grid;
+  gap: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--px-line);
+  border-radius: calc(var(--px-radius) + 0.45rem);
+  background:
+    linear-gradient(
+      120deg,
+      color-mix(in oklch, var(--primary) 10%, transparent),
+      transparent 55%
+    ),
+    var(--px-fill);
+  padding: 1.35rem 1.2rem;
+}
+
+@media (min-width: 800px) {
+  .pricing-close {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 1.5rem 1.5rem;
+  }
+}
+
+.pricing-close h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.pricing-close p {
+  margin-top: 0.35rem;
+  max-width: 28rem;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--px-mute);
+}
+
+.pricing-close-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+/* Footer */
+.pricing-footer {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--px-line);
+  padding: 1.25rem 0 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--px-mute);
+}
+
+.pricing-footer a {
+  color: var(--px-mute);
+  text-decoration: none;
+}
+
+.pricing-footer a:hover {
+  color: var(--foreground);
+}
+
+/* Custom toast */
+.pricing-toast {
+  display: flex;
+  width: min(22rem, calc(100vw - 2rem));
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid var(--px-line-strong);
+  border-radius: 0.75rem;
+  background: color-mix(in oklch, var(--background) 92%, transparent);
+  backdrop-filter: blur(12px);
+  padding: 0.85rem 0.9rem;
+  box-shadow: 0 18px 40px -22px color-mix(in oklch, var(--foreground) 30%, transparent);
+  direction: rtl;
+}
+
+.pricing-toast-mark {
+  width: 0.45rem;
+  align-self: stretch;
+  border-radius: 99px;
+  background: var(--primary);
+}
+
+.pricing-toast-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.pricing-toast-desc {
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  color: var(--px-mute);
+}
+
+/* DS reactions */
+.style-vega .pricing-page {
+  --px-radius: 0.85rem;
+}
+
+.style-vega .pricing-band[data-featured="true"] {
+  transform: translateY(-2px);
+}
+
+.style-glass .pricing-band[data-featured="true"] {
+  background: color-mix(in oklch, var(--primary) 12%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.style-rose .pricing-band[data-featured="true"] {
+  box-shadow: 0 20px 44px -24px color-mix(in oklch, var(--primary) 40%, transparent);
+}
+
+.style-nili .pricing-page {
+  --px-radius: 0.15rem;
+}
+
+.style-nili .pricing-bill-switch,
+.style-nili .pricing-band,
+.style-nili .pricing-matrix,
+.style-nili .pricing-faq-list,
+.style-nili .pricing-close {
+  border-radius: 0.2rem;
+}
+
+.style-khesht .pricing-page {
+  --px-radius: 0.1rem;
+}
+
+.style-khesht .pricing-band {
+  box-shadow: 3px 3px 0 0 color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+
+.style-khesht .pricing-band[data-featured="true"] {
+  box-shadow: 4px 4px 0 0 var(--primary);
+}
+
+.style-khesht .pricing-btn-primary {
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--primary) 40%, black) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-bill-thumb,
+  .pricing-band,
+  .pricing-btn-primary,
+  .pricing-hero,
+  .pricing-title em::after,
+  .pricing-kicker::before {
+    transition: none !important;
+    animation: none !important;
+  }
+}

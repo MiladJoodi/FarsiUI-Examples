@@ -14,7 +14,7 @@ export default function EcommerceExampleLayout({
       <div className="flex min-h-full flex-col overflow-x-hidden">
         <Suspense
           fallback={
-            <header className="sticky top-0 z-20 h-[7.5rem] border-b bg-background" />
+            <header className="sticky top-0 z-20 h-[9.5rem] border-b bg-background" />
           }
         >
           <StoreHeader />

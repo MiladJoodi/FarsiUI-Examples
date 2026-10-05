@@ -13,8 +13,7 @@ import {
   YAxis,
 } from "recharts"
 
-import { formatPersianNumber } from "@/lib/digits"
-import { formatCount, formatToman } from "@/lib/format"
+import { formatCount, formatPercent, formatToman } from "@/lib/format"
 import {
   categoryShareData,
   channelSalesData,
@@ -37,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { formatPersianNumber } from "@/lib/digits"
 
 const salesConfig = {
   sales: { label: "فروش", color: "var(--chart-1)" },
@@ -55,7 +55,7 @@ const channelConfig = {
 const summary = [
   { label: "مجموع فروش دوره", value: formatToman(401_200_000) },
   { label: "میانگین ماهانه", value: formatToman(57_314_000) },
-  { label: "رشد نسبت به دوره قبل", value: `${formatPersianNumber(12.4)}٪` },
+  { label: "رشد نسبت به دوره قبل", value: formatPercent(12.4) },
   { label: "سفارش‌های موفق", value: formatCount(1_284) },
 ]
 
@@ -97,7 +97,7 @@ export function ReportsOverview() {
             className="rounded-xl border bg-background px-4 py-3"
           >
             <p className="text-sm text-muted-foreground">{item.label}</p>
-            <p className="mt-1 text-lg font-semibold tracking-tight">
+            <p className="mt-1 text-base font-semibold tracking-normal whitespace-nowrap sm:text-lg">
               {item.value}
             </p>
           </div>
@@ -111,16 +111,22 @@ export function ReportsOverview() {
           <TabsTrigger value="channels">کانال‌ها</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="sales" className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-xl border lg:col-span-2">
-            <div className="border-b px-4 py-3">
+        <TabsContent
+          value="sales"
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <div className="rounded-xl border sm:col-span-2 lg:col-span-1">
+            <div className="border-b px-3 py-2.5">
               <h3 className="text-sm font-medium">فروش در برابر هدف</h3>
             </div>
-            <div className="p-4">
-              <ChartContainer config={salesConfig} className="aspect-video w-full">
+            <div className="p-3">
+              <ChartContainer
+                config={salesConfig}
+                className="aspect-[5/3] w-full max-h-[200px]"
+              >
                 <AreaChart
                   data={salesChartData}
-                  margin={{ top: 8, right: 4, left: 8, bottom: 0 }}
+                  margin={{ top: 6, right: 4, left: 4, bottom: 0 }}
                 >
                   <CartesianGrid vertical={false} />
                   <XAxis
@@ -128,12 +134,13 @@ export function ReportsOverview() {
                     tickLine={false}
                     axisLine={false}
                     reversed
+                    tickMargin={6}
                   />
                   <YAxis
                     orientation="right"
                     tickLine={false}
                     axisLine={false}
-                    width={48}
+                    width={36}
                     tickFormatter={(v) =>
                       formatPersianNumber(Number(v) / 1_000_000)
                     }
@@ -159,23 +166,26 @@ export function ReportsOverview() {
               </ChartContainer>
             </div>
           </div>
+
           <div className="rounded-xl border">
-            <div className="border-b px-4 py-3">
+            <div className="border-b px-3 py-2.5">
               <h3 className="text-sm font-medium">ترکیب دسته‌ها</h3>
             </div>
-            <div className="p-4">
+            <div className="p-3">
               <ChartContainer
                 config={{ value: { label: "سهم" } }}
-                className="mx-auto aspect-square max-h-[240px]"
+                className="mx-auto aspect-square max-h-[180px] w-full"
               >
                 <PieChart>
-                  <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
+                  <ChartTooltip
+                    content={<ChartTooltipContent nameKey="name" />}
+                  />
                   <Pie
                     data={categoryShareData}
                     dataKey="value"
                     nameKey="name"
-                    innerRadius={50}
-                    outerRadius={80}
+                    innerRadius={42}
+                    outerRadius={68}
                   >
                     {categoryShareData.map((entry) => (
                       <Cell key={entry.name} fill={entry.fill} />
@@ -185,9 +195,10 @@ export function ReportsOverview() {
               </ChartContainer>
             </div>
           </div>
-          <div className="rounded-xl border p-4">
-            <h3 className="mb-3 text-sm font-medium">نکات دوره</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+
+          <div className="rounded-xl border p-3">
+            <h3 className="mb-2.5 text-sm font-medium">نکات دوره</h3>
+            <ul className="space-y-2 text-sm leading-relaxed text-muted-foreground">
               <li>بهترین ماه: شهریور با فروش بالای هدف</li>
               <li>بیشترین سهم دسته: لوازم جانبی</li>
               <li>پیشنهاد: کمپین برای دسته‌های تصویری و نمایشگر</li>
@@ -197,14 +208,17 @@ export function ReportsOverview() {
 
         <TabsContent value="orders">
           <div className="rounded-xl border">
-            <div className="border-b px-4 py-3">
+            <div className="border-b px-3 py-2.5">
               <h3 className="text-sm font-medium">سفارش و مرجوعی هفتگی</h3>
             </div>
-            <div className="p-4">
-              <ChartContainer config={ordersConfig} className="aspect-video w-full">
+            <div className="p-3">
+              <ChartContainer
+                config={ordersConfig}
+                className="aspect-[5/3] w-full max-h-[220px]"
+              >
                 <BarChart
                   data={weeklyOrdersData}
-                  margin={{ top: 8, right: 4, left: 8, bottom: 0 }}
+                  margin={{ top: 6, right: 4, left: 4, bottom: 0 }}
                 >
                   <CartesianGrid vertical={false} />
                   <XAxis
@@ -217,7 +231,7 @@ export function ReportsOverview() {
                     orientation="right"
                     tickLine={false}
                     axisLine={false}
-                    width={36}
+                    width={32}
                     tickFormatter={(v) => formatPersianNumber(Number(v))}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
@@ -236,24 +250,26 @@ export function ReportsOverview() {
 
         <TabsContent value="channels">
           <div className="rounded-xl border">
-            <div className="border-b px-4 py-3">
+            <div className="border-b px-3 py-2.5">
               <h3 className="text-sm font-medium">سهم کانال‌های فروش</h3>
             </div>
-            <div className="p-4">
+            <div className="p-3">
               <ChartContainer
                 config={channelConfig}
                 dir="ltr"
-                className="aspect-video w-full"
+                className="aspect-[5/3] w-full max-h-[220px]"
               >
                 <BarChart
                   data={channelSalesData}
                   layout="vertical"
-                  margin={{ top: 8, right: 12, left: 8, bottom: 8 }}
+                  margin={{ top: 6, right: 12, left: 4, bottom: 6 }}
                 >
                   <CartesianGrid horizontal={false} />
                   <XAxis
                     type="number"
-                    tickFormatter={(v) => `${formatPersianNumber(Number(v))}٪`}
+                    tickFormatter={(v) =>
+                      `${formatPersianNumber(Number(v))}٪`
+                    }
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
@@ -261,7 +277,7 @@ export function ReportsOverview() {
                   <YAxis
                     type="category"
                     dataKey="channel"
-                    width={96}
+                    width={88}
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
@@ -271,7 +287,7 @@ export function ReportsOverview() {
                     dataKey="sales"
                     fill="var(--color-sales)"
                     radius={[0, 4, 4, 0]}
-                    barSize={22}
+                    barSize={18}
                   />
                 </BarChart>
               </ChartContainer>

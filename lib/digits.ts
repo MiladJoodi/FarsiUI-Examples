@@ -153,7 +153,10 @@ export function formatPersianNumber(
     style,
     useGrouping,
     maximumFractionDigits: style === "percent" ? 2 : 20,
-  }).format(style === "percent" ? normalized / 100 : normalized)
+  })
+    .format(style === "percent" ? normalized / 100 : normalized)
+    // Some engines insert thin/nbsp around group separators — strip for tight Persian digits
+    .replace(/[\u00A0\u2007\u2009\u202F]/g, "")
 }
 
 /** Locale-aware number display helper. */

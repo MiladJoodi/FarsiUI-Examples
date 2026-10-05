@@ -1,7 +1,6 @@
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react"
 
-import { formatCount, formatToman } from "@/lib/format"
-import { formatPersianNumber } from "@/lib/digits"
+import { formatCount, formatPercent, formatToman } from "@/lib/format"
 import { dashboardStats } from "@/lib/mock/stats"
 import { DashboardPanel } from "@/components/dashboard/dashboard-panel"
 
@@ -33,7 +32,7 @@ const items = [
     hint: "نرخ تبدیل",
     delta: dashboardStats.conversion,
     up: true,
-    deltaSuffix: "٪ تبدیل",
+    deltaSuffix: " تبدیل",
   },
 ]
 
@@ -50,15 +49,15 @@ export function StatsCards() {
             aria-hidden
             className="absolute inset-y-0 start-0 w-1 bg-primary/80"
           />
-          <p className="text-sm text-muted-foreground">{item.label}</p>
-          <p className="mt-0.5 text-base font-semibold tracking-tight sm:text-lg">
+          <p className="ps-2 text-sm text-muted-foreground">{item.label}</p>
+          <p className="mt-0.5 ps-2 text-base font-semibold tracking-normal whitespace-nowrap sm:text-lg">
             {item.value}
           </p>
           <div
-            className={`mt-1.5 flex items-center gap-1.5 text-xs ${
+            className={`mt-1.5 ms-2 flex w-fit max-w-[calc(100%-0.5rem)] items-center gap-1.5 rounded-md px-2 py-1 text-xs tracking-normal ${
               item.up
-                ? "text-emerald-700 dark:text-emerald-400"
-                : "text-amber-700 dark:text-amber-400"
+                ? "bg-emerald-500/15 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300"
+                : "bg-red-500/15 text-red-800 dark:bg-red-500/20 dark:text-red-400"
             }`}
           >
             {item.up ? (
@@ -66,10 +65,10 @@ export function StatsCards() {
             ) : (
               <TrendingDownIcon className="size-3.5 shrink-0" />
             )}
-            <span>
+            <span className="min-w-0 leading-snug">
               {item.deltaSuffix
-                ? `${formatPersianNumber(item.delta)}${item.deltaSuffix}`
-                : `${item.up ? "+" : "−"}${formatPersianNumber(item.delta)}٪ ${item.hint}`}
+                ? `${formatPercent(item.delta)}${item.deltaSuffix}`
+                : `${item.up ? "+" : "−"}${formatPercent(item.delta)} ${item.hint}`}
             </span>
           </div>
         </DashboardPanel>

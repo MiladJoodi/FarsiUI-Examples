@@ -44,7 +44,7 @@ export const settingsSections: SettingsSectionMeta[] = [
   {
     id: "privacy",
     title: "حریم خصوصی",
-    description: "میزان دیده شدن پروفایل و فعالیت آنلاین.",
+    description: "چه کسانی شما را می‌بینند و چه چیزی از فعالیت‌تان آشکار است.",
   },
   {
     id: "security",
@@ -90,6 +90,8 @@ export type SettingsState = {
     showOnlineStatus: boolean
     allowMentions: boolean
     shareActivity: boolean
+    searchable: boolean
+    showEmail: boolean
   }
   security: {
     twoFactor: boolean
@@ -113,7 +115,7 @@ export const defaultSettings: SettingsState = {
     bio: "روی تجربهٔ کاربری فارسی و هماهنگی تیم محصول کار می‌کنم.",
   },
   account: {
-    email: "nima.kazemi@hamyar.ir",
+    email: "info@farsiui.ir",
     phone: "۰۹۱۲۱۲۳۴۵۶۷",
     username: "nima.k",
   },
@@ -136,6 +138,8 @@ export const defaultSettings: SettingsState = {
     showOnlineStatus: true,
     allowMentions: true,
     shareActivity: false,
+    searchable: true,
+    showEmail: false,
   },
   security: {
     twoFactor: false,

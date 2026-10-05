@@ -131,7 +131,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                   <div className="flex flex-col gap-1">
                     <span className="text-sm font-medium">نیما کاظمی</span>
                     <span className="text-xs text-muted-foreground">
-                      nima.kazemi@hamyar.ir
+                      info@farsiui.ir
                     </span>
                   </div>
                 </DropdownMenuLabel>

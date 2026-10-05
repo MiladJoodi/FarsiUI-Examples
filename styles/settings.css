@@ -1,0 +1,366 @@
+/* Settings example — custom controls, borders, icons (scoped) */
+
+.settings-page {
+  --st-radius: 0.45rem;
+  --st-radius-lg: 0.65rem;
+  --st-border: color-mix(in oklch, var(--foreground) 12%, transparent);
+  --st-border-strong: color-mix(in oklch, var(--foreground) 22%, transparent);
+  --st-fill: color-mix(in oklch, var(--foreground) 3.5%, var(--background));
+  --st-fill-hover: color-mix(in oklch, var(--foreground) 6%, var(--background));
+  --st-control-h: 2.15rem;
+  --st-control-px: 0.7rem;
+  --st-icon: 0.85rem;
+  --st-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark .settings-page {
+  --st-border: color-mix(in oklch, white 12%, transparent);
+  --st-border-strong: color-mix(in oklch, white 22%, transparent);
+  --st-fill: color-mix(in oklch, white 4%, var(--background));
+  --st-fill-hover: color-mix(in oklch, white 7%, var(--background));
+}
+
+/* ——— Cards ——— */
+.settings-card {
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius-lg);
+  background: var(--st-fill);
+}
+
+.settings-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--st-border);
+}
+
+.settings-card-body {
+  padding: 0.9rem 1rem 1rem;
+}
+
+.settings-card-danger {
+  border-color: color-mix(in oklch, var(--destructive) 35%, transparent);
+  background: color-mix(in oklch, var(--destructive) 5%, var(--background));
+}
+
+/* ——— Icon chips ——— */
+.settings-icon {
+  display: inline-flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--st-border);
+  border-radius: calc(var(--st-radius) - 1px);
+  background: var(--background);
+  color: color-mix(in oklch, var(--foreground) 65%, transparent);
+}
+
+.settings-icon svg {
+  width: var(--st-icon);
+  height: var(--st-icon);
+  stroke-width: 1.6;
+}
+
+.settings-icon-lg {
+  width: 2.1rem;
+  height: 2.1rem;
+}
+
+.settings-icon-active {
+  border-color: var(--st-border-strong);
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* ——— Nav ——— */
+.settings-nav {
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius-lg);
+  background: var(--background);
+  padding: 0.3rem;
+}
+
+.settings-nav-item {
+  display: flex;
+  width: 100%;
+  height: 2rem;
+  align-items: center;
+  gap: 0.5rem;
+  border: 0;
+  border-radius: var(--st-radius);
+  padding-inline: 0.55rem;
+  font-size: 0.8125rem;
+  line-height: 1;
+  color: color-mix(in oklch, var(--foreground) 58%, transparent);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+  outline: none;
+}
+
+.settings-nav-item:hover {
+  background: var(--st-fill-hover);
+  color: var(--foreground);
+}
+
+.settings-nav-item:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 45%, transparent);
+}
+
+.settings-nav-item[aria-current="page"] {
+  background: var(--st-fill-hover);
+  color: var(--foreground);
+  font-weight: 600;
+  box-shadow: inset -2px 0 0 var(--foreground);
+}
+
+.settings-nav-item svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  stroke-width: 1.6;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* ——— Inputs / textarea / select ——— */
+.settings-page .settings-input,
+.settings-page input.settings-input,
+.settings-page textarea.settings-input {
+  height: var(--st-control-h) !important;
+  min-height: var(--st-control-h);
+  border-radius: var(--st-radius) !important;
+  border-color: var(--st-border) !important;
+  background: var(--background) !important;
+  padding-inline: var(--st-control-px) !important;
+  font-size: 0.8125rem !important;
+  box-shadow: none !important;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.settings-page textarea.settings-input {
+  height: auto !important;
+  min-height: 5.5rem;
+  padding-block: 0.55rem !important;
+  line-height: 1.55;
+}
+
+.settings-page .settings-input:hover,
+.settings-page input.settings-input:hover,
+.settings-page textarea.settings-input:hover {
+  border-color: var(--st-border-strong) !important;
+}
+
+.settings-page .settings-input:focus-visible,
+.settings-page input.settings-input:focus-visible,
+.settings-page textarea.settings-input:focus-visible {
+  border-color: color-mix(in oklch, var(--foreground) 40%, transparent) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--foreground) 8%, transparent) !important;
+}
+
+.settings-page [data-slot="select-trigger"].settings-input {
+  height: var(--st-control-h) !important;
+  min-height: var(--st-control-h) !important;
+  border-radius: var(--st-radius) !important;
+  border-color: var(--st-border) !important;
+  background: var(--background) !important;
+  font-size: 0.8125rem !important;
+  box-shadow: none !important;
+}
+
+.settings-page [data-slot="select-trigger"].settings-input:focus-visible {
+  border-color: color-mix(in oklch, var(--foreground) 40%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--foreground) 8%, transparent) !important;
+}
+
+/* ——— Buttons ——— */
+.settings-btn {
+  height: var(--st-control-h) !important;
+  min-height: var(--st-control-h) !important;
+  border-radius: var(--st-radius) !important;
+  padding-inline: 0.85rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em;
+  box-shadow: none !important;
+  transition:
+    transform 160ms var(--st-ease),
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease !important;
+}
+
+.settings-btn-sm {
+  height: 1.85rem !important;
+  min-height: 1.85rem !important;
+  padding-inline: 0.7rem !important;
+  font-size: 0.75rem !important;
+}
+
+.settings-btn-primary {
+  border: 1px solid color-mix(in oklch, var(--primary) 55%, transparent) !important;
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 16%, transparent),
+    0 1px 0 color-mix(in oklch, var(--foreground) 6%, transparent) !important;
+}
+
+.settings-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.04);
+  transform: translateY(-0.5px);
+}
+
+.settings-btn-soft {
+  border: 1px solid var(--st-border) !important;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+.settings-btn-soft:hover:not(:disabled) {
+  border-color: var(--st-border-strong) !important;
+  background: var(--st-fill-hover) !important;
+}
+
+.settings-btn-danger {
+  border: 1px solid color-mix(in oklch, var(--destructive) 40%, transparent) !important;
+  background: color-mix(in oklch, var(--destructive) 8%, var(--background)) !important;
+  color: var(--destructive) !important;
+}
+
+.settings-btn-danger:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--destructive) 14%, var(--background)) !important;
+}
+
+.settings-btn:disabled {
+  opacity: 0.45;
+  transform: none !important;
+}
+
+/* ——— Toggle / choice rows ——— */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  min-height: 2.75rem;
+  padding-block: 0.55rem;
+  border-bottom: 1px solid var(--st-border);
+}
+
+.settings-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.settings-row:first-child {
+  padding-top: 0;
+}
+
+.settings-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 100%;
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius);
+  background: var(--background);
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.settings-choice:hover {
+  border-color: var(--st-border-strong);
+}
+
+.settings-choice[data-selected="true"] {
+  border-color: var(--st-border-strong);
+  background: var(--st-fill);
+  box-shadow: inset 0 0 0 1px var(--st-border-strong);
+}
+
+/* ——— Privacy meter ——— */
+.settings-meter {
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius-lg);
+  background: var(--background);
+  padding: 0.9rem 1rem;
+}
+
+.settings-meter-bar {
+  height: 3px;
+  border-radius: 99px;
+  background: var(--st-border);
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.settings-meter-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--foreground);
+  transition: width 280ms var(--st-ease);
+}
+
+/* ——— Sessions ——— */
+.settings-session {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.6rem;
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius);
+  background: var(--background);
+  padding: 0.55rem 0.7rem;
+}
+
+/* ——— Sticky save ——— */
+.settings-savebar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem;
+  pointer-events: none;
+}
+
+.settings-savebar-inner {
+  pointer-events: auto;
+  display: flex;
+  width: 100%;
+  max-width: 26rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--st-border-strong);
+  border-radius: var(--st-radius-lg);
+  background: var(--background);
+  padding: 0.45rem 0.5rem 0.45rem 0.85rem;
+  box-shadow: 0 10px 28px -14px color-mix(in oklch, var(--foreground) 28%, transparent);
+}
+
+.style-khesht .settings-btn-primary {
+  box-shadow: 2px 2px 0 0 var(--khesht-offset, var(--primary)) !important;
+}
+
+.style-khesht .settings-card,
+.style-khesht .settings-nav,
+.style-khesht .settings-choice {
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--foreground) 18%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-btn-primary:hover:not(:disabled) {
+    transform: none;
+  }
+  .settings-meter-fill {
+    transition: none;
+  }
+}

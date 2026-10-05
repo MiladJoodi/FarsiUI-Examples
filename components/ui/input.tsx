@@ -77,13 +77,15 @@ function Input({
     <>
       {hiddenInput ? <input {...hiddenInput} readOnly tabIndex={-1} /> : null}
       <InputPrimitive
-        data-slot="input"
         className={cn(
           "h-(--control-h-md) w-full min-w-0 rounded-(--radius-control) border border-input bg-transparent px-(--space-control-x) py-1 text-base font-normal shadow-xs transition-[color,background-color,border-color,box-shadow] duration-200 outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
           className
         )}
         {...props}
         {...inputProps}
+        data-slot={
+          (props as { "data-slot"?: string })["data-slot"] ?? "input"
+        }
         placeholder={formatPlaceholder(placeholder)}
         ref={composedRef}
         onValueChange={(next, eventDetails) => {

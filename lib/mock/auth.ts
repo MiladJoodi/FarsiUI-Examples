@@ -9,8 +9,8 @@ export const authBrandTagline = "فضای کاری تیم‌های محصول ف
 
 /** Demo credentials that succeed on login (UI-only) */
 export const demoCredentials = {
-  email: "nima.kazemi@hamyar.ir",
-  password: "Hamyar1405",
+  email: "info@farsiui.ir",
+  password: "farsiui",
   otp: "123456",
 } as const
 

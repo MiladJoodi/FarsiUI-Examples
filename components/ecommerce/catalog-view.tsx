@@ -126,7 +126,7 @@ export function CatalogView() {
             <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
               {title}
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm tracking-normal text-muted-foreground">
               {q
                 ? `نتایج جستجو برای «${q}» · ${formatCount(filtered.length)} کالا`
                 : `${formatCount(filtered.length)} کالا در فروشگاه نورا`}

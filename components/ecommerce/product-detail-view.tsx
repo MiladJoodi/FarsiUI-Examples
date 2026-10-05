@@ -6,15 +6,18 @@ import * as React from "react"
 import { MinusIcon, PlusIcon, StarIcon } from "lucide-react"
 import { toast } from "sonner"
 
-import { toPersianDigits } from "@/lib/digits"
-import { formatCount, formatToman } from "@/lib/format"
+import { formatCount, formatPercent, formatToman } from "@/lib/format"
+import { formatPersianNumber, toPersianDigits } from "@/lib/digits"
 import {
   categoryLabels,
   getDiscountPercent,
   type Product,
 } from "@/lib/mock/ecommerce"
 import { useCart } from "@/components/ecommerce/cart-context"
-import { ProductThumb } from "@/components/ecommerce/product-card"
+import {
+  ProductThumb,
+  ProductWireframeMedia,
+} from "@/components/ecommerce/product-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,6 +29,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
 import {
   Tabs,
   TabsContent,
@@ -84,60 +88,81 @@ export function ProductDetailView({ product }: { product: Product }) {
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
         <div className="space-y-3">
-          <ProductThumb product={product} className="aspect-4/3 sm:aspect-square" />
+          <ProductThumb
+            product={product}
+            className="aspect-4/3 rounded-xl border border-border/70 sm:aspect-square"
+          />
           <div className="grid grid-cols-4 gap-2">
             {[0, 1, 2, 3].map((i) => (
-              <div
+              <ProductWireframeMedia
                 key={i}
-                className="aspect-square rounded-lg border opacity-80"
-                style={{
-                  backgroundColor: product.accent,
-                  opacity: 0.55 + i * 0.1,
-                }}
-                aria-hidden
+                className={cn(
+                  "aspect-square rounded-lg border border-border/70",
+                  i === 0 && "ring-2 ring-primary/40 ring-offset-2"
+                )}
               />
             ))}
           </div>
         </div>
 
         <div className="space-y-5">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">{product.brand}</p>
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <div className="space-y-3">
+            <Badge variant="outline" className="font-normal tracking-normal">
+              {product.brand}
+            </Badge>
+            <h1 className="text-xl font-semibold leading-snug tracking-tight sm:text-2xl">
               {product.name}
             </h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {product.shortDescription}
             </p>
-            <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1 tabular-nums text-foreground">
-                <StarIcon className="size-4 fill-current" />
-                {toPersianDigits(product.rating.toFixed(1))}
-              </span>
-              <span aria-hidden>·</span>
-              <span className="tabular-nums">
-                {formatCount(product.reviewCount)} نظر
-              </span>
-              <span aria-hidden>·</span>
-              <span>
-                {outOfStock
-                  ? "ناموجود"
-                  : `${formatCount(product.stock)} عدد موجود`}
-              </span>
-            </div>
           </div>
 
-          <div className="flex flex-wrap items-baseline gap-3">
-            <span className="text-xl font-semibold tabular-nums">
-              {formatToman(product.price)}
-            </span>
-            {product.compareAtPrice ? (
-              <span className="text-sm text-muted-foreground line-through tabular-nums">
-                {formatToman(product.compareAtPrice)}
+          <dl className="grid grid-cols-3 divide-x divide-x-reverse overflow-hidden rounded-xl border bg-muted/20 text-center text-xs">
+            <div className="px-2 py-3">
+              <dt className="sr-only">امتیاز</dt>
+              <dd className="flex items-center justify-center gap-1 text-sm font-semibold tracking-normal text-foreground">
+                <StarIcon className="size-4 fill-current" aria-hidden />
+                {formatPersianNumber(product.rating, { useGrouping: false })}
+              </dd>
+              <dd className="mt-1 text-muted-foreground">امتیاز خریداران</dd>
+            </div>
+            <div className="px-2 py-3">
+              <dt className="sr-only">تعداد نظر</dt>
+              <dd className="text-sm font-semibold tracking-normal text-foreground">
+                {formatCount(product.reviewCount)}
+              </dd>
+              <dd className="mt-1 text-muted-foreground">نظر ثبت‌شده</dd>
+            </div>
+            <div className="px-2 py-3">
+              <dt className="sr-only">موجودی</dt>
+              <dd className="text-sm font-semibold tracking-normal text-foreground">
+                {outOfStock ? "۰" : formatCount(product.stock)}
+              </dd>
+              <dd className="mt-1 text-muted-foreground">
+                {outOfStock ? "ناموجود" : "عدد موجود"}
+              </dd>
+            </div>
+          </dl>
+
+          <div className="rounded-xl border bg-card p-4 shadow-xs">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="text-2xl font-semibold tracking-normal whitespace-nowrap">
+                {formatToman(product.price)}
               </span>
-            ) : null}
-            {discount > 0 ? (
-              <Badge className="tabular-nums">٪{toPersianDigits(discount)}</Badge>
+              {product.compareAtPrice ? (
+                <span className="text-sm tracking-normal text-muted-foreground line-through whitespace-nowrap">
+                  {formatToman(product.compareAtPrice)}
+                </span>
+              ) : null}
+              {discount > 0 ? (
+                <Badge className="tracking-normal">{formatPercent(discount)}</Badge>
+              ) : null}
+            </div>
+            {!outOfStock ? (
+              <p className="mt-2 text-xs tracking-normal text-muted-foreground">
+                موجود در انبار — ارسال معمولاً ۱ تا ۳ روز کاری
+              </p>
             ) : null}
           </div>
 
@@ -176,7 +201,7 @@ export function ProductDetailView({ product }: { product: Product }) {
               >
                 <MinusIcon className="size-4" />
               </Button>
-              <span className="min-w-8 text-center text-sm tabular-nums">
+              <span className="min-w-8 text-center text-sm tracking-normal">
                 {toPersianDigits(qty)}
               </span>
               <Button

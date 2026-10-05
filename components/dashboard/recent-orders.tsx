@@ -55,7 +55,9 @@ export function RecentOrders() {
         <TableBody>
           {recentOrders.map((order) => (
             <TableRow key={order.id}>
-              <TableCell className="font-medium">{order.id}</TableCell>
+              <TableCell className="font-medium" dir="ltr">
+                {order.id}
+              </TableCell>
               <TableCell>{order.customer}</TableCell>
               <TableCell className="whitespace-nowrap">
                 {formatToman(order.amount)}

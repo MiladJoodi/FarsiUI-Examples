@@ -1,41 +1,42 @@
 import Link from "next/link"
-import { ArrowLeftIcon } from "lucide-react"
 
 import { EXAMPLES, type ExampleMeta } from "@/lib/examples"
 import { toPersianDigits } from "@/lib/digits"
 import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
-import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 function ExampleCard({ example }: { example: ExampleMeta }) {
   const ready = example.status === "ready"
 
+  const content = (
+    <>
+      <h2 className="text-base font-semibold tracking-tight">{example.title}</h2>
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        {example.description}
+      </p>
+      {!ready ? (
+        <p className="mt-auto text-xs text-muted-foreground">به‌زودی</p>
+      ) : null}
+    </>
+  )
+
+  const className = cn(
+    "flex flex-col gap-1.5 rounded-xl border bg-card p-5 text-card-foreground shadow-xs",
+    ready &&
+      "transition-colors hover:border-primary/35 hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+  )
+
+  if (ready) {
+    return (
+      <Link href={example.href} className={className}>
+        {content}
+      </Link>
+    )
+  }
+
   return (
-    <article className="flex flex-col gap-3 rounded-xl border bg-card p-5 text-card-foreground shadow-xs">
-      <div className="space-y-1.5">
-        <h2 className="text-base font-semibold tracking-tight">{example.title}</h2>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {example.description}
-        </p>
-      </div>
-      {ready ? (
-        <Link
-          href={example.href}
-          className={cn(
-            buttonVariants({ size: "sm", variant: "ghost" }),
-            "mt-auto w-full justify-start px-0 text-primary hover:bg-transparent hover:text-primary/80"
-          )}
-        >
-          مشاهده نمونه
-          <ArrowLeftIcon data-icon="inline-end" />
-        </Link>
-      ) : (
-        <Button className="mt-auto w-full" size="sm" variant="outline" disabled>
-          به‌زودی
-        </Button>
-      )}
-    </article>
+    <article className={cn(className, "opacity-70")}>{content}</article>
   )
 }
 

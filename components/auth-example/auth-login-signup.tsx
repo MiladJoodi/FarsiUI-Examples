@@ -1,7 +1,9 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { CheckIcon, XIcon } from "lucide-react"
 import * as React from "react"
 import { toast } from "sonner"
 
@@ -16,20 +18,44 @@ import {
 } from "@/lib/mock/auth"
 import { normalizeDigits } from "@/lib/digits"
 import { PasswordInput } from "@/components/auth-example/password-input"
-import { PasswordRequirements } from "@/components/auth-example/password-requirements"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
 
 const AUTH_BASE = "/examples/authentication"
+
+function showAuthSuccessToast({
+  title,
+  description,
+}: {
+  title: string
+  description: string
+}) {
+  toast.custom(
+    (id) => (
+      <div className="auth-toast" role="status">
+        <span className="auth-toast-icon" aria-hidden>
+          <CheckIcon className="size-4" strokeWidth={2.4} />
+        </span>
+        <div className="auth-toast-body">
+          <p className="auth-toast-title">{title}</p>
+          <p className="auth-toast-desc">{description}</p>
+        </div>
+        <button
+          type="button"
+          className="auth-toast-close"
+          aria-label="بستن"
+          onClick={() => toast.dismiss(id)}
+        >
+          <XIcon className="mx-auto size-3.5" />
+        </button>
+      </div>
+    ),
+    { duration: 4800 }
+  )
+}
 
 export function AuthLoginSignup({
   initialTab = "login",
@@ -37,57 +63,105 @@ export function AuthLoginSignup({
   initialTab?: "login" | "signup"
 }) {
   const [tab, setTab] = React.useState(initialTab)
+  const [panelTab, setPanelTab] = React.useState(initialTab)
+  const [phase, setPhase] = React.useState<"in" | "out">("in")
+  const switchTimer = React.useRef<number | null>(null)
+
+  React.useEffect(() => {
+    return () => {
+      if (switchTimer.current) window.clearTimeout(switchTimer.current)
+    }
+  }, [])
+
+  function switchTab(next: "login" | "signup") {
+    if (next === tab || phase === "out") return
+    setTab(next)
+    setPhase("out")
+    if (switchTimer.current) window.clearTimeout(switchTimer.current)
+    switchTimer.current = window.setTimeout(() => {
+      setPanelTab(next)
+      setPhase("in")
+    }, 200)
+  }
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-center lg:gap-14">
-      <aside className="hidden space-y-3 lg:block">
-        <p className="text-sm text-muted-foreground">{authBrandTagline}</p>
-        <h1 className="text-3xl font-semibold tracking-tight">{authBrandName}</h1>
-        <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-          ورود امن به فضای کاری؛ همه جریان‌های این صفحه فقط نمایشی‌اند و به
-          سرور متصل نیستند.
-        </p>
-        <ul className="space-y-2 pt-2 text-sm text-muted-foreground">
-          <li>ورود و ثبت‌نام در یک جا</li>
-          <li>بازیابی رمز و تأیید کد یک‌بارمصرف</li>
-          <li>پیام‌های خطای واقعی‌نما برای تست رابط</li>
-        </ul>
-      </aside>
-
-      <div className="mx-auto w-full max-w-md space-y-6">
-        <div className="space-y-1 lg:hidden">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {authBrandName}
-          </h1>
-          <p className="text-sm text-muted-foreground">{authBrandTagline}</p>
-        </div>
-
-        <Tabs
-          value={tab}
-          onValueChange={(v) => {
-            if (v === "login" || v === "signup") setTab(v)
-          }}
-          className="gap-5"
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">ورود</TabsTrigger>
-            <TabsTrigger value="signup">ثبت‌نام</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="login" className="outline-none">
-            <LoginForm />
-          </TabsContent>
-          <TabsContent value="signup" className="outline-none">
-            <SignupForm onGoLogin={() => setTab("login")} />
-          </TabsContent>
-        </Tabs>
+    <div className="auth-stage">
+      <div className="auth-visual" aria-hidden>
+        <Image
+          src="/parsian.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="auth-visual-img"
+        />
+        <div className="auth-visual-veil" />
       </div>
+
+      <section className="auth-glass" aria-label="ورود و ثبت‌نام">
+        <div className="auth-panel-inner space-y-5">
+          <header className="space-y-2">
+            <p className="text-[0.65rem] font-medium tracking-[0.18em] auth-muted">
+              {authBrandTagline}
+            </p>
+            <h1 className="auth-brand">
+              {authBrandName}
+              <span className="auth-brand-mark" aria-hidden />
+            </h1>
+            <p className="auth-muted max-w-[22rem] text-[0.875rem] leading-relaxed">
+              ورود و ثبت‌نام در یک جا — امن، فارسی، و فقط نمایشی برای این نمونه.
+            </p>
+          </header>
+
+          <div
+            className="auth-switch"
+            role="tablist"
+            aria-label="ورود یا ثبت‌نام"
+          >
+            <button
+              type="button"
+              role="tab"
+              className="auth-switch-btn"
+              aria-selected={tab === "login"}
+              aria-pressed={tab === "login"}
+              onClick={() => switchTab("login")}
+            >
+              ورود
+            </button>
+            <button
+              type="button"
+              role="tab"
+              className="auth-switch-btn"
+              aria-selected={tab === "signup"}
+              aria-pressed={tab === "signup"}
+              onClick={() => switchTab("signup")}
+            >
+              ثبت‌نام
+            </button>
+          </div>
+
+          <div
+            role="tabpanel"
+            className={cn(
+              "auth-tab-panel",
+              phase === "out" && "auth-tab-panel-leaving"
+            )}
+            key={panelTab}
+          >
+            {panelTab === "login" ? (
+              <LoginForm />
+            ) : (
+              <SignupForm onGoLogin={() => switchTab("login")} />
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
 
 function LoginForm() {
-  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.email)
+  const [identifier, setIdentifier] = React.useState(demoCredentials.email)
   const [password, setPassword] = React.useState("")
   const [remember, setRemember] = React.useState(true)
   const [loading, setLoading] = React.useState(false)
@@ -121,65 +195,72 @@ function LoginForm() {
 
     if (!idOk || !passOk) {
       setError(
-        "ایمیل/موبایل یا رمز عبور نادرست است. برای تست موفق از رمز نمونه استفاده کنید."
+        "ایمیل/موبایل یا رمز نادرست است. برای تست موفق از رمز نمونه استفاده کنید."
       )
       return
     }
 
     setSuccess(true)
-    toast.success("ورود موفق", {
+    showAuthSuccessToast({
+      title: "ورود موفق",
       description: remember
-        ? "نشست نمایشی ذخیره شد."
+        ? "نشست نمایشی ذخیره شد — آماده‌اید."
         : "وارد فضای کاری شدید (نمایشی).",
     })
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5" noValidate>
-      <div className="space-y-1">
-        <h2 className="text-lg font-semibold tracking-tight">ورود به حساب</h2>
-        <p className="text-sm text-muted-foreground">
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <div className="space-y-0.5">
+        <h2 className="text-base font-semibold tracking-tight text-white">
+          ورود به حساب
+        </h2>
+        <p className="text-[0.8125rem] auth-muted">
           با ایمیل یا موبایل وارد شوید.
         </p>
       </div>
 
       {error ? (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="auth-alert auth-alert-error">
           <AlertTitle>ورود ناموفق</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
       {success ? (
-        <Alert>
+        <Alert className="auth-alert">
           <AlertTitle>خوش آمدید</AlertTitle>
           <AlertDescription>
-            ورود نمایشی انجام شد. در محصول واقعی به داشبورد هدایت می‌شوید.
+            ورود نمایشی انجام شد. در محصول واقعی به داشبورد می‌روید.
           </AlertDescription>
         </Alert>
       ) : null}
 
-      <FieldGroup>
-        <Field data-invalid={error ? true : undefined}>
-          <FieldLabel htmlFor="login-id">ایمیل یا موبایل</FieldLabel>
+      <div className="space-y-3.5">
+        <div className="auth-field">
+          <label htmlFor="login-id" className="auth-label">
+            ایمیل یا موبایل
+          </label>
           <Input
             id="login-id"
+            className="auth-input"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             dir={identifier.includes("@") ? "ltr" : undefined}
-            className={identifier.includes("@") ? "text-start" : undefined}
             autoComplete="username"
             inputMode="email"
             aria-invalid={error ? true : undefined}
           />
-        </Field>
+        </div>
 
-        <Field>
+        <div className="auth-field">
           <div className="flex items-center justify-between gap-2">
-            <FieldLabel htmlFor="login-password">رمز عبور</FieldLabel>
+            <label htmlFor="login-password" className="auth-label">
+              رمز عبور
+            </label>
             <Link
               href={`${AUTH_BASE}/forgot-password`}
-              className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              className="auth-link text-[0.7rem]"
             >
               فراموشی رمز؟
             </Link>
@@ -191,25 +272,29 @@ function LoginForm() {
             autoComplete="current-password"
             aria-invalid={error ? true : undefined}
           />
-          <FieldDescription>
-            رمز نمونه برای تست موفق:{" "}
-            <span dir="ltr" className="font-mono text-xs">
+          <p className="text-[0.68rem] auth-muted">
+            رمز نمونه:{" "}
+            <span dir="ltr" className="font-mono text-[0.7rem]">
               {demoCredentials.password}
             </span>
-          </FieldDescription>
-        </Field>
+          </p>
+        </div>
 
-        <label className="flex cursor-pointer items-center gap-2">
+        <label className="flex cursor-pointer items-center gap-2 pt-0.5">
           <Checkbox
             checked={remember}
             onCheckedChange={(c) => setRemember(c === true)}
           />
-          <span className="text-sm">مرا به خاطر بسپار</span>
+          <span className="text-[0.8125rem] auth-check-label">مرا به خاطر بسپار</span>
         </label>
-      </FieldGroup>
+      </div>
 
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "در حال ورود…" : "ورود"}
+      <Button
+        type="submit"
+        className="auth-btn auth-btn-primary w-full"
+        disabled={loading}
+      >
+        {loading ? "در حال ورود…" : "ورود به همیار"}
       </Button>
     </form>
   )
@@ -256,7 +341,8 @@ function SignupForm({ onGoLogin }: { onGoLogin: () => void }) {
     await fakeDelay(1100)
     setLoading(false)
 
-    toast.success("حساب ساخته شد", {
+    showAuthSuccessToast({
+      title: "حساب ساخته شد",
       description: "برای تأیید، کد یک‌بارمصرف را وارد کنید.",
     })
     router.push(
@@ -265,59 +351,78 @@ function SignupForm({ onGoLogin }: { onGoLogin: () => void }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5" noValidate>
-      <div className="space-y-1">
-        <h2 className="text-lg font-semibold tracking-tight">ساخت حساب</h2>
-        <p className="text-sm text-muted-foreground">
-          چند فیلد کوتاه؛ بعد از ثبت‌نام کد تأیید می‌آید.
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <div className="space-y-0.5">
+        <h2 className="text-base font-semibold tracking-tight text-white">
+          ساخت حساب
+        </h2>
+        <p className="text-[0.8125rem] auth-muted">
+          بعد از ثبت‌نام، کد تأیید می‌آید.
         </p>
       </div>
 
       {error ? (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="auth-alert auth-alert-error">
           <AlertTitle>ثبت‌نام ناقص است</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="signup-name">نام و نام خانوادگی</FieldLabel>
+      <div className="space-y-3.5">
+        <div className="auth-field">
+          <label htmlFor="signup-name" className="auth-label">
+            نام و نام خانوادگی
+          </label>
           <Input
             id="signup-name"
+            className="auth-input"
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoComplete="name"
             persianDigits={false}
           />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="signup-email">ایمیل</FieldLabel>
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="signup-email" className="auth-label">
+            ایمیل
+          </label>
           <Input
             id="signup-email"
             type="email"
             dir="ltr"
-            className="text-start"
+            className="auth-input text-start"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             persianDigits={false}
           />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="signup-password">رمز عبور</FieldLabel>
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="signup-password" className="auth-label">
+            رمز عبور
+          </label>
           <PasswordInput
             id="signup-password"
             value={password}
             onChange={setPassword}
             autoComplete="new-password"
           />
-          <div className="pt-1">
-            <PasswordRequirements password={password} />
+          <div className="auth-meter" aria-hidden>
+            {[1, 2, 3].map((n) => (
+              <span key={n} data-on={strength.score >= n ? "true" : "false"} />
+            ))}
           </div>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="signup-confirm">تکرار رمز عبور</FieldLabel>
+          <p className="text-[0.68rem] auth-muted">
+            حداقل ۸ نویسه، یک حرف و یک رقم
+          </p>
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="signup-confirm" className="auth-label">
+            تکرار رمز عبور
+          </label>
           <PasswordInput
             id="signup-confirm"
             value={confirm}
@@ -325,28 +430,33 @@ function SignupForm({ onGoLogin }: { onGoLogin: () => void }) {
             autoComplete="new-password"
             aria-invalid={confirm && confirm !== password ? true : undefined}
           />
-        </Field>
+        </div>
+
         <label className="flex cursor-pointer items-start gap-2">
           <Checkbox
             className="mt-0.5"
             checked={terms}
             onCheckedChange={(c) => setTerms(c === true)}
           />
-          <span className="text-sm leading-relaxed text-muted-foreground">
+          <span className="text-[0.8125rem] leading-relaxed auth-muted">
             شرایط استفاده و حریم خصوصی همیار را می‌پذیرم. (نمایشی)
           </span>
         </label>
-      </FieldGroup>
+      </div>
 
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button
+        type="submit"
+        className="auth-btn auth-btn-primary w-full"
+        disabled={loading}
+      >
         {loading ? "در حال ایجاد حساب…" : "ایجاد حساب"}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-[0.8125rem] auth-muted">
         قبلاً حساب دارید؟{" "}
         <button
           type="button"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
+          className={cn("auth-link font-medium text-white")}
           onClick={onGoLogin}
         >
           ورود

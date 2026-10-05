@@ -5,11 +5,10 @@ import {
   Columns3Icon,
   ListIcon,
   PlusIcon,
-  SearchIcon,
 } from "lucide-react"
 
 import { toPersianDigits } from "@/lib/digits"
-import { formatJalaliDate } from "@/lib/format"
+import { formatCount, formatJalaliDate, formatPercent } from "@/lib/format"
 import {
   activeProject,
   getMember,
@@ -23,6 +22,7 @@ import {
   type TaskStatus,
 } from "@/lib/mock/tasks"
 import { EntityActionsMenu } from "@/components/shared/entity-actions-menu"
+import { SearchField } from "@/components/shared/search-field"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -40,7 +40,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
   InputGroup,
-  InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
@@ -151,10 +150,10 @@ export function TasksView() {
       </div>
 
       {/* Project context + overview */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
         <section
           aria-label="خلاصه وظایف"
-          className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+          className="grid h-fit grid-cols-2 gap-3 sm:grid-cols-4"
         >
           <StatTile label="کل وظایف" value={counts.total} />
           <StatTile label="در حال انجام" value={counts.doing} />
@@ -173,8 +172,8 @@ export function TasksView() {
                 تیم فعال روی همین فضای کاری
               </p>
             </div>
-            <span className="text-sm font-semibold tabular-nums">
-              {toPersianDigits(activeProject.progress)}٪
+            <span className="text-sm font-semibold tracking-normal whitespace-nowrap">
+              {formatPercent(activeProject.progress)}
             </span>
           </div>
           <Progress value={activeProject.progress} className="mt-3 gap-2">
@@ -205,17 +204,13 @@ export function TasksView() {
 
       {/* Toolbar: CTA pattern already has create above; here search + filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <InputGroup className="h-9 w-full min-w-0 flex-1 sm:max-w-md">
-          <InputGroupAddon align="inline-start">
-            <SearchIcon className="size-4" />
-          </InputGroupAddon>
-          <InputGroupInput
-            placeholder="جستجوی عنوان، برچسب یا شناسه…"
-            aria-label="جستجوی وظایف"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </InputGroup>
+        <SearchField
+          wrapperClassName="flex-1 sm:max-w-md"
+          placeholder="جستجوی عنوان، برچسب یا شناسه…"
+          aria-label="جستجوی وظایف"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
 
         <Select
           value={priorityFilter}
@@ -259,8 +254,8 @@ export function TasksView() {
           </SelectContent>
         </Select>
 
-        <p className="text-sm text-muted-foreground sm:ms-auto">
-          {toPersianDigits(filtered.length)} وظیفه
+        <p className="text-sm tracking-normal text-muted-foreground sm:ms-auto">
+          {formatCount(filtered.length)} وظیفه
         </p>
       </div>
 
@@ -276,7 +271,7 @@ export function TasksView() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="board">
+        <TabsContent value="board" className="flex-none">
           <TaskBoard
             tasks={filtered}
             onOpen={setSelected}
@@ -284,7 +279,7 @@ export function TasksView() {
           />
         </TabsContent>
 
-        <TabsContent value="list">
+        <TabsContent value="list" className="flex-none">
           <TaskList
             tasks={filtered}
             onOpen={setSelected}
@@ -329,13 +324,13 @@ function StatTile({
     >
       <p className="text-xs text-muted-foreground sm:text-sm">{label}</p>
       <p
-        className={`mt-0.5 text-lg font-semibold tabular-nums tracking-tight ${
+        className={`mt-0.5 text-lg font-semibold tracking-normal ${
           tone === "warn"
             ? "text-amber-700 dark:text-amber-400"
             : ""
         }`}
       >
-        {toPersianDigits(value)}
+        {formatCount(value)}
       </p>
     </div>
   )
@@ -362,8 +357,8 @@ function TaskBoard({
             >
               <div className="flex items-center justify-between gap-2 border-b px-3 py-2.5">
                 <StatusBadge status={status} />
-                <span className="text-xs tabular-nums text-muted-foreground">
-                  {toPersianDigits(columnTasks.length)}
+                <span className="text-xs tracking-normal text-muted-foreground">
+                  {formatCount(columnTasks.length)}
                 </span>
               </div>
               <div className="flex flex-col gap-2 p-2.5">
@@ -431,7 +426,7 @@ function TaskCard({
             {member.name}
           </span>
         </div>
-        <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+        <span className="shrink-0 text-xs tracking-normal whitespace-nowrap text-muted-foreground">
           {formatJalaliDate(task.dueDate)}
         </span>
       </div>
@@ -522,14 +517,14 @@ function TaskList({
                   <TableCell>
                     <PriorityBadge priority={task.priority} />
                   </TableCell>
-                  <TableCell className="whitespace-nowrap tabular-nums">
+                  <TableCell className="whitespace-nowrap tracking-normal">
                     {formatJalaliDate(task.dueDate)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Progress value={task.progress} className="min-w-16 flex-1 gap-0" />
-                      <span className="w-8 text-end text-xs tabular-nums text-muted-foreground">
-                        {toPersianDigits(task.progress)}٪
+                      <span className="shrink-0 text-end text-xs tracking-normal text-muted-foreground">
+                        {formatPercent(task.progress)}
                       </span>
                     </div>
                   </TableCell>

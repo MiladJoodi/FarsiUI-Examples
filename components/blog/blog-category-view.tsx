@@ -36,11 +36,14 @@ export function BlogCategoryView({ category }: { category: BlogCategory }) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <header className="max-w-2xl space-y-3">
+      <header className="max-w-2xl space-y-2.5">
+        <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground">
+          موضوع
+        </p>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           {category.name}
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           {category.description}
         </p>
         <p className="text-xs text-muted-foreground">
@@ -48,9 +51,9 @@ export function BlogCategoryView({ category }: { category: BlogCategory }) {
         </p>
       </header>
 
-      <div>
+      <div className="rounded-xl border border-foreground/8 bg-card/30 px-4 sm:px-5">
         {items.length === 0 ? (
-          <p className="border border-dashed px-4 py-12 text-center text-sm text-muted-foreground">
+          <p className="px-1 py-12 text-center text-sm text-muted-foreground">
             هنوز مطلبی در این موضوع نیست.
           </p>
         ) : (

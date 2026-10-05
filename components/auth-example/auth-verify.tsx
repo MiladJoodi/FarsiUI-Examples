@@ -81,7 +81,7 @@ export function AuthVerify({
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6">
+    <div className="mx-auto w-full max-w-md space-y-6 px-4 py-10 sm:px-6 sm:py-14">
       <div className="space-y-1">
         <p className="text-sm text-muted-foreground">
           <Link

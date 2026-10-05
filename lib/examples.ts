@@ -106,4 +106,11 @@ export const EXAMPLES: ExampleMeta[] = [
     href: "/examples/pricing",
     status: "ready",
   },
+  {
+    id: "contact",
+    title: "تماس با ما",
+    description: "فرم تماس ساده با حاشیهٔ نازک برای پیام و درخواست.",
+    href: "/examples/contact",
+    status: "ready",
+  },
 ]

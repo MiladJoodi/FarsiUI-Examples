@@ -19,7 +19,8 @@ export const analyticsRanges: {
 export type AnalyticsKpi = {
   id: string
   label: string
-  value: string
+  value: number
+  valueKind: "toman" | "count" | "percent"
   delta: number
   up: boolean
   context: string
@@ -29,7 +30,8 @@ export const analyticsKpis: AnalyticsKpi[] = [
   {
     id: "revenue",
     label: "درآمد خالص",
-    value: "۴۸۶٬۲۰۰٬۰۰۰ تومان",
+    value: 486_200_000,
+    valueKind: "toman",
     delta: 12.4,
     up: true,
     context: "پس از کسر مرجوعی و تخفیف",
@@ -37,7 +39,8 @@ export const analyticsKpis: AnalyticsKpi[] = [
   {
     id: "orders",
     label: "سفارش تکمیل‌شده",
-    value: "۳٬۴۸۲",
+    value: 3_482,
+    valueKind: "count",
     delta: 6.1,
     up: true,
     context: "میانگین ۱۱۶ سفارش در روز",
@@ -45,7 +48,8 @@ export const analyticsKpis: AnalyticsKpi[] = [
   {
     id: "conversion",
     label: "نرخ تبدیل",
-    value: "۳٫۸٪",
+    value: 3.8,
+    valueKind: "percent",
     delta: 0.4,
     up: false,
     context: "از بازدید تا پرداخت موفق",
@@ -53,7 +57,8 @@ export const analyticsKpis: AnalyticsKpi[] = [
   {
     id: "aov",
     label: "میانگین سبد",
-    value: "۱٬۳۹۵٬۰۰۰ تومان",
+    value: 1_395_000,
+    valueKind: "toman",
     delta: 2.8,
     up: true,
     context: "بدون سفارش‌های سازمانی",
