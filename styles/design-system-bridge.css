@@ -57,6 +57,7 @@ body[class*="style-"] {
 }
 
 /* Dark token files use `.dark .style-*` (descendant). Support both on <html> too. */
+html.dark.style-vega,
 html.dark.style-glass,
 html.dark.style-rose,
 html.dark.style-nili,

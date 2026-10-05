@@ -311,31 +311,32 @@ export function AnalyticsView() {
               <DashboardPanelBody className="space-y-4">
                 <ChartContainer
                   config={funnelConfig}
-                  className="aspect-[4/3] w-full min-h-[200px]"
+                  dir="ltr"
+                  className="aspect-[4/3] w-full min-h-[220px]"
                 >
                   <BarChart
                     data={funnelData}
                     layout="vertical"
-                    margin={{ top: 4, right: 8, left: 8, bottom: 4 }}
+                    margin={{ top: 8, right: 12, left: 8, bottom: 8 }}
                   >
                     <CartesianGrid horizontal={false} />
                     <XAxis
                       type="number"
-                      reversed
                       tickLine={false}
                       axisLine={false}
+                      tickMargin={8}
                       tickFormatter={(v) => formatPersianNumber(Number(v))}
                     />
                     <YAxis
                       type="category"
                       dataKey="stage"
-                      orientation="right"
-                      width={64}
+                      width={56}
                       tickLine={false}
                       axisLine={false}
+                      tickMargin={8}
                     />
                     <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                    <Bar dataKey="value" radius={[4, 0, 0, 4]}>
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={22}>
                       {funnelData.map((entry) => (
                         <Cell key={entry.stage} fill={entry.fill} />
                       ))}
@@ -387,34 +388,36 @@ export function AnalyticsView() {
               <DashboardPanelBody>
                 <ChartContainer
                   config={channelConfig}
-                  className="aspect-[5/3] w-full min-h-[240px]"
+                  dir="ltr"
+                  className="aspect-[5/3] w-full min-h-[260px]"
                 >
                   <BarChart
                     data={channelPerformance}
                     layout="vertical"
-                    margin={{ top: 4, right: 8, left: 8, bottom: 4 }}
+                    margin={{ top: 8, right: 12, left: 8, bottom: 8 }}
                   >
                     <CartesianGrid horizontal={false} />
                     <XAxis
                       type="number"
-                      reversed
                       tickLine={false}
                       axisLine={false}
+                      tickMargin={8}
                       tickFormatter={(v) => formatPersianNumber(Number(v))}
                     />
                     <YAxis
                       type="category"
                       dataKey="channel"
-                      orientation="right"
-                      width={110}
+                      width={118}
                       tickLine={false}
                       axisLine={false}
+                      tickMargin={8}
                     />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Bar
                       dataKey="revenue"
                       fill="var(--color-revenue)"
-                      radius={[4, 0, 0, 4]}
+                      radius={[0, 4, 4, 0]}
+                      barSize={22}
                     />
                   </BarChart>
                 </ChartContainer>

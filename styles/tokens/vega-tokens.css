@@ -1,0 +1,391 @@
+/**
+ * Vega / آرام (comfort) — soft, open, calm FarsiUI style.
+ *
+ * Full semantic + component recipes so switching away from خشت/رز/فیروزه
+ * actually restyles cards, fields, buttons, and overlays everywhere.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* Light — soft airy paper                                                    */
+/* -------------------------------------------------------------------------- */
+
+.style-vega {
+  --vega-primary: #3d6b8c;
+  --vega-primary-foreground: #f7fbff;
+  --vega-ring: #5b8aad;
+  --vega-brand: #2f5670;
+  --vega-brand-foreground: #f7fbff;
+  --vega-chart-1: #3d6b8c;
+  --vega-chart-2: #6a8f7a;
+  --vega-chart-3: #c08a4e;
+  --vega-chart-4: #7a6ea8;
+  --vega-chart-5: #6b7c8c;
+
+  --background: #f4f7fa;
+  --foreground: #1c2833;
+  --card: #ffffff;
+  --card-foreground: #1c2833;
+  --popover: #ffffff;
+  --popover-foreground: #1c2833;
+  --primary: var(--vega-primary);
+  --primary-foreground: var(--vega-primary-foreground);
+  --secondary: #e8eef4;
+  --secondary-foreground: #1c2833;
+  --muted: #eef2f6;
+  --muted-foreground: #5c6b7a;
+  --accent: #e4edf5;
+  --accent-foreground: #1c2833;
+  --destructive: #c0392b;
+  --border: #d5dee7;
+  --input: #d5dee7;
+  --ring: var(--vega-ring);
+
+  --sidebar: #f8fafc;
+  --sidebar-foreground: #1c2833;
+  --sidebar-primary: var(--vega-primary);
+  --sidebar-primary-foreground: var(--vega-primary-foreground);
+  --sidebar-accent: #e4edf5;
+  --sidebar-accent-foreground: #1c2833;
+  --sidebar-border: #d5dee7;
+  --sidebar-ring: var(--vega-ring);
+
+  --chart-1: var(--vega-chart-1);
+  --chart-2: var(--vega-chart-2);
+  --chart-3: var(--vega-chart-3);
+  --chart-4: var(--vega-chart-4);
+  --chart-5: var(--vega-chart-5);
+
+  --radius: 0.875rem;
+  --radius-field: 0.75rem;
+  --radius-surface: 1rem;
+  --radius-overlay: 1rem;
+  --radius-control: 0.875rem;
+  --radius-4xl: 1.5rem;
+  --radius-3xl: 1.25rem;
+  --radius-2xl: 1.125rem;
+  --radius-xl: 1rem;
+  --radius-lg: 0.875rem;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.5rem;
+
+  --surface: #ffffff;
+  --surface-muted: #eef2f6;
+  --surface-border: #d5dee7;
+  --surface-filter: none;
+  --surface-opacity: 1;
+  --surface-foreground: #1c2833;
+
+  --field: #ffffff;
+  --field-border: #d0dae4;
+  --field-shadow: 0 1px 2px rgb(28 40 51 / 0.04);
+
+  --control: #ffffff;
+  --control-border: #d0dae4;
+  --control-shadow: 0 1px 2px rgb(28 40 51 / 0.05);
+
+  --overlay: #ffffff;
+  --overlay-shadow: 0 12px 28px -8px rgb(28 40 51 / 0.18);
+
+  --shadow-surface: 0 1px 2px rgb(28 40 51 / 0.04), 0 8px 20px -12px rgb(28 40 51 / 0.12);
+  --shadow-field: 0 1px 2px rgb(28 40 51 / 0.04);
+  --shadow-overlay: 0 12px 28px -8px rgb(28 40 51 / 0.18);
+  --shadow-control: 0 1px 2px rgb(28 40 51 / 0.05);
+  --shadow-press: 0 0 0 0 transparent;
+
+  --motion-fast: 160ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --press: scale(0.98);
+  --line: 1px;
+
+  --khesht-ink: #1c2833;
+  --khesht-offset: transparent;
+
+  color-scheme: light;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Dark — soft night                                                          */
+/* -------------------------------------------------------------------------- */
+
+html.dark.style-vega,
+.dark .style-vega {
+  --vega-primary: #7eb3d4;
+  --vega-primary-foreground: #102030;
+  --vega-ring: #7eb3d4;
+  --vega-brand: #9ec7e0;
+  --vega-brand-foreground: #102030;
+  --vega-chart-1: #7eb3d4;
+  --vega-chart-2: #8fbf9e;
+  --vega-chart-3: #d4a574;
+  --vega-chart-4: #a79ad4;
+  --vega-chart-5: #8a9aab;
+
+  --background: #121820;
+  --foreground: #e8eef4;
+  --card: #1a222c;
+  --card-foreground: #e8eef4;
+  --popover: #1a222c;
+  --popover-foreground: #e8eef4;
+  --primary: var(--vega-primary);
+  --primary-foreground: var(--vega-primary-foreground);
+  --secondary: #243040;
+  --secondary-foreground: #e8eef4;
+  --muted: #1e2834;
+  --muted-foreground: #9aabbb;
+  --accent: #243040;
+  --accent-foreground: #e8eef4;
+  --destructive: #e57373;
+  --border: #2c3a4a;
+  --input: #2c3a4a;
+  --ring: var(--vega-ring);
+
+  --sidebar: #161e28;
+  --sidebar-foreground: #e8eef4;
+  --sidebar-primary: var(--vega-primary);
+  --sidebar-primary-foreground: var(--vega-primary-foreground);
+  --sidebar-accent: #243040;
+  --sidebar-accent-foreground: #e8eef4;
+  --sidebar-border: #2c3a4a;
+  --sidebar-ring: var(--vega-ring);
+
+  --chart-1: var(--vega-chart-1);
+  --chart-2: var(--vega-chart-2);
+  --chart-3: var(--vega-chart-3);
+  --chart-4: var(--vega-chart-4);
+  --chart-5: var(--vega-chart-5);
+
+  --surface: #1a222c;
+  --surface-muted: #1e2834;
+  --surface-border: #2c3a4a;
+  --surface-foreground: #e8eef4;
+
+  --field: #161e28;
+  --field-border: #2c3a4a;
+  --field-shadow: none;
+
+  --control: #1a222c;
+  --control-border: #2c3a4a;
+  --control-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+
+  --overlay: #1a222c;
+  --overlay-shadow: 0 16px 36px -10px rgb(0 0 0 / 0.45);
+
+  --shadow-surface: 0 1px 2px rgb(0 0 0 / 0.2), 0 10px 24px -14px rgb(0 0 0 / 0.45);
+  --shadow-field: none;
+  --shadow-overlay: 0 16px 36px -10px rgb(0 0 0 / 0.45);
+  --shadow-control: 0 1px 2px rgb(0 0 0 / 0.25);
+  --shadow-press: 0 0 0 0 transparent;
+
+  --khesht-ink: #e8eef4;
+  --khesht-offset: transparent;
+
+  color-scheme: dark;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Soft page wash                                                             */
+/* -------------------------------------------------------------------------- */
+
+.style-vega {
+  background-color: var(--background);
+  background-image: radial-gradient(
+    48% 36% at 88% 0%,
+    rgb(61 107 140 / 0.08),
+    transparent 70%
+  );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+html.dark.style-vega,
+.dark .style-vega {
+  background-image: radial-gradient(
+    48% 36% at 88% 0%,
+    rgb(126 179 212 / 0.1),
+    transparent 70%
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Soft fills — cards, fields, buttons, overlays                              */
+/* -------------------------------------------------------------------------- */
+
+.style-vega .cn-card,
+.style-vega .cn-alert,
+.style-vega [data-slot="card"] {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: var(--radius-surface) !important;
+  box-shadow: var(--shadow-surface) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--card-foreground);
+}
+
+.style-vega .cn-input,
+.style-vega .cn-textarea,
+.style-vega .cn-select-trigger,
+.style-vega .cn-input-group,
+.style-vega .cn-native-select,
+.style-vega .cn-input-otp-slot,
+.style-vega .cn-combobox-input,
+.style-vega [data-slot="input"],
+.style-vega [data-slot="textarea"],
+.style-vega [data-slot="select-trigger"],
+.style-vega [data-slot="input-group"],
+.style-vega [data-slot="input-group-control"],
+.style-vega [data-slot="combobox-input"] {
+  background-color: var(--field) !important;
+  border: 1px solid var(--field-border) !important;
+  border-radius: var(--radius-field) !important;
+  box-shadow: var(--field-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--foreground);
+}
+
+.style-vega .cn-button,
+.style-vega [data-slot="button"],
+.style-vega [data-slot="input-group-button"] {
+  border-radius: var(--radius-control) !important;
+  font-weight: 500;
+  transition:
+    transform var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease);
+}
+
+.style-vega .cn-button-variant-default,
+.style-vega [data-slot="button"][data-variant="default"] {
+  background-color: var(--vega-primary) !important;
+  color: var(--vega-primary-foreground) !important;
+  border-color: transparent !important;
+  box-shadow: var(--shadow-control) !important;
+}
+
+.style-vega .cn-button-variant-default:active,
+.style-vega [data-slot="button"][data-variant="default"]:active {
+  transform: var(--press);
+  box-shadow: var(--shadow-press) !important;
+}
+
+.style-vega .cn-button-variant-outline,
+.style-vega .cn-button-variant-secondary,
+.style-vega .cn-menubar,
+.style-vega .cn-toggle-variant-outline,
+.style-vega .cn-pagination-link[data-active="true"],
+.style-vega .cn-pagination-link[aria-current="page"],
+.style-vega .cn-input-group-button,
+.style-vega [data-slot="button"][data-variant="outline"],
+.style-vega [data-slot="button"][data-variant="secondary"],
+.style-vega [data-slot="toggle"][data-variant="outline"],
+.style-vega [data-slot="input-group-button"] {
+  background-color: var(--control) !important;
+  border: 1px solid var(--control-border) !important;
+  box-shadow: var(--shadow-control) !important;
+  border-radius: var(--radius-control) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--foreground);
+}
+
+.style-vega .cn-button-variant-ghost:hover,
+.style-vega .cn-button-variant-ghost[aria-expanded="true"],
+.style-vega [data-slot="button"][data-variant="ghost"]:hover,
+.style-vega [data-slot="button"][data-variant="ghost"][aria-expanded="true"] {
+  background-color: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+.style-vega .cn-item-variant-muted,
+.style-vega .cn-empty-media,
+.style-vega [data-slot="item"][data-variant="muted"],
+.style-vega [data-slot="empty-media"] {
+  background-color: var(--surface-muted) !important;
+  border: 1px solid var(--surface-border) !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-control) !important;
+  backdrop-filter: none !important;
+}
+
+.style-vega .cn-dialog-content,
+.style-vega .cn-alert-dialog-content,
+.style-vega .cn-popover-content,
+.style-vega .cn-sheet-content,
+.style-vega .cn-drawer-content,
+.style-vega .cn-drawer-popup,
+.style-vega .cn-dropdown-menu-content,
+.style-vega .cn-dropdown-menu-sub-content,
+.style-vega .cn-select-content,
+.style-vega .cn-combobox-content,
+.style-vega .cn-hover-card-content,
+.style-vega .cn-context-menu-content,
+.style-vega .cn-context-menu-sub-content,
+.style-vega .cn-menubar-content,
+.style-vega .cn-menubar-sub-content,
+.style-vega .cn-navigation-menu-viewport,
+.style-vega .cn-chart-tooltip,
+.style-vega .cn-tooltip-content,
+.style-vega [data-slot="dialog-content"],
+.style-vega [data-slot="alert-dialog-content"],
+.style-vega [data-slot="popover-content"],
+.style-vega [data-slot="sheet-content"],
+.style-vega [data-slot="drawer-content"],
+.style-vega [data-slot="drawer"],
+.style-vega [data-slot="dropdown-menu-content"],
+.style-vega [data-slot="dropdown-menu-sub-content"],
+.style-vega [data-slot="select-content"],
+.style-vega [data-slot="combobox-content"],
+.style-vega [data-slot="hover-card-content"],
+.style-vega [data-slot="context-menu-content"],
+.style-vega [data-slot="context-menu-sub-content"],
+.style-vega [data-slot="menubar-content"],
+.style-vega [data-slot="menubar-sub-content"],
+.style-vega [data-slot="navigation-menu-viewport"],
+.style-vega [data-slot="chart-tooltip"],
+.style-vega [data-slot="tooltip-content"] {
+  background-color: var(--overlay) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: var(--radius-overlay) !important;
+  box-shadow: var(--shadow-overlay) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--popover-foreground);
+}
+
+.style-vega .cn-badge,
+.style-vega [data-slot="badge"] {
+  border-radius: 999px !important;
+}
+
+.style-vega .cn-tabs-list,
+.style-vega [data-slot="tabs-list"] {
+  background-color: var(--surface-muted) !important;
+  border-radius: var(--radius-control) !important;
+}
+
+.style-vega .cn-separator,
+.style-vega [data-slot="separator"] {
+  background-color: var(--border) !important;
+}
+
+.style-vega .cn-sidebar,
+.style-vega [data-slot="sidebar"] {
+  background-color: var(--sidebar) !important;
+  border-color: var(--sidebar-border) !important;
+  color: var(--sidebar-foreground);
+}
+
+.style-vega .cn-table,
+.style-vega [data-slot="table"] {
+  --border: var(--surface-border);
+}
+
+.style-vega [data-slot="chart"] {
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}

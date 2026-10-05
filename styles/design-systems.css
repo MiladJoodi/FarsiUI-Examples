@@ -1,4 +1,5 @@
 @import "./density.css";
+@import "./tokens/vega-tokens.css";
 @import "./tokens/glass-tokens.css";
 @import "./tokens/rose-tokens.css";
 @import "./tokens/nili-tokens.css";

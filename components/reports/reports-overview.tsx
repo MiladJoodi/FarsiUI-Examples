@@ -240,29 +240,38 @@ export function ReportsOverview() {
               <h3 className="text-sm font-medium">سهم کانال‌های فروش</h3>
             </div>
             <div className="p-4">
-              <ChartContainer config={channelConfig} className="aspect-video w-full">
-                <BarChart data={channelSalesData} layout="vertical">
+              <ChartContainer
+                config={channelConfig}
+                dir="ltr"
+                className="aspect-video w-full"
+              >
+                <BarChart
+                  data={channelSalesData}
+                  layout="vertical"
+                  margin={{ top: 8, right: 12, left: 8, bottom: 8 }}
+                >
                   <CartesianGrid horizontal={false} />
                   <XAxis
                     type="number"
-                    reversed
                     tickFormatter={(v) => `${formatPersianNumber(Number(v))}٪`}
                     tickLine={false}
                     axisLine={false}
+                    tickMargin={8}
                   />
                   <YAxis
                     type="category"
                     dataKey="channel"
-                    orientation="right"
                     width={96}
                     tickLine={false}
                     axisLine={false}
+                    tickMargin={8}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar
                     dataKey="sales"
                     fill="var(--color-sales)"
-                    radius={[4, 0, 0, 4]}
+                    radius={[0, 4, 4, 0]}
+                    barSize={22}
                   />
                 </BarChart>
               </ChartContainer>

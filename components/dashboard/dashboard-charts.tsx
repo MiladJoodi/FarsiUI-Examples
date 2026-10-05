@@ -163,33 +163,38 @@ export function ChannelSalesChart() {
         </div>
       </DashboardPanelHeader>
       <DashboardPanelBody>
-        <ChartContainer config={channelConfig} className="aspect-[5/4] w-full">
+        <ChartContainer
+          config={channelConfig}
+          dir="ltr"
+          className="aspect-[5/4] w-full"
+        >
           <BarChart
             data={channelSalesData}
             layout="vertical"
-            margin={{ top: 4, right: 8, left: 12, bottom: 4 }}
+            margin={{ top: 8, right: 12, left: 8, bottom: 8 }}
           >
             <CartesianGrid horizontal={false} />
             <XAxis
               type="number"
               tickLine={false}
               axisLine={false}
-              reversed
+              tickMargin={8}
               tickFormatter={(v) => `${formatPersianNumber(Number(v))}٪`}
             />
             <YAxis
               type="category"
               dataKey="channel"
-              orientation="right"
               width={88}
               tickLine={false}
               axisLine={false}
+              tickMargin={8}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Bar
               dataKey="sales"
               fill="var(--color-sales)"
-              radius={[4, 0, 0, 4]}
+              radius={[0, 4, 4, 0]}
+              barSize={22}
             />
           </BarChart>
         </ChartContainer>
