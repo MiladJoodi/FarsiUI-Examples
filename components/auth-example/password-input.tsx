@@ -15,7 +15,7 @@ export function PasswordInput({
   "aria-invalid": ariaInvalid,
   className,
   ...props
-}: Omit<React.ComponentProps<typeof Input>, "type"> & {
+}: Omit<React.ComponentProps<typeof Input>, "type" | "onChange" | "value"> & {
   value: string
   onChange: (value: string) => void
 }) {

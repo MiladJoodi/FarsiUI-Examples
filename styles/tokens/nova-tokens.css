@@ -1,0 +1,299 @@
+/**
+ * Nova / پیشفرض — clean, compact, standard FarsiUI style.
+ * Deliberately different from آرام (vega): cooler neutrals, tighter geometry, flat chrome.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* Light — crisp paper                                                        */
+/* -------------------------------------------------------------------------- */
+
+.style-nova {
+  --nova-primary: #1e293b;
+  --nova-primary-foreground: #f8fafc;
+  --nova-ring: #64748b;
+  --nova-brand: #0f172a;
+  --nova-brand-foreground: #f8fafc;
+  --nova-chart-1: #1e293b;
+  --nova-chart-2: #0f766e;
+  --nova-chart-3: #b45309;
+  --nova-chart-4: #4f46e5;
+  --nova-chart-5: #64748b;
+
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: var(--nova-primary);
+  --primary-foreground: var(--nova-primary-foreground);
+  --secondary: #e2e8f0;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #e2e8f0;
+  --accent-foreground: #0f172a;
+  --destructive: #dc2626;
+  --border: #cbd5e1;
+  --input: #cbd5e1;
+  --ring: var(--nova-ring);
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: var(--nova-primary);
+  --sidebar-primary-foreground: var(--nova-primary-foreground);
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: var(--nova-ring);
+
+  --chart-1: var(--nova-chart-1);
+  --chart-2: var(--nova-chart-2);
+  --chart-3: var(--nova-chart-3);
+  --chart-4: var(--nova-chart-4);
+  --chart-5: var(--nova-chart-5);
+
+  --radius: 0.5rem;
+  --radius-field: 0.375rem;
+  --radius-surface: 0.5rem;
+  --radius-overlay: 0.5rem;
+  --radius-control: 0.5rem;
+  --radius-4xl: 0.75rem;
+  --radius-3xl: 0.625rem;
+  --radius-2xl: 0.5rem;
+  --radius-xl: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
+
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+  --surface-border: #e2e8f0;
+  --surface-filter: none;
+  --surface-opacity: 1;
+  --surface-foreground: #0f172a;
+
+  --field: #ffffff;
+  --field-border: #cbd5e1;
+  --field-shadow: none;
+
+  --control: #ffffff;
+  --control-border: #cbd5e1;
+  --control-shadow: none;
+
+  --overlay: #ffffff;
+  --overlay-shadow: 0 10px 24px -12px rgb(15 23 42 / 0.2);
+
+  --shadow-surface: 0 1px 2px rgb(15 23 42 / 0.04);
+  --shadow-field: none;
+  --shadow-overlay: 0 10px 24px -12px rgb(15 23 42 / 0.2);
+  --shadow-control: none;
+  --shadow-press: none;
+
+  --motion-fast: 120ms;
+  --motion-ease: ease;
+  --press: scale(0.98);
+  --line: 1px;
+
+  --khesht-ink: #0f172a;
+  --khesht-offset: transparent;
+
+  color-scheme: light;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Dark                                                                       */
+/* -------------------------------------------------------------------------- */
+
+html.dark.style-nova,
+.dark .style-nova {
+  --nova-primary: #e2e8f0;
+  --nova-primary-foreground: #0f172a;
+  --nova-ring: #94a3b8;
+  --nova-brand: #f8fafc;
+  --nova-brand-foreground: #0f172a;
+  --nova-chart-1: #e2e8f0;
+  --nova-chart-2: #2dd4bf;
+  --nova-chart-3: #fbbf24;
+  --nova-chart-4: #a5b4fc;
+  --nova-chart-5: #94a3b8;
+
+  --background: #0b1220;
+  --foreground: #f8fafc;
+  --card: #111827;
+  --card-foreground: #f8fafc;
+  --popover: #111827;
+  --popover-foreground: #f8fafc;
+  --primary: var(--nova-primary);
+  --primary-foreground: var(--nova-primary-foreground);
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  --destructive: #f87171;
+  --border: #334155;
+  --input: #334155;
+  --ring: var(--nova-ring);
+
+  --sidebar: #0f172a;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: var(--nova-primary);
+  --sidebar-primary-foreground: var(--nova-primary-foreground);
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #334155;
+  --sidebar-ring: var(--nova-ring);
+
+  --chart-1: var(--nova-chart-1);
+  --chart-2: var(--nova-chart-2);
+  --chart-3: var(--nova-chart-3);
+  --chart-4: var(--nova-chart-4);
+  --chart-5: var(--nova-chart-5);
+
+  --surface: #111827;
+  --surface-muted: #1e293b;
+  --surface-border: #334155;
+  --surface-foreground: #f8fafc;
+
+  --field: #0f172a;
+  --field-border: #334155;
+  --field-shadow: none;
+
+  --control: #111827;
+  --control-border: #334155;
+  --control-shadow: none;
+
+  --overlay: #111827;
+  --overlay-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.45);
+
+  --shadow-surface: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-field: none;
+  --shadow-overlay: 0 16px 32px -12px rgb(0 0 0 / 0.45);
+  --shadow-control: none;
+
+  --khesht-ink: #f8fafc;
+  --khesht-offset: transparent;
+
+  color-scheme: dark;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Flat chrome                                                                */
+/* -------------------------------------------------------------------------- */
+
+.style-nova {
+  background-color: var(--background);
+  background-image: none;
+}
+
+.style-nova .cn-card,
+.style-nova .cn-alert,
+.style-nova [data-slot="card"] {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: var(--radius-surface) !important;
+  box-shadow: var(--shadow-surface) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--card-foreground);
+}
+
+.style-nova .cn-input,
+.style-nova .cn-textarea,
+.style-nova .cn-select-trigger,
+.style-nova .cn-input-group,
+.style-nova .cn-native-select,
+.style-nova .cn-input-otp-slot,
+.style-nova .cn-combobox-input,
+.style-nova [data-slot="input"],
+.style-nova [data-slot="textarea"],
+.style-nova [data-slot="select-trigger"],
+.style-nova [data-slot="input-group"],
+.style-nova [data-slot="input-group-control"],
+.style-nova [data-slot="combobox-input"] {
+  background-color: var(--field) !important;
+  border: 1px solid var(--field-border) !important;
+  border-radius: var(--radius-field) !important;
+  box-shadow: var(--field-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--foreground);
+}
+
+.style-nova .cn-button,
+.style-nova [data-slot="button"],
+.style-nova [data-slot="input-group-button"] {
+  border-radius: var(--radius-control) !important;
+  font-weight: 500;
+}
+
+.style-nova .cn-button-variant-default,
+.style-nova [data-slot="button"][data-variant="default"] {
+  background-color: var(--nova-primary) !important;
+  color: var(--nova-primary-foreground) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.style-nova .cn-button-variant-outline,
+.style-nova .cn-button-variant-secondary,
+.style-nova [data-slot="button"][data-variant="outline"],
+.style-nova [data-slot="button"][data-variant="secondary"],
+.style-nova [data-slot="input-group-button"] {
+  background-color: var(--control) !important;
+  border: 1px solid var(--control-border) !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-control) !important;
+  color: var(--foreground);
+}
+
+.style-nova .cn-dialog-content,
+.style-nova .cn-alert-dialog-content,
+.style-nova .cn-popover-content,
+.style-nova .cn-sheet-content,
+.style-nova .cn-drawer-content,
+.style-nova .cn-drawer-popup,
+.style-nova .cn-dropdown-menu-content,
+.style-nova .cn-select-content,
+.style-nova .cn-combobox-content,
+.style-nova .cn-tooltip-content,
+.style-nova [data-slot="dialog-content"],
+.style-nova [data-slot="alert-dialog-content"],
+.style-nova [data-slot="popover-content"],
+.style-nova [data-slot="sheet-content"],
+.style-nova [data-slot="drawer-content"],
+.style-nova [data-slot="drawer"],
+.style-nova [data-slot="dropdown-menu-content"],
+.style-nova [data-slot="select-content"],
+.style-nova [data-slot="combobox-content"],
+.style-nova [data-slot="tooltip-content"] {
+  background-color: var(--overlay) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: var(--radius-overlay) !important;
+  box-shadow: var(--shadow-overlay) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--popover-foreground);
+}
+
+.style-nova .cn-badge,
+.style-nova [data-slot="badge"] {
+  border-radius: var(--radius-control) !important;
+}
+
+.style-nova .cn-sidebar,
+.style-nova [data-slot="sidebar"] {
+  background-color: var(--sidebar) !important;
+  border-color: var(--sidebar-border) !important;
+  color: var(--sidebar-foreground);
+}
+
+.style-nova [data-slot="chart"] {
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}

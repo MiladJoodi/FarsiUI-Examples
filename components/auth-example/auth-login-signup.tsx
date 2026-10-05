@@ -87,7 +87,7 @@ export function AuthLoginSignup({
 }
 
 function LoginForm() {
-  const [identifier, setIdentifier] = React.useState(demoCredentials.email)
+  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.email)
   const [password, setPassword] = React.useState("")
   const [remember, setRemember] = React.useState(true)
   const [loading, setLoading] = React.useState(false)

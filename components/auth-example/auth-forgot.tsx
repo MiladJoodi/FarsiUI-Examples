@@ -34,7 +34,7 @@ type Step = "request" | "verify" | "reset" | "success"
 
 export function AuthForgotPassword() {
   const [step, setStep] = React.useState<Step>("request")
-  const [identifier, setIdentifier] = React.useState(demoCredentials.email)
+  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.email)
   const [otp, setOtp] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [confirm, setConfirm] = React.useState("")

@@ -15,14 +15,6 @@
   --text-control-sm: 0.8rem;
   --leading-control: 1.25;
   --radius-control: var(--radius-lg);
-  --radius: 0.5rem;
-  /* Slightly cooler compact chrome so پیشفرض ≠ آرام */
-  --primary: oklch(0.38 0.04 250);
-  --primary-foreground: oklch(0.98 0.01 250);
-  --ring: oklch(0.55 0.05 250);
-  --sidebar-primary: oklch(0.38 0.04 250);
-  --sidebar-primary-foreground: oklch(0.98 0.01 250);
-  --sidebar-ring: oklch(0.55 0.05 250);
 }
 
 .style-vega {
@@ -40,7 +32,6 @@
   --text-control-sm: 0.8125rem;
   --leading-control: 1.35;
   --radius-control: var(--radius-xl);
-  --radius: 0.75rem;
 }
 
 .style-glass {

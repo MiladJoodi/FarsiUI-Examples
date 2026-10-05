@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckIcon, ChevronDownIcon, SlidersHorizontalIcon } from "lucide-react"
+import { ChevronDownIcon, SlidersHorizontalIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import {
@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -20,7 +19,6 @@ import {
 import {
   Popover,
   PopoverContent,
-  PopoverDescription,
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
@@ -82,7 +80,7 @@ function StyleThumb({
     <div
       aria-hidden
       className={cn(
-        "flex h-10 w-full shrink-0 flex-col justify-center gap-1 border px-2",
+        "relative flex h-10 w-full shrink-0 flex-col justify-center gap-1 border px-2",
         look.wrap,
         selected ? "border-primary/40" : "border-border/60"
       )}
@@ -90,6 +88,12 @@ function StyleThumb({
       <span className={cn("shrink-0", look.a)} />
       <span className={cn("shrink-0", look.b)} />
       <span className={cn("shrink-0", look.c)} />
+      {selected ? (
+        <span
+          className="absolute -top-0.5 -end-0.5 size-2.5 rounded-full border-2 border-background bg-emerald-500 shadow-sm"
+          title="انتخاب‌شده"
+        />
+      ) : null}
     </div>
   )
 }
@@ -118,16 +122,8 @@ function DesignSystemGrid({ onSelect }: { onSelect?: () => void }) {
             )}
             aria-pressed={selected}
           >
-            {selected ? (
-              <CheckIcon className="absolute top-2 end-2 size-3.5 text-primary" />
-            ) : null}
             <StyleThumb id={preset.id} selected={selected} />
-            <div className="min-w-0 pe-4">
-              <p className="truncate text-xs font-medium">{preset.label}</p>
-              <p className="truncate text-[0.6875rem] text-muted-foreground">
-                {preset.hint}
-              </p>
-            </div>
+            <p className="truncate text-xs font-medium">{preset.label}</p>
           </button>
         )
       })}
@@ -192,9 +188,6 @@ function DesktopPicker() {
       >
         <PopoverHeader>
           <PopoverTitle>دیزاین‌سیستم</PopoverTitle>
-          <PopoverDescription>
-            یکی از استایل‌های FarsiUI را انتخاب کنید — بلافاصله اعمال می‌شود
-          </PopoverDescription>
         </PopoverHeader>
         <DesignSystemGrid onSelect={() => setOpen(false)} />
       </PopoverContent>
@@ -211,9 +204,6 @@ function MobilePicker() {
       <DrawerContent className="max-h-[min(88vh,36rem)] rounded-t-2xl">
         <DrawerHeader className="pb-2 text-start">
           <DrawerTitle>دیزاین‌سیستم</DrawerTitle>
-          <DrawerDescription>
-            یکی از استایل‌های FarsiUI را انتخاب کنید — بلافاصله اعمال می‌شود
-          </DrawerDescription>
         </DrawerHeader>
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-6">
           <DesignSystemGrid onSelect={() => setOpen(false)} />

@@ -22,7 +22,10 @@ function ExampleCard({ example }: { example: ExampleMeta }) {
       {ready ? (
         <Link
           href={example.href}
-          className={cn(buttonVariants({ size: "sm" }), "mt-auto w-full")}
+          className={cn(
+            buttonVariants({ size: "sm", variant: "ghost" }),
+            "mt-auto w-full justify-start px-0 text-primary hover:bg-transparent hover:text-primary/80"
+          )}
         >
           مشاهده نمونه
           <ArrowLeftIcon data-icon="inline-end" />

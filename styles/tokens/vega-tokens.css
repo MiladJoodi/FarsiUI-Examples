@@ -1,52 +1,52 @@
 /**
  * Vega / آرام (comfort) — soft, open, calm FarsiUI style.
  *
- * Full semantic + component recipes so switching away from خشت/رز/فیروزه
- * actually restyles cards, fields, buttons, and overlays everywhere.
+ * Must read as a full visual system (colors, elevation, soft chrome),
+ * not only a larger border-radius vs پیشفرض.
  */
 
 /* -------------------------------------------------------------------------- */
-/* Light — soft airy paper                                                    */
+/* Light — airy mist                                                          */
 /* -------------------------------------------------------------------------- */
 
 .style-vega {
-  --vega-primary: #3d6b8c;
-  --vega-primary-foreground: #f7fbff;
-  --vega-ring: #5b8aad;
-  --vega-brand: #2f5670;
-  --vega-brand-foreground: #f7fbff;
-  --vega-chart-1: #3d6b8c;
-  --vega-chart-2: #6a8f7a;
-  --vega-chart-3: #c08a4e;
-  --vega-chart-4: #7a6ea8;
-  --vega-chart-5: #6b7c8c;
+  --vega-primary: #3a7ca5;
+  --vega-primary-foreground: #f4fbff;
+  --vega-ring: #6aa3c4;
+  --vega-brand: #2a5f80;
+  --vega-brand-foreground: #f4fbff;
+  --vega-chart-1: #3a7ca5;
+  --vega-chart-2: #5f9a7a;
+  --vega-chart-3: #c4924a;
+  --vega-chart-4: #7d72b0;
+  --vega-chart-5: #6d8194;
 
-  --background: #f4f7fa;
-  --foreground: #1c2833;
+  --background: #eaf2f8;
+  --foreground: #1a2b3a;
   --card: #ffffff;
-  --card-foreground: #1c2833;
+  --card-foreground: #1a2b3a;
   --popover: #ffffff;
-  --popover-foreground: #1c2833;
+  --popover-foreground: #1a2b3a;
   --primary: var(--vega-primary);
   --primary-foreground: var(--vega-primary-foreground);
-  --secondary: #e8eef4;
-  --secondary-foreground: #1c2833;
-  --muted: #eef2f6;
-  --muted-foreground: #5c6b7a;
-  --accent: #e4edf5;
-  --accent-foreground: #1c2833;
+  --secondary: #d7e6f1;
+  --secondary-foreground: #1a2b3a;
+  --muted: #dde8f1;
+  --muted-foreground: #4f667a;
+  --accent: #cfe0ed;
+  --accent-foreground: #1a2b3a;
   --destructive: #c0392b;
-  --border: #d5dee7;
-  --input: #d5dee7;
+  --border: #bcd0e0;
+  --input: #bcd0e0;
   --ring: var(--vega-ring);
 
-  --sidebar: #f8fafc;
-  --sidebar-foreground: #1c2833;
+  --sidebar: #f3f8fc;
+  --sidebar-foreground: #1a2b3a;
   --sidebar-primary: var(--vega-primary);
   --sidebar-primary-foreground: var(--vega-primary-foreground);
-  --sidebar-accent: #e4edf5;
-  --sidebar-accent-foreground: #1c2833;
-  --sidebar-border: #d5dee7;
+  --sidebar-accent: #d7e6f1;
+  --sidebar-accent-foreground: #1a2b3a;
+  --sidebar-border: #c5d7e6;
   --sidebar-ring: var(--vega-ring);
 
   --chart-1: var(--vega-chart-1);
@@ -55,97 +55,113 @@
   --chart-4: var(--vega-chart-4);
   --chart-5: var(--vega-chart-5);
 
-  --radius: 0.875rem;
-  --radius-field: 0.75rem;
-  --radius-surface: 1rem;
-  --radius-overlay: 1rem;
-  --radius-control: 0.875rem;
-  --radius-4xl: 1.5rem;
-  --radius-3xl: 1.25rem;
-  --radius-2xl: 1.125rem;
-  --radius-xl: 1rem;
-  --radius-lg: 0.875rem;
-  --radius-md: 0.75rem;
-  --radius-sm: 0.5rem;
+  /* Soft open geometry — larger than پیشفرض, roomier than خشت */
+  --radius: 1.125rem;
+  --radius-field: 0.875rem;
+  --radius-surface: 1.375rem;
+  --radius-overlay: 1.25rem;
+  /* Density sets --radius-control: var(--radius-xl); do not override here */
+  --radius-4xl: 1.75rem;
+  --radius-3xl: 1.5rem;
+  --radius-2xl: 1.25rem;
+  --radius-xl: 1.125rem;
+  --radius-lg: 1rem;
+  --radius-md: 0.875rem;
+  --radius-sm: 0.625rem;
 
   --surface: #ffffff;
-  --surface-muted: #eef2f6;
-  --surface-border: #d5dee7;
+  --surface-muted: #e3edf5;
+  --surface-border: #c5d7e6;
   --surface-filter: none;
   --surface-opacity: 1;
-  --surface-foreground: #1c2833;
+  --surface-foreground: #1a2b3a;
 
-  --field: #ffffff;
-  --field-border: #d0dae4;
-  --field-shadow: 0 1px 2px rgb(28 40 51 / 0.04);
+  --field: #f7fbfe;
+  --field-border: #b7cdda;
+  --field-shadow:
+    inset 0 1px 2px rgb(26 43 58 / 0.04),
+    0 1px 0 rgb(255 255 255 / 0.7);
 
   --control: #ffffff;
-  --control-border: #d0dae4;
-  --control-shadow: 0 1px 2px rgb(28 40 51 / 0.05);
+  --control-border: #b7cdda;
+  --control-shadow:
+    0 1px 2px rgb(26 43 58 / 0.05),
+    0 6px 16px -10px rgb(58 124 165 / 0.28);
 
   --overlay: #ffffff;
-  --overlay-shadow: 0 12px 28px -8px rgb(28 40 51 / 0.18);
+  --overlay-shadow:
+    0 4px 10px -4px rgb(26 43 58 / 0.08),
+    0 22px 44px -18px rgb(58 124 165 / 0.35);
 
-  --shadow-surface: 0 1px 2px rgb(28 40 51 / 0.04), 0 8px 20px -12px rgb(28 40 51 / 0.12);
-  --shadow-field: 0 1px 2px rgb(28 40 51 / 0.04);
-  --shadow-overlay: 0 12px 28px -8px rgb(28 40 51 / 0.18);
-  --shadow-control: 0 1px 2px rgb(28 40 51 / 0.05);
+  --shadow-surface:
+    0 1px 2px rgb(26 43 58 / 0.04),
+    0 10px 28px -14px rgb(58 124 165 / 0.28),
+    0 2px 0 rgb(255 255 255 / 0.8) inset;
+  --shadow-field:
+    inset 0 1px 2px rgb(26 43 58 / 0.04),
+    0 1px 0 rgb(255 255 255 / 0.7);
+  --shadow-overlay:
+    0 4px 10px -4px rgb(26 43 58 / 0.08),
+    0 22px 44px -18px rgb(58 124 165 / 0.35);
+  --shadow-control:
+    0 1px 2px rgb(26 43 58 / 0.05),
+    0 6px 16px -10px rgb(58 124 165 / 0.28);
   --shadow-press: 0 0 0 0 transparent;
 
-  --motion-fast: 160ms;
+  --motion-fast: 180ms;
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --press: scale(0.98);
   --line: 1px;
 
-  --khesht-ink: #1c2833;
+  --khesht-ink: #1a2b3a;
   --khesht-offset: transparent;
 
   color-scheme: light;
 }
 
 /* -------------------------------------------------------------------------- */
-/* Dark — soft night                                                          */
+/* Dark — soft night sky                                                      */
 /* -------------------------------------------------------------------------- */
 
 html.dark.style-vega,
 .dark .style-vega {
-  --vega-primary: #7eb3d4;
-  --vega-primary-foreground: #102030;
-  --vega-ring: #7eb3d4;
-  --vega-brand: #9ec7e0;
-  --vega-brand-foreground: #102030;
-  --vega-chart-1: #7eb3d4;
-  --vega-chart-2: #8fbf9e;
+  --vega-primary: #7eb9d8;
+  --vega-primary-foreground: #0d1c28;
+  --vega-ring: #7eb9d8;
+  --vega-brand: #a5d0e8;
+  --vega-brand-foreground: #0d1c28;
+  --vega-chart-1: #7eb9d8;
+  --vega-chart-2: #8fc4a0;
   --vega-chart-3: #d4a574;
   --vega-chart-4: #a79ad4;
   --vega-chart-5: #8a9aab;
 
-  --background: #121820;
-  --foreground: #e8eef4;
-  --card: #1a222c;
-  --card-foreground: #e8eef4;
-  --popover: #1a222c;
-  --popover-foreground: #e8eef4;
+  --background: #0f1a24;
+  --foreground: #e8f1f8;
+  --card: #162433;
+  --card-foreground: #e8f1f8;
+  --popover: #182738;
+  --popover-foreground: #e8f1f8;
   --primary: var(--vega-primary);
   --primary-foreground: var(--vega-primary-foreground);
-  --secondary: #243040;
-  --secondary-foreground: #e8eef4;
-  --muted: #1e2834;
-  --muted-foreground: #9aabbb;
-  --accent: #243040;
-  --accent-foreground: #e8eef4;
+  --secondary: #1e3144;
+  --secondary-foreground: #e8f1f8;
+  --muted: #1a2c3c;
+  --muted-foreground: #9bb0c2;
+  --accent: #24384c;
+  --accent-foreground: #e8f1f8;
   --destructive: #e57373;
-  --border: #2c3a4a;
-  --input: #2c3a4a;
+  --border: #2a4054;
+  --input: #2a4054;
   --ring: var(--vega-ring);
 
-  --sidebar: #161e28;
-  --sidebar-foreground: #e8eef4;
+  --sidebar: #132130;
+  --sidebar-foreground: #e8f1f8;
   --sidebar-primary: var(--vega-primary);
   --sidebar-primary-foreground: var(--vega-primary-foreground);
-  --sidebar-accent: #243040;
-  --sidebar-accent-foreground: #e8eef4;
-  --sidebar-border: #2c3a4a;
+  --sidebar-accent: #1e3144;
+  --sidebar-accent-foreground: #e8f1f8;
+  --sidebar-border: #2a4054;
   --sidebar-ring: var(--vega-ring);
 
   --chart-1: var(--vega-chart-1);
@@ -154,29 +170,30 @@ html.dark.style-vega,
   --chart-4: var(--vega-chart-4);
   --chart-5: var(--vega-chart-5);
 
-  --surface: #1a222c;
-  --surface-muted: #1e2834;
-  --surface-border: #2c3a4a;
-  --surface-foreground: #e8eef4;
+  --surface: #162433;
+  --surface-muted: #1a2c3c;
+  --surface-border: #2a4054;
+  --surface-foreground: #e8f1f8;
 
-  --field: #161e28;
-  --field-border: #2c3a4a;
-  --field-shadow: none;
+  --field: #132130;
+  --field-border: #2f4860;
+  --field-shadow: inset 0 1px 2px rgb(0 0 0 / 0.28);
 
-  --control: #1a222c;
-  --control-border: #2c3a4a;
-  --control-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+  --control: #162433;
+  --control-border: #2f4860;
+  --control-shadow: 0 8px 20px -12px rgb(0 0 0 / 0.55);
 
-  --overlay: #1a222c;
-  --overlay-shadow: 0 16px 36px -10px rgb(0 0 0 / 0.45);
+  --overlay: #182738;
+  --overlay-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.55);
 
-  --shadow-surface: 0 1px 2px rgb(0 0 0 / 0.2), 0 10px 24px -14px rgb(0 0 0 / 0.45);
-  --shadow-field: none;
-  --shadow-overlay: 0 16px 36px -10px rgb(0 0 0 / 0.45);
-  --shadow-control: 0 1px 2px rgb(0 0 0 / 0.25);
-  --shadow-press: 0 0 0 0 transparent;
+  --shadow-surface:
+    0 1px 2px rgb(0 0 0 / 0.35),
+    0 14px 32px -16px rgb(126 185 216 / 0.18);
+  --shadow-field: inset 0 1px 2px rgb(0 0 0 / 0.28);
+  --shadow-overlay: 0 24px 48px -16px rgb(0 0 0 / 0.55);
+  --shadow-control: 0 8px 20px -12px rgb(0 0 0 / 0.55);
 
-  --khesht-ink: #e8eef4;
+  --khesht-ink: #e8f1f8;
   --khesht-offset: transparent;
 
   color-scheme: dark;
@@ -188,22 +205,34 @@ html.dark.style-vega,
 
 .style-vega {
   background-color: var(--background);
-  background-image: radial-gradient(
-    48% 36% at 88% 0%,
-    rgb(61 107 140 / 0.08),
-    transparent 70%
-  );
+  background-image:
+    radial-gradient(
+      55% 42% at 92% -4%,
+      rgb(58 124 165 / 0.18),
+      transparent 72%
+    ),
+    radial-gradient(
+      40% 34% at 8% 100%,
+      rgb(95 154 122 / 0.1),
+      transparent 70%
+    );
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
 
 html.dark.style-vega,
 .dark .style-vega {
-  background-image: radial-gradient(
-    48% 36% at 88% 0%,
-    rgb(126 179 212 / 0.1),
-    transparent 70%
-  );
+  background-image:
+    radial-gradient(
+      55% 42% at 92% -4%,
+      rgb(126 185 216 / 0.14),
+      transparent 72%
+    ),
+    radial-gradient(
+      40% 34% at 8% 100%,
+      rgb(143 196 160 / 0.08),
+      transparent 70%
+    );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -262,6 +291,14 @@ html.dark.style-vega,
   color: var(--vega-primary-foreground) !important;
   border-color: transparent !important;
   box-shadow: var(--shadow-control) !important;
+}
+
+.style-vega .cn-button-variant-default:hover,
+.style-vega [data-slot="button"][data-variant="default"]:hover {
+  background-color: color-mix(in srgb, var(--vega-primary) 90%, white) !important;
+  box-shadow:
+    0 2px 4px rgb(26 43 58 / 0.06),
+    0 10px 22px -12px rgb(58 124 165 / 0.4) !important;
 }
 
 .style-vega .cn-button-variant-default:active,
@@ -388,4 +425,13 @@ html.dark.style-vega,
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+}
+
+/* Soft active nav / sidebar item */
+.style-vega [data-slot="sidebar-menu-button"][data-active="true"],
+.style-vega [data-active="true"][data-slot="sidebar-menu-button"] {
+  background-color: var(--sidebar-accent) !important;
+  color: var(--sidebar-accent-foreground) !important;
+  box-shadow: var(--shadow-control) !important;
+  border-radius: var(--radius-control) !important;
 }
