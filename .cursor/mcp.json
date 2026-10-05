@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "FarsiUI": {
+      "command": "npx",
+      "args": [
+        "farsiui@latest",
+        "mcp"
+      ]
+    }
+  }
+}

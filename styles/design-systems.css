@@ -1,0 +1,13 @@
+@import "./density.css";
+@import "./tokens/glass-tokens.css";
+@import "./tokens/rose-tokens.css";
+@import "./tokens/nili-tokens.css";
+@import "./tokens/khesht-tokens.css";
+@import "./design-system-bridge.css";
+
+@custom-variant style-vega (&:where(.style-vega *));
+@custom-variant style-nova (&:where(.style-nova *));
+@custom-variant style-glass (&:where(.style-glass *));
+@custom-variant style-rose (&:where(.style-rose *));
+@custom-variant style-nili (&:where(.style-nili *));
+@custom-variant style-khesht (&:where(.style-khesht *));
