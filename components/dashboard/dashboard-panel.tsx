@@ -49,7 +49,7 @@ export function DashboardPanelTitle({
   ...props
 }: React.ComponentProps<"h3">) {
   return (
-    <h3 className={cn("text-sm font-medium", className)} {...props} />
+    <h3 className={cn("taraz-subtitle font-semibold", className)} {...props} />
   )
 }
 
@@ -57,12 +57,7 @@ export function DashboardPanelDescription({
   className,
   ...props
 }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-xs text-muted-foreground", className)}
-      {...props}
-    />
-  )
+  return <p className={cn("taraz-muted", className)} {...props} />
 }
 
 export function DashboardPanelBody({

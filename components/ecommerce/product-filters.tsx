@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
+import { Slider } from "@/components/ui/slider"
 import {
   Sheet,
   SheetContent,
@@ -23,6 +24,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+
 export type CatalogFiltersState = {
   category: ProductCategory | "all"
   brands: string[]
@@ -39,21 +41,23 @@ export const defaultFilters: CatalogFiltersState = {
   inStockOnly: false,
 }
 
+const PRICE_STEP = 50_000
+
 const PRICE_PRESETS: {
   id: string
   label: string
   range: [number, number]
 }[] = [
-  { id: "all", label: "همه قیمت‌ها", range: [PRICE_MIN, PRICE_MAX] },
-  { id: "under1m", label: "تا ۱ میلیون تومان", range: [PRICE_MIN, 1_000_000] },
+  { id: "all", label: "همه", range: [PRICE_MIN, PRICE_MAX] },
+  { id: "under1m", label: "تا ۱م", range: [PRICE_MIN, 1_000_000] },
   {
     id: "1m-3m",
-    label: "۱ تا ۳ میلیون تومان",
+    label: "۱–۳م",
     range: [1_000_000, 3_000_000],
   },
   {
     id: "3m-max",
-    label: "۳ تا ۵ میلیون تومان",
+    label: "۳–۵م",
     range: [3_000_000, PRICE_MAX],
   },
 ]
@@ -66,6 +70,12 @@ function activePricePresetId(range: [number, number]) {
   )
 }
 
+function clampPriceRange(raw: number[]): [number, number] {
+  const a = Math.min(PRICE_MAX, Math.max(PRICE_MIN, raw[0] ?? PRICE_MIN))
+  const b = Math.min(PRICE_MAX, Math.max(PRICE_MIN, raw[1] ?? PRICE_MAX))
+  return a <= b ? [a, b] : [b, a]
+}
+
 export function FiltersSidebar({
   value,
   onChange,
@@ -76,7 +86,7 @@ export function FiltersSidebar({
   resultCount: number
 }) {
   return (
-    <aside className="hidden w-56 shrink-0 lg:block xl:w-64">
+    <aside className="ecom-filters hidden w-56 shrink-0 lg:block xl:w-64">
       <FiltersPanel
         value={value}
         onChange={onChange}
@@ -144,6 +154,7 @@ function FiltersPanel({
     ProductCategory,
     string,
   ][]
+  const activePreset = activePricePresetId(value.priceRange)
 
   function toggleBrand(brand: string) {
     const exists = value.brands.includes(brand)
@@ -153,6 +164,10 @@ function FiltersPanel({
         ? value.brands.filter((b) => b !== brand)
         : [...value.brands, brand],
     })
+  }
+
+  function setPriceRange(next: [number, number]) {
+    onChange({ ...value, priceRange: next })
   }
 
   return (
@@ -196,32 +211,72 @@ function FiltersPanel({
 
       <Separator />
 
-      <section className="space-y-2">
-        <p className="text-xs font-medium text-muted-foreground">بازه قیمت</p>
-        <RadioGroup
-          value={activePricePresetId(value.priceRange)}
-          onValueChange={(next) => {
-            const preset = PRICE_PRESETS.find((item) => item.id === next)
-            if (!preset) return
-            onChange({ ...value, priceRange: [...preset.range] })
-          }}
-          className="gap-2"
-        >
-          {PRICE_PRESETS.map((preset) => (
-            <label
-              key={preset.id}
-              className="flex cursor-pointer items-center gap-2 text-sm leading-snug"
+      <section className="ecom-price-filter space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs font-medium text-muted-foreground">بازه قیمت</p>
+          {activePreset === "custom" ? (
+            <button
+              type="button"
+              className="text-[0.65rem] font-medium text-muted-foreground underline-offset-2 hover:underline"
+              onClick={() => setPriceRange([PRICE_MIN, PRICE_MAX])}
             >
-              <RadioGroupItem value={preset.id} />
-              {preset.label}
-            </label>
-          ))}
-        </RadioGroup>
-        {activePricePresetId(value.priceRange) === "custom" ? (
-          <p className="rounded-lg border bg-muted/30 px-2.5 py-2 text-xs tracking-normal text-muted-foreground">
-            {formatToman(value.priceRange[0])} تا {formatToman(value.priceRange[1])}
-          </p>
-        ) : null}
+              بازنشانی
+            </button>
+          ) : null}
+        </div>
+
+        <div className="ecom-price-display grid grid-cols-2 gap-2">
+          <div className="rounded-lg border bg-muted/25 px-2.5 py-2">
+            <p className="text-[0.65rem] text-muted-foreground">از</p>
+            <p className="ecom-num mt-0.5 text-xs font-semibold leading-snug">
+              {formatToman(value.priceRange[0])}
+            </p>
+          </div>
+          <div className="rounded-lg border bg-muted/25 px-2.5 py-2">
+            <p className="text-[0.65rem] text-muted-foreground">تا</p>
+            <p className="ecom-num mt-0.5 text-xs font-semibold leading-snug">
+              {formatToman(value.priceRange[1])}
+            </p>
+          </div>
+        </div>
+
+        <Slider
+          className="ecom-price-slider px-1"
+          min={PRICE_MIN}
+          max={PRICE_MAX}
+          step={PRICE_STEP}
+          value={[value.priceRange[0], value.priceRange[1]]}
+          onValueChange={(next) => {
+            if (!Array.isArray(next) || next.length < 2) return
+            setPriceRange(clampPriceRange(next))
+          }}
+          aria-label="بازه قیمت"
+        />
+
+        <div className="ecom-num flex items-center justify-between text-[0.65rem] text-muted-foreground">
+          <span>{formatToman(PRICE_MIN)}</span>
+          <span>{formatToman(PRICE_MAX)}</span>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {PRICE_PRESETS.map((preset) => {
+            const selected = activePreset === preset.id
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => setPriceRange([...preset.range])}
+                className={
+                  selected
+                    ? "rounded-full bg-foreground px-2.5 py-1 text-[0.68rem] font-semibold text-background"
+                    : "rounded-full border px-2.5 py-1 text-[0.68rem] font-medium text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                }
+              >
+                {preset.label}
+              </button>
+            )
+          })}
+        </div>
       </section>
 
       <Separator />

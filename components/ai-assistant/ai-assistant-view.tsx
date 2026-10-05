@@ -9,7 +9,6 @@ import {
   MessageSquareIcon,
   MoreHorizontalIcon,
   PanelLeftIcon,
-  PaperclipIcon,
   RefreshCwIcon,
   SendIcon,
   SparklesIcon,
@@ -224,20 +223,17 @@ export function AiAssistantView() {
 
   return (
     <TooltipProvider>
-      <div className="flex h-full min-h-0 overflow-hidden">
-        <aside className="hidden w-[17.5rem] shrink-0 flex-col border-e bg-muted/30 md:flex">
+      <div className="ai-shell">
+        <aside className="ai-sidebar">
           {sidebar}
         </aside>
 
-        <section
-          className="relative flex min-w-0 flex-1 flex-col bg-background"
-          aria-label="گفتگو با دستیار"
-        >
-          <header className="flex h-12 shrink-0 items-center gap-1 border-b px-2 sm:px-3">
+        <section className="ai-main" aria-label="گفتگو با دستیار">
+          <header className="ai-main-header">
             <Button
               variant="ghost"
               size="icon-sm"
-              className="shrink-0 md:hidden"
+              className="ai-ghost shrink-0 md:hidden"
               aria-label="منوی گفتگوها"
               onClick={() => setSidebarOpen(true)}
             >
@@ -246,48 +242,52 @@ export function AiAssistantView() {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="hidden shrink-0 md:inline-flex"
+              className="ai-ghost hidden shrink-0 md:inline-flex"
               aria-label="گفتگوی جدید"
               onClick={startNewChat}
             >
               <SquarePenIcon className="size-4" />
             </Button>
 
-            <div className="flex min-w-0 flex-1 justify-center px-1">
-              <Select
-                value={modelId}
-                onValueChange={(v) => {
-                  if (!v) return
-                  setModelId(v)
-                  setItems((prev) =>
-                    prev.map((c) =>
-                      c.id === active.id ? { ...c, modelId: v } : c
-                    )
-                  )
-                }}
-                items={Object.fromEntries(models.map((m) => [m.id, m.name]))}
-              >
-                <SelectTrigger
-                  size="sm"
-                  className="h-8 max-w-[14rem] border-0 bg-transparent shadow-none"
-                  aria-label="انتخاب مدل"
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {models.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="ai-header-picker">
+              <DesignSystemPicker />
             </div>
 
+            <Select
+              value={modelId}
+              onValueChange={(v) => {
+                if (!v) return
+                setModelId(v)
+                setItems((prev) =>
+                  prev.map((c) =>
+                    c.id === active.id ? { ...c, modelId: v } : c
+                  )
+                )
+              }}
+              items={Object.fromEntries(models.map((m) => [m.id, m.name]))}
+            >
+              <SelectTrigger
+                size="sm"
+                className="ai-model-trigger shrink-0"
+                aria-label="انتخاب مدل"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {models.map((m) => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <ModeToggle />
+
             <Button
               variant="ghost"
               size="icon-sm"
-              className="shrink-0 md:hidden"
+              className="ai-ghost shrink-0 md:hidden"
               aria-label="گفتگوی جدید"
               onClick={startNewChat}
             >
@@ -296,7 +296,7 @@ export function AiAssistantView() {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="shrink-0"
+              className="ai-ghost shrink-0"
               aria-label="گزینه‌های بیشتر"
               onClick={() => setSettingsOpen(true)}
             >
@@ -305,7 +305,7 @@ export function AiAssistantView() {
           </header>
 
           <ScrollArea className="min-h-0 flex-1">
-            <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-3 py-4 sm:px-4 sm:py-6">
+            <div className="ai-thread">
               {isEmpty ? (
                 <EmptyState onPick={applyPrompt} />
               ) : (
@@ -338,7 +338,10 @@ export function AiAssistantView() {
         </section>
 
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <SheetContent side="right" className="w-[min(18rem,100%)] p-0 md:hidden">
+          <SheetContent
+            side="right"
+            className="w-[min(18rem,100%)] border-[color:var(--ai-line)] bg-[color:var(--ai-glass)] p-0 text-[color:var(--ai-ink)] backdrop-blur-xl md:hidden"
+          >
             {sidebar}
           </SheetContent>
         </Sheet>
@@ -409,8 +412,8 @@ function ChatSidebar({
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between gap-2 px-3 py-3">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-background">
-            <SparklesIcon className="size-4" aria-hidden />
+          <span className="ai-brand-mark">
+            <SparklesIcon aria-hidden />
           </span>
           <span className="truncate text-sm font-semibold">{assistantName}</span>
         </div>
@@ -418,6 +421,7 @@ function ChatSidebar({
           <Button
             variant="ghost"
             size="icon-sm"
+            className="ai-ghost"
             aria-label="بستن منو"
             onClick={onClose}
           >
@@ -429,7 +433,7 @@ function ChatSidebar({
       <div className="space-y-2 px-2 pb-2">
         <Button
           variant="outline"
-          className="h-9 w-full justify-start gap-2 rounded-lg border-border/80 bg-background/60 shadow-none"
+          className="ai-new-btn w-full justify-start gap-2"
           onClick={onNewChat}
         >
           <SquarePenIcon className="size-4" />
@@ -440,6 +444,7 @@ function ChatSidebar({
           aria-label="جستجوی گفتگو"
           value={query}
           onChange={(e) => onQueryChange(e.target.value ?? "")}
+          className="border-(--ai-line) bg-white/5 text-(--ai-ink) placeholder:text-(--ai-mute)"
         />
       </div>
 
@@ -448,10 +453,10 @@ function ChatSidebar({
           {grouped.map(({ group, label, items }) =>
             items.length === 0 ? null : (
               <div key={group}>
-                <p className="mb-1 px-2.5 text-[0.65rem] font-medium text-muted-foreground">
+                <p className="mb-1.5 px-2.5 text-[0.65rem] font-medium tracking-wide text-[color:var(--ai-mute)]">
                   {label}
                 </p>
-                <ul className="space-y-0.5">
+                <ul className="space-y-1">
                   {items.map((item) => {
                     const selected = item.id === activeId
                     return (
@@ -459,15 +464,11 @@ function ChatSidebar({
                         <button
                           type="button"
                           onClick={() => onSelect(item.id)}
-                          className={cn(
-                            "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-start text-sm transition-colors",
-                            selected
-                              ? "bg-background shadow-xs ring-1 ring-border/60"
-                              : "hover:bg-background/70"
-                          )}
+                          data-active={selected ? "true" : "false"}
+                          className="ai-conv-btn"
                         >
                           <MessageSquareIcon
-                            className="size-4 shrink-0 opacity-50"
+                            className="size-4 shrink-0 opacity-55"
                             aria-hidden
                           />
                           <span className="min-w-0 flex-1 truncate">
@@ -482,23 +483,23 @@ function ChatSidebar({
             )
           )}
           {grouped.every((g) => g.items.length === 0) ? (
-            <p className="px-2 py-8 text-center text-sm text-muted-foreground">
+            <p className="px-2 py-8 text-center text-sm text-[color:var(--ai-mute)]">
               گفتگویی پیدا نشد.
             </p>
           ) : null}
         </nav>
       </ScrollArea>
 
-      <div className="mt-auto space-y-2 border-t bg-muted/20 p-2">
-        <DesignSystemPicker className="w-full" />
-        <div className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5">
+      <div className="ai-sidebar-foot">
+        <div className="flex items-center justify-between gap-2 rounded-xl px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-2">
             <Avatar size="sm">
-              <AvatarFallback className="text-[0.65rem]">ن‌ک</AvatarFallback>
+              <AvatarFallback className="bg-white/10 text-[0.65rem] text-[color:var(--ai-ink)]">
+                ن‌ک
+              </AvatarFallback>
             </Avatar>
             <span className="truncate text-xs font-medium">نیما کاظمی</span>
           </div>
-          <ModeToggle />
         </div>
       </div>
     </div>
@@ -507,25 +508,24 @@ function ChatSidebar({
 
 function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-8 py-10 sm:min-h-[min(60vh,28rem)]">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          چه کمکی از دستم برمی‌آید؟
-        </h1>
-        <p className="text-sm text-muted-foreground">{assistantHint}</p>
+    <div className="ai-empty">
+      <div className="flex flex-col items-center">
+        <div className="ai-empty-orb" aria-hidden>
+          <SparklesIcon className="size-7 text-white" />
+        </div>
+        <h1>چه کمکی از دستم برمی‌آید؟</h1>
+        <p>{assistantHint}</p>
       </div>
-      <div className="grid w-full max-w-2xl gap-2 sm:grid-cols-2">
+      <div className="ai-prompt-grid">
         {suggestedPrompts.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => onPick(item.prompt)}
-            className="rounded-2xl border bg-muted/20 p-4 text-start transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="ai-prompt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/40"
           >
-            <span className="block text-sm font-medium">{item.title}</span>
-            <span className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-              {item.prompt}
-            </span>
+            <strong>{item.title}</strong>
+            <span className="line-clamp-2">{item.prompt}</span>
           </button>
         ))}
       </div>
@@ -544,39 +544,47 @@ function MessageRow({
 
   if (isUser) {
     return (
-      <div className="flex flex-col items-end gap-1">
-        <div className="max-w-[min(100%,85%)] rounded-[1.25rem] bg-muted/80 px-4 py-2.5 text-sm leading-relaxed">
+      <div className="ai-msg" data-role="user">
+        <div className="ai-user-bubble">
           {message.blocks.map((block, i) => (
             <BlockView key={i} block={block} />
           ))}
         </div>
         <time
           dateTime={message.createdAt}
-          className={cn("px-1 text-[0.65rem] text-muted-foreground", numericClass)}
+          className={cn(
+            "px-1 text-[0.65rem] text-[color:var(--ai-mute)]",
+            numericClass
+          )}
         >
-          {message.createdAt}
+          شما · {message.createdAt}
         </time>
       </div>
     )
   }
 
   return (
-    <article className="space-y-2 text-sm leading-relaxed">
-      <div className="flex items-center gap-2">
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-full border bg-background">
-          <SparklesIcon className="size-3.5" aria-hidden />
-        </span>
-        <span className="text-sm font-medium">{assistantName}</span>
-      </div>
-      <div className="space-y-3 pe-1 ps-9">
-        {message.blocks.map((block, i) => (
-          <BlockView key={i} block={block} />
-        ))}
-        <MessageActions onRetry={onRetry} message={message} />
+    <article className="ai-msg" data-role="assistant">
+      <div className="ai-assistant-card space-y-2 text-sm leading-relaxed">
+        <div className="flex items-center gap-2">
+          <span className="ai-assistant-avatar">
+            <SparklesIcon className="size-3.5" aria-hidden />
+          </span>
+          <span className="text-sm font-medium">{assistantName}</span>
+        </div>
+        <div className="space-y-2.5">
+          {message.blocks.map((block, i) => (
+            <BlockView key={i} block={block} />
+          ))}
+          <MessageActions onRetry={onRetry} message={message} />
+        </div>
       </div>
       <time
         dateTime={message.createdAt}
-        className={cn("block ps-9 text-[0.65rem] text-muted-foreground", numericClass)}
+        className={cn(
+          "px-1 text-[0.65rem] text-[color:var(--ai-mute)]",
+          numericClass
+        )}
       >
         {message.createdAt}
       </time>
@@ -586,11 +594,11 @@ function MessageRow({
 
 function ThinkingRow() {
   return (
-    <div className="flex items-center gap-2 ps-9 text-sm text-muted-foreground">
+    <div className="ai-thinking flex items-center gap-2 ps-2 text-sm text-[color:var(--ai-mute)]">
       <span className="inline-flex gap-1" aria-live="polite">
-        <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/70 [animation-delay:0ms]" />
-        <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/70 [animation-delay:120ms]" />
-        <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/70 [animation-delay:240ms]" />
+        <span className="size-1.5 animate-bounce rounded-full [animation-delay:0ms]" />
+        <span className="size-1.5 animate-bounce rounded-full [animation-delay:120ms]" />
+        <span className="size-1.5 animate-bounce rounded-full [animation-delay:240ms]" />
       </span>
       <span>در حال نوشتن</span>
     </div>
@@ -599,11 +607,15 @@ function ThinkingRow() {
 
 function BlockView({ block }: { block: ContentBlock }) {
   if (block.type === "text") {
-    return <p className="whitespace-pre-wrap text-foreground">{block.text}</p>
+    return (
+      <p className="whitespace-pre-wrap text-[color:var(--ai-ink)]">
+        {block.text}
+      </p>
+    )
   }
   if (block.type === "list") {
     return (
-      <ul className="list-disc space-y-1.5 pe-1 ps-5 text-foreground">
+      <ul className="list-disc space-y-1.5 pe-1 ps-5 text-[color:var(--ai-ink)]">
         {block.items.map((item) => (
           <li key={item}>{item}</li>
         ))}
@@ -620,10 +632,7 @@ function BlockView({ block }: { block: ContentBlock }) {
           const source = getSource(id)
           if (!source) return null
           return (
-            <span
-              key={id}
-              className="inline-flex max-w-full items-center gap-1.5 rounded-lg border bg-muted/40 px-2 py-1 text-xs"
-            >
+            <span key={id} className="ai-source-chip max-w-full">
               {source.kind === "web" ? (
                 <GlobeIcon className="size-3.5 shrink-0" aria-hidden />
               ) : (
@@ -653,17 +662,16 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   }
 
   return (
-    <div
-      dir="ltr"
-      className="overflow-hidden rounded-lg border border-[#3c3c3c] bg-[#1e1e1e] text-start shadow-md"
-    >
-      <div className="flex items-center justify-between gap-2 bg-[#2d2d2d] px-3 py-2">
-        <span className="text-xs tracking-normal text-[#cccccc]">{language}</span>
+    <div dir="ltr" className="ai-code text-start">
+      <div className="flex items-center justify-between gap-2 border-b-0 bg-[#0a1528] px-3 py-2">
+        <span className="text-xs tracking-normal text-cyan-100/70">
+          {language}
+        </span>
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
-          className="size-8 text-[#cccccc] hover:bg-white/10 hover:text-white"
+          className="size-8 text-cyan-100/70 hover:bg-white/10 hover:text-white"
           onClick={copy}
           aria-label={copied ? "کپی شد" : "کپی کد"}
         >
@@ -715,6 +723,7 @@ function MessageActions({
         type="button"
         variant="ghost"
         size="icon-sm"
+        className="ai-ghost"
         onClick={copyAll}
         aria-label={copied ? "کپی شد" : "کپی پاسخ"}
       >
@@ -729,6 +738,7 @@ function MessageActions({
           type="button"
           variant="ghost"
           size="icon-sm"
+          className="ai-ghost"
           onClick={onRetry}
           aria-label="تلاش دوباره"
         >
@@ -751,24 +761,12 @@ function Composer({
   disabled?: boolean
 }) {
   return (
-    <div className="shrink-0 border-t bg-background/95 px-3 pb-4 pt-3 backdrop-blur sm:px-4">
+    <div className="ai-composer-wrap">
       <div className="mx-auto w-full max-w-3xl">
-        <div className="flex min-h-11 items-center gap-2 rounded-[1.625rem] border border-input bg-background px-2 py-1.5 shadow-sm focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-9 shrink-0 rounded-full"
-            aria-label="پیوست فایل"
-            onClick={() =>
-              toast.message("پیوست در این نمونه فقط نمایشی است")
-            }
-          >
-            <PaperclipIcon className="size-5" />
-          </Button>
+        <div className="ai-composer">
           <Textarea
             rows={1}
-            placeholder="پیام برای دستیار…"
+            placeholder="پیام به FarsiUI…"
             aria-label="متن پیام"
             persianDigits={false}
             value={value}
@@ -780,12 +778,12 @@ function Composer({
                 onSend()
               }
             }}
-            className="!min-h-9 max-h-36 flex-1 resize-none border-0 bg-transparent px-1 py-2 text-sm leading-6 shadow-none focus-visible:border-0 focus-visible:ring-0 md:py-1.5"
+            className="min-h-9! max-h-28 flex-1 resize-none border-0 bg-transparent px-1 py-2 text-sm leading-6 shadow-none focus-visible:border-0 focus-visible:ring-0"
           />
           <Button
             type="button"
             size="icon-sm"
-            className="size-9 shrink-0 rounded-full"
+            className="ai-send shrink-0 rounded-full"
             aria-label="ارسال پیام"
             disabled={disabled || !value.trim()}
             onClick={onSend}
@@ -793,13 +791,8 @@ function Composer({
             <SendIcon className="size-4 rtl:-scale-x-100" />
           </Button>
         </div>
-        <p
-          className={cn(
-            "mt-2 text-center text-[0.65rem] text-muted-foreground",
-            numericClass
-          )}
-        >
-          {assistantName} ممکن است اشتباه کند. اطلاعات مهم را بررسی کنید.
+        <p className={cn("ai-footnote", numericClass)}>
+          FarsiUI ممکن است اشتباه کند.
         </p>
       </div>
     </div>

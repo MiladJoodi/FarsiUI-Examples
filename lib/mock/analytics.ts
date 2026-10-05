@@ -196,6 +196,99 @@ export const analyticsInsights = [
     body: "کمپین بازدید مجدد با ROAS ۷٫۲ بهترین بازده هزینه را در بین کانال‌های پولی ثبت کرده است.",
     tone: "neutral" as const,
   },
+  {
+    title: "موبایل سهم غالب نشست‌هاست",
+    body: "۵۸٪ نشست‌ها از موبایل است؛ سرعت صفحهٔ محصول روی موبایل باید در اولویت بهینه‌سازی بماند.",
+    tone: "neutral" as const,
+  },
+  {
+    title: "تهران و اصفهان پیشتاز خرید",
+    body: "نزدیک به نیمی از درآمد موفق از دو استان تهران و اصفهان آمده است.",
+    tone: "positive" as const,
+  },
 ]
 
-export const reportUpdatedAt = "۱۴۰۵/۰۷/۰۸ — ساعت ۱۸:۴۰"
+export const secondaryKpis: AnalyticsKpi[] = [
+  {
+    id: "visitors",
+    label: "بازدید یکتا",
+    value: 48_200,
+    valueKind: "count",
+    delta: 9.2,
+    up: true,
+    context: "کاربر یکتای بازه",
+  },
+  {
+    id: "refund",
+    label: "نرخ مرجوعی",
+    value: 4.6,
+    valueKind: "percent",
+    delta: 0.3,
+    up: false,
+    context: "نسبت به سفارش موفق",
+  },
+  {
+    id: "cac",
+    label: "هزینه جذب",
+    value: 186_000,
+    valueKind: "toman",
+    delta: 5.1,
+    up: false,
+    context: "به ازای هر سفارش",
+  },
+  {
+    id: "repeat",
+    label: "خرید مجدد",
+    value: 27.4,
+    valueKind: "percent",
+    delta: 3.2,
+    up: true,
+    context: "در ۹۰ روز اخیر",
+  },
+]
+
+export const periodGoals = [
+  {
+    id: "g-rev",
+    label: "هدف درآمد ماه",
+    current: 486.2,
+    target: 620,
+    unit: "م تومان",
+  },
+  {
+    id: "g-ord",
+    label: "هدف سفارش",
+    current: 3482,
+    target: 4200,
+    unit: "سفارش",
+  },
+  {
+    id: "g-conv",
+    label: "هدف نرخ تبدیل",
+    current: 3.8,
+    target: 4.5,
+    unit: "٪",
+  },
+]
+
+export const cityPerformance = [
+  { city: "تهران", orders: 1240, revenue: 178.4, share: 36.7 },
+  { city: "اصفهان", orders: 486, revenue: 64.2, share: 13.2 },
+  { city: "مشهد", orders: 412, revenue: 52.8, share: 10.9 },
+  { city: "شیراز", orders: 298, revenue: 41.6, share: 8.6 },
+  { city: "تبریز", orders: 241, revenue: 33.1, share: 6.8 },
+  { city: "سایر", orders: 805, revenue: 116.1, share: 23.8 },
+]
+
+export const hourlyTraffic = [
+  { hour: "۰۸", value: 42 },
+  { hour: "۱۰", value: 68 },
+  { hour: "۱۲", value: 88 },
+  { hour: "۱۴", value: 74 },
+  { hour: "۱۶", value: 91 },
+  { hour: "۱۸", value: 100 },
+  { hour: "۲۰", value: 96 },
+  { hour: "۲۲", value: 71 },
+]
+
+export const reportUpdatedAt = "۱۴۰۵/۰۷/۰۸، ۱۸:۴۰"

@@ -34,7 +34,7 @@ export const categoryLabels: Record<ProductCategory, string> = {
 }
 
 export const storeName = "نورا"
-export const storeTagline = "فروشگاه آنلاین لوازم روزمره"
+export const storeTagline = "اتلیه خرید · منتخب روزمره"
 
 export const brands = [
   "آریا تک",
@@ -66,7 +66,7 @@ export const products: Product[] = [
       { label: "اتصال", value: "بلوتوث ۵٫۳" },
       { label: "ضدآب", value: "IPX4" },
     ],
-    accent: "oklch(0.72 0.08 250)",
+    accent: "oklch(0.62 0.14 250)",
   },
   {
     id: "p2",
@@ -87,7 +87,7 @@ export const products: Product[] = [
       { label: "باتری", value: "تا ۷ روز" },
       { label: "ضدآب", value: "۵ATM" },
     ],
-    accent: "oklch(0.7 0.09 220)",
+    accent: "oklch(0.58 0.12 220)",
   },
   {
     id: "p3",
@@ -107,7 +107,7 @@ export const products: Product[] = [
       { label: "خروجی تصویر", value: "HDMI ۴K@۶۰Hz" },
       { label: "شارژ", value: "تا ۱۰۰ وات Pass-through" },
     ],
-    accent: "oklch(0.68 0.06 180)",
+    accent: "oklch(0.68 0.11 180)",
   },
   {
     id: "p4",
@@ -128,7 +128,7 @@ export const products: Product[] = [
       { label: "جنس", value: "۷۰٪ لینن، ۳۰٪ پنبه" },
       { label: "سایزها", value: "S تا XL" },
     ],
-    accent: "oklch(0.82 0.06 95)",
+    accent: "oklch(0.78 0.1 145)",
   },
   {
     id: "p5",
@@ -148,7 +148,7 @@ export const products: Product[] = [
       { label: "جنس رویه", value: "پارچه مشبک" },
       { label: "کفی", value: "EVA نرم" },
     ],
-    accent: "oklch(0.88 0.02 100)",
+    accent: "oklch(0.82 0.04 95)",
   },
   {
     id: "p6",
@@ -168,7 +168,7 @@ export const products: Product[] = [
       { label: "جنس", value: "پشم مرینوس مخلوط" },
       { label: "ابعاد", value: "۱۸۰×۴۵ سانتی‌متر" },
     ],
-    accent: "oklch(0.75 0.04 60)",
+    accent: "oklch(0.7 0.08 55)",
   },
   {
     id: "p7",
@@ -189,7 +189,7 @@ export const products: Product[] = [
       { label: "ظرفیت", value: "۳۵۰ میلی‌لیتر" },
       { label: "مقاومت", value: "ماشین ظرفشویی و مایکروویو" },
     ],
-    accent: "oklch(0.78 0.03 40)",
+    accent: "oklch(0.74 0.06 40)",
   },
   {
     id: "p8",
@@ -209,7 +209,7 @@ export const products: Product[] = [
       { label: "توان", value: "۹ وات" },
       { label: "تغذیه", value: "USB-C" },
     ],
-    accent: "oklch(0.85 0.08 90)",
+    accent: "oklch(0.8 0.12 90)",
   },
   {
     id: "p9",
@@ -229,7 +229,7 @@ export const products: Product[] = [
       { label: "ابعاد", value: "۳۰×۲۰×۱۵ سانتی‌متر" },
       { label: "تعداد", value: "۳ عدد" },
     ],
-    accent: "oklch(0.8 0.02 240)",
+    accent: "oklch(0.72 0.06 240)",
   },
   {
     id: "p10",
@@ -249,7 +249,7 @@ export const products: Product[] = [
       { label: "قطر", value: "۲۸ سانتی‌متر" },
       { label: "سازگاری", value: "گاز، فر، القایی" },
     ],
-    accent: "oklch(0.55 0.04 50)",
+    accent: "oklch(0.48 0.06 45)",
   },
   {
     id: "p11",
@@ -268,7 +268,7 @@ export const products: Product[] = [
       { label: "حجم", value: "۳۰ میلی‌لیتر" },
       { label: "نوع پوست", value: "نرمال تا خشک" },
     ],
-    accent: "oklch(0.86 0.1 85)",
+    accent: "oklch(0.84 0.12 85)",
   },
   {
     id: "p12",
@@ -288,7 +288,7 @@ export const products: Product[] = [
       { label: "حجم", value: "۴۰۰ میلی‌لیتر" },
       { label: "فرمول", value: "بدون سولفات" },
     ],
-    accent: "oklch(0.78 0.08 145)",
+    accent: "oklch(0.7 0.12 150)",
   },
   {
     id: "p13",
@@ -307,7 +307,7 @@ export const products: Product[] = [
       { label: "حجم", value: "۲۵۰ میلی‌لیتر" },
       { label: "مناسب", value: "همه انواع پوست" },
     ],
-    accent: "oklch(0.88 0.05 20)",
+    accent: "oklch(0.82 0.08 25)",
   },
   {
     id: "p14",
@@ -327,7 +327,7 @@ export const products: Product[] = [
       { label: "ظرفیت", value: "۲۰٬۰۰۰ میلی‌آمپرساعت" },
       { label: "خروجی", value: "USB-C PD تا ۳۰ وات" },
     ],
-    accent: "oklch(0.65 0.05 280)",
+    accent: "oklch(0.55 0.1 280)",
   },
 ]
 

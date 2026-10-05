@@ -18,7 +18,6 @@ import { ModeToggle } from "@/components/layout/mode-toggle"
 import { SearchField } from "@/components/shared/search-field"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 
 const categories = Object.entries(categoryLabels) as [
   ProductCategory,
@@ -58,21 +57,22 @@ export function StoreHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+    <header className="ecom-header">
       <ExampleHeaderChrome
         className="static z-auto border-b-0 bg-transparent backdrop-blur-none"
         innerClassName="max-w-7xl"
         start={
           <Link
             href="/examples/ecommerce"
-            className="min-w-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="ecom-brand rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <p className="truncate text-sm font-semibold tracking-tight">
-              {storeName}
-            </p>
-            <p className="hidden truncate text-xs text-muted-foreground sm:block">
-              {storeTagline}
-            </p>
+            <span className="ecom-brand-mark" aria-hidden>
+              ن
+            </span>
+            <span className="ecom-brand-text">
+              <strong>{storeName}</strong>
+              <span>{storeTagline}</span>
+            </span>
           </Link>
         }
         end={
@@ -99,7 +99,7 @@ export function StoreHeader() {
             >
               <ShoppingBagIcon className="size-4" />
               {itemCount > 0 ? (
-                <Badge className="absolute -top-1 -start-1 h-4 min-w-4 justify-center px-1 text-[0.6rem] tracking-normal">
+                <Badge className="ecom-cart-badge ecom-num">
                   {formatCount(itemCount)}
                 </Badge>
               ) : null}
@@ -109,30 +109,23 @@ export function StoreHeader() {
         }
       />
 
-      <div className="mx-auto max-w-7xl space-y-2 px-4 pb-3 pt-0 sm:px-6">
-        <form onSubmit={handleSearchSubmit} className="w-full">
+      <div className="ecom-search-wrap">
+        <form onSubmit={handleSearchSubmit}>
           <SearchField
             wrapperClassName="w-full"
-            placeholder="جستجوی محصول…"
+            placeholder="جستجو در اتلیه…"
             aria-label="جستجوی محصول"
             value={localQuery}
             onChange={(e) => setDraftQuery(e.target.value ?? "")}
           />
         </form>
 
-        <nav
-          aria-label="دسته‌بندی‌ها"
-          className="-mx-1 flex gap-1 overflow-x-auto pb-0.5"
-        >
+        <nav aria-label="دسته‌بندی‌ها" className="ecom-cats">
           <button
             type="button"
             onClick={() => pushCatalog({ category: null })}
-            className={cn(
-              "shrink-0 rounded-full px-3 py-1 text-xs transition-colors",
-              isCatalog && !activeCategory
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:text-foreground"
-            )}
+            data-active={isCatalog && !activeCategory ? "true" : "false"}
+            className="ecom-cat"
           >
             همه
           </button>
@@ -141,12 +134,10 @@ export function StoreHeader() {
               key={id}
               type="button"
               onClick={() => pushCatalog({ category: id })}
-              className={cn(
-                "shrink-0 rounded-full px-3 py-1 text-xs transition-colors",
-                isCatalog && activeCategory === id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-              )}
+              data-active={
+                isCatalog && activeCategory === id ? "true" : "false"
+              }
+              className="ecom-cat"
             >
               {label}
             </button>

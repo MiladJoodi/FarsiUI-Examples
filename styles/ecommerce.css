@@ -1,0 +1,701 @@
+/* Ecommerce — اتلیه نورا (editorial lookbook market) */
+
+.ecom-page {
+  --ecom-ink: #12151c;
+  --ecom-mute: color-mix(in oklch, #12151c 58%, transparent);
+  --ecom-line: color-mix(in oklch, #12151c 12%, transparent);
+  --ecom-line-strong: color-mix(in oklch, #12151c 22%, transparent);
+  --ecom-panel: #ffffff;
+  --ecom-soft: #f3f5f7;
+  --ecom-accent: #0c5c63;
+  --ecom-accent-hot: #d7263d;
+  --ecom-mark: #f2c94c;
+  --ecom-radius: 0.35rem;
+  --ecom-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  min-height: 100dvh;
+  color: var(--ecom-ink);
+  background:
+    radial-gradient(ellipse 70% 40% at 100% 0%, color-mix(in oklch, var(--ecom-accent) 10%, transparent), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0% 20%, color-mix(in oklch, var(--ecom-mark) 14%, transparent), transparent 50%),
+    linear-gradient(180deg, #e9edf1 0%, #f4f6f8 40%, #eef1f4 100%) !important;
+  overflow-x: clip;
+}
+
+.dark .ecom-page {
+  --ecom-ink: #eef2f6;
+  --ecom-mute: color-mix(in oklch, #eef2f6 55%, transparent);
+  --ecom-line: color-mix(in oklch, #eef2f6 14%, transparent);
+  --ecom-line-strong: color-mix(in oklch, #eef2f6 24%, transparent);
+  --ecom-panel: #141820;
+  --ecom-soft: #1a2029;
+  --ecom-accent: #3db8c2;
+  --ecom-accent-hot: #ff5a6e;
+  --ecom-mark: #f2c94c;
+  background:
+    radial-gradient(ellipse 70% 40% at 100% 0%, color-mix(in oklch, var(--ecom-accent) 14%, transparent), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0% 18%, color-mix(in oklch, var(--ecom-mark) 10%, transparent), transparent 50%),
+    linear-gradient(180deg, #0b0e13 0%, #12161e 45%, #0e1218 100%) !important;
+}
+
+.ecom-page::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    -18deg,
+    transparent,
+    transparent 11px,
+    color-mix(in oklch, var(--ecom-ink) 4%, transparent) 11px,
+    color-mix(in oklch, var(--ecom-ink) 4%, transparent) 12px
+  );
+}
+
+.ecom-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+.ecom-num {
+  letter-spacing: 0 !important;
+  font-variant-numeric: normal;
+  font-feature-settings: normal;
+}
+
+/* Header */
+.ecom-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--ecom-line) !important;
+  background: color-mix(in oklch, var(--ecom-panel) 88%, transparent) !important;
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+}
+
+.ecom-brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.ecom-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  flex-shrink: 0;
+  border-radius: var(--ecom-radius);
+  background: var(--ecom-ink);
+  color: var(--ecom-mark);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  box-shadow: 0 8px 20px color-mix(in oklch, var(--ecom-ink) 18%, transparent);
+}
+
+.ecom-brand-text {
+  min-width: 0;
+}
+
+.ecom-brand-text strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.ecom-brand-text span {
+  display: none;
+  font-size: 0.68rem;
+  color: var(--ecom-mute);
+}
+
+@media (min-width: 640px) {
+  .ecom-brand-text span {
+    display: block;
+  }
+}
+
+.ecom-search-wrap {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding: 0 1rem 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .ecom-search-wrap {
+    padding-inline: 1.5rem;
+  }
+}
+
+.ecom-search-wrap form {
+  position: relative;
+}
+
+.ecom-search-wrap [data-slot="input"],
+.ecom-search-wrap input {
+  height: 2.65rem !important;
+  border: 1px solid var(--ecom-line-strong) !important;
+  border-radius: 999px !important;
+  background: var(--ecom-panel) !important;
+  box-shadow: 0 10px 28px color-mix(in oklch, var(--ecom-ink) 6%, transparent) !important;
+}
+
+.ecom-cats {
+  display: flex;
+  gap: 0.15rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+  margin-top: 0.7rem;
+  scrollbar-width: none;
+}
+
+.ecom-cats::-webkit-scrollbar {
+  display: none;
+}
+
+.ecom-cat {
+  position: relative;
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  padding: 0.45rem 0.85rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--ecom-mute);
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.ecom-cat:hover {
+  color: var(--ecom-ink);
+}
+
+.ecom-cat[data-active="true"] {
+  color: var(--ecom-ink);
+}
+
+.ecom-cat[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.55rem;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--ecom-accent);
+  box-shadow: 0 0 12px color-mix(in oklch, var(--ecom-accent) 45%, transparent);
+}
+
+.ecom-cart-badge {
+  position: absolute !important;
+  top: -0.2rem !important;
+  inset-inline-start: -0.2rem !important;
+  min-width: 1rem !important;
+  height: 1rem !important;
+  border-radius: 999px !important;
+  background: var(--ecom-accent-hot) !important;
+  color: white !important;
+  font-size: 0.58rem !important;
+  padding-inline: 0.25rem !important;
+}
+
+/* Shell body */
+.ecom-body {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  flex: 1;
+  padding: 1.25rem 1rem 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .ecom-body {
+    padding: 1.6rem 1.5rem 3rem;
+  }
+}
+
+/* Hero strip */
+.ecom-hero {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--ecom-line);
+  border-radius: 1.15rem;
+  background:
+    linear-gradient(
+      125deg,
+      color-mix(in oklch, var(--ecom-accent) 88%, #000) 0%,
+      color-mix(in oklch, var(--ecom-accent) 55%, #0a2e33) 48%,
+      color-mix(in oklch, var(--ecom-ink) 90%, #000) 100%
+    );
+  color: #f5fafb;
+  padding: 1.35rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 24px 48px color-mix(in oklch, var(--ecom-accent) 18%, transparent);
+}
+
+@media (min-width: 900px) {
+  .ecom-hero {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    padding: 1.75rem 1.75rem;
+    min-height: 13.5rem;
+  }
+}
+
+.ecom-hero::before {
+  content: "";
+  position: absolute;
+  inset-inline-end: -8%;
+  top: -30%;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--ecom-mark) 35%, transparent);
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+.ecom-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid color-mix(in oklch, white 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklch, white 10%, transparent);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.ecom-hero h2 {
+  position: relative;
+  margin-top: 0.85rem;
+  max-width: 18ch;
+  font-size: clamp(1.45rem, 3.2vw, 2.15rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+.ecom-hero p {
+  position: relative;
+  margin-top: 0.55rem;
+  max-width: 34rem;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: color-mix(in oklch, white 78%, transparent);
+}
+
+.ecom-hero-actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.1rem;
+}
+
+.ecom-hero-cta {
+  height: 2.45rem !important;
+  border-radius: 999px !important;
+  background: var(--ecom-mark) !important;
+  color: #1a1505 !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.ecom-hero-ghost {
+  height: 2.45rem !important;
+  border-radius: 999px !important;
+  border: 1px solid color-mix(in oklch, white 35%, transparent) !important;
+  background: transparent !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+.ecom-hero-stage {
+  position: relative;
+  display: none;
+  min-height: 10rem;
+}
+
+@media (min-width: 900px) {
+  .ecom-hero-stage {
+    display: block;
+  }
+}
+
+.ecom-hero-orb {
+  position: absolute;
+  inset: 8% 12%;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 30% 30%, color-mix(in oklch, white 35%, transparent), transparent 45%),
+    linear-gradient(160deg, color-mix(in oklch, var(--ecom-mark) 70%, white), color-mix(in oklch, var(--ecom-accent) 40%, #062428));
+  box-shadow:
+    0 28px 50px color-mix(in oklch, black 35%, transparent),
+    inset 0 1px 0 color-mix(in oklch, white 40%, transparent);
+  transform: rotate(-6deg);
+}
+
+.ecom-hero-orb::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: 999px;
+  border: 1px dashed color-mix(in oklch, white 45%, transparent);
+}
+
+/* Toolbar */
+.ecom-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .ecom-toolbar {
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
+  }
+}
+
+.ecom-toolbar h1 {
+  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.ecom-toolbar p {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--ecom-mute);
+}
+
+/* Filters rail */
+.ecom-filters {
+  border: 1px solid var(--ecom-line);
+  border-radius: 1rem;
+  background: var(--ecom-panel);
+  padding: 1rem;
+  box-shadow: 0 12px 32px color-mix(in oklch, var(--ecom-ink) 5%, transparent);
+}
+
+.ecom-filters h2 {
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+.ecom-filters .text-muted-foreground {
+  color: var(--ecom-mute) !important;
+}
+
+/* Product card — lookbook */
+.ecom-card {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ecom-line);
+  border-radius: 1.05rem;
+  background: var(--ecom-panel);
+  box-shadow: 0 10px 28px color-mix(in oklch, var(--ecom-ink) 4%, transparent);
+  transition:
+    transform 220ms var(--ecom-ease),
+    box-shadow 220ms var(--ecom-ease),
+    border-color 220ms ease;
+}
+
+.ecom-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--ecom-line-strong);
+  box-shadow: 0 22px 44px color-mix(in oklch, var(--ecom-ink) 10%, transparent);
+}
+
+.ecom-media {
+  position: relative;
+  aspect-ratio: 1 / 1.05;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ecom-media-wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 22% 18%, color-mix(in oklch, white 55%, transparent), transparent 42%),
+    linear-gradient(160deg, var(--ecom-product, #9db4c0), color-mix(in oklch, var(--ecom-product, #9db4c0) 45%, #1a1f28));
+}
+
+.ecom-media-shape {
+  position: absolute;
+  inset-inline-end: 8%;
+  bottom: 10%;
+  width: 58%;
+  aspect-ratio: 1;
+  border-radius: 1.4rem;
+  background: color-mix(in oklch, white 22%, transparent);
+  border: 1px solid color-mix(in oklch, white 35%, transparent);
+  backdrop-filter: blur(6px);
+  transform: rotate(8deg);
+  box-shadow: 0 18px 36px color-mix(in oklch, black 18%, transparent);
+}
+
+.ecom-media-shape::before {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: 999px;
+  background: color-mix(in oklch, white 28%, transparent);
+}
+
+.ecom-media-shape[data-kind="electronics"] {
+  border-radius: 1.1rem 1.1rem 0.45rem 0.45rem;
+  transform: rotate(-4deg);
+}
+
+.ecom-media-shape[data-kind="apparel"] {
+  border-radius: 999px 999px 1.2rem 1.2rem;
+  transform: rotate(3deg);
+}
+
+.ecom-media-shape[data-kind="home"] {
+  border-radius: 0.55rem;
+  transform: rotate(12deg) scale(0.92);
+}
+
+.ecom-media-shape[data-kind="beauty"] {
+  border-radius: 999px;
+  width: 46%;
+  inset-inline-end: 18%;
+  transform: none;
+}
+
+.ecom-media-label {
+  position: absolute;
+  inset-inline-start: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 2;
+  border-radius: 999px;
+  background: color-mix(in oklch, black 42%, transparent);
+  color: white;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.62rem;
+  font-weight: 650;
+  backdrop-filter: blur(8px);
+}
+
+.ecom-badge-sale {
+  position: absolute;
+  top: 0.7rem;
+  inset-inline-start: 0.7rem;
+  z-index: 2;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--ecom-accent-hot) !important;
+  color: white !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 18px color-mix(in oklch, var(--ecom-accent-hot) 35%, transparent) !important;
+}
+
+.ecom-badge-out {
+  position: absolute;
+  top: 0.7rem;
+  inset-inline-end: 0.7rem;
+  z-index: 2;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: color-mix(in oklch, black 55%, transparent) !important;
+  color: white !important;
+  backdrop-filter: blur(8px);
+}
+
+.ecom-card-body {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.9rem 0.95rem 1rem;
+}
+
+.ecom-card-brand {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ecom-mute);
+}
+
+.ecom-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.ecom-card-title:hover {
+  color: var(--ecom-accent);
+}
+
+.ecom-card-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.ecom-card-price strong {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.ecom-card-price s {
+  font-size: 0.72rem;
+  color: var(--ecom-mute);
+}
+
+.ecom-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--ecom-mute);
+}
+
+.ecom-card-meta .star {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: var(--ecom-ink);
+  font-weight: 650;
+}
+
+.ecom-card-cta {
+  margin-top: auto !important;
+  height: 2.3rem !important;
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  background: var(--ecom-ink) !important;
+  color: #f7f8fa !important;
+  box-shadow: none !important;
+}
+
+.ecom-card-cta[data-outline="true"] {
+  background: transparent !important;
+  border: 1px solid var(--ecom-line-strong) !important;
+  color: var(--ecom-ink) !important;
+}
+
+.ecom-card:hover .ecom-card-cta:not([data-outline="true"]) {
+  background: var(--ecom-accent) !important;
+}
+
+.ecom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .ecom-grid {
+    gap: 1.1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .ecom-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ecom-empty {
+  border: 1px dashed var(--ecom-line-strong);
+  border-radius: 1rem;
+  background: var(--ecom-panel);
+  padding: 3.5rem 1rem;
+  text-align: center;
+}
+
+.ecom-empty p:first-child {
+  font-weight: 750;
+}
+
+.ecom-empty p:last-child {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--ecom-mute);
+}
+
+.ecom-price-filter {
+  --ecom-ink: #12151c;
+  --ecom-line: color-mix(in oklch, #12151c 12%, transparent);
+  --ecom-panel: #ffffff;
+  --ecom-accent: #0c5c63;
+}
+
+.dark .ecom-price-filter {
+  --ecom-ink: #eef2f6;
+  --ecom-line: color-mix(in oklch, #eef2f6 14%, transparent);
+  --ecom-panel: #141820;
+  --ecom-accent: #3db8c2;
+}
+
+.ecom-price-filter .ecom-price-display {
+  border-color: var(--ecom-line);
+}
+
+.ecom-price-slider {
+  min-height: 1.75rem;
+  padding-block: 0.45rem;
+}
+
+.ecom-price-slider [data-slot="slider-track"] {
+  height: 0.45rem !important;
+  background: color-mix(in oklch, var(--ecom-ink) 14%, transparent) !important;
+}
+
+.ecom-price-slider [data-slot="slider-range"] {
+  background: var(--ecom-accent) !important;
+}
+
+.ecom-price-slider [data-slot="slider-thumb"] {
+  width: 1.15rem !important;
+  height: 1.15rem !important;
+  border: 2px solid var(--ecom-accent) !important;
+  background: var(--ecom-panel) !important;
+  box-shadow: 0 4px 12px color-mix(in oklch, var(--ecom-accent) 28%, transparent) !important;
+}
+
+/* Detail / cart inherit mild polish */
+.ecom-page .rounded-xl.border,
+.ecom-page .rounded-2xl.border {
+  border-color: var(--ecom-line);
+  background: var(--ecom-panel);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecom-card {
+    transition: none;
+  }
+  .ecom-card:hover {
+    transform: none;
+  }
+}

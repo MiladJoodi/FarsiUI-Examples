@@ -1,0 +1,1467 @@
+/* تراز — layout always; yellow product skin only on «پیشفرض».
+   Other design systems remap --tz-* to their own tokens. */
+
+.taraz-page {
+  --tz-yellow: var(--primary);
+  --tz-yellow-deep: var(--primary);
+  --tz-yellow-ink: var(--primary-foreground);
+  --tz-yellow-glow: color-mix(in oklch, var(--primary) 28%, transparent);
+  --tz-ink: var(--foreground);
+  --tz-mute: var(--muted-foreground);
+  --tz-line: var(--border);
+  --tz-panel: var(--card);
+  --tz-bg: var(--background);
+  --tz-sidebar: var(--sidebar);
+  --tz-chrome: var(--sidebar);
+  --tz-chrome-line: var(--sidebar-border, var(--border));
+  --tz-control-h: 2.5rem;
+  --tz-radius: var(--radius-xl);
+  --tz-radius-btn: var(--radius-lg);
+  --tz-radius-control: var(--radius-control);
+  --tz-fs-xs: 0.75rem;
+  --tz-fs-sm: 0.8125rem;
+  --tz-fs-md: 0.875rem;
+  --tz-fs-lg: 0.9375rem;
+  --tz-fs-xl: 1.125rem;
+  --tz-fs-hero: 1.375rem;
+  --tz-lh: 1.7;
+  --tz-chart-in: var(--chart-1);
+  --tz-chart-out: var(--chart-2);
+  --tz-donut-1: var(--chart-1);
+  --tz-donut-2: var(--chart-2);
+  --tz-donut-3: var(--chart-3);
+  --tz-donut-4: var(--chart-4);
+  --tz-shadow: 0 10px 30px color-mix(in oklch, var(--foreground) 6%, transparent);
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  color: var(--tz-ink);
+  background: var(--tz-bg);
+  font-size: var(--tz-fs-md);
+  line-height: var(--tz-lh);
+}
+
+/* Designed Taraz yellow skin — only «پیشفرض» */
+.taraz-page[data-ds="default"] {
+  --tz-yellow: #f0b429;
+  --tz-yellow-deep: #d9a116;
+  --tz-yellow-ink: #16120a;
+  --tz-yellow-glow: color-mix(in oklch, #f0b429 22%, transparent);
+  --tz-ink: #18181b;
+  --tz-mute: #71717a;
+  --tz-line: color-mix(in oklch, #18181b 10%, transparent);
+  --tz-panel: #ffffff;
+  --tz-bg: #f4f5f7;
+  --tz-sidebar: #fafafa;
+  --tz-chrome: #fafafa;
+  --tz-chrome-line: color-mix(in oklch, #18181b 10%, transparent);
+  --tz-radius: 0.85rem;
+  --tz-radius-btn: 0.85rem;
+  --tz-radius-control: 0.85rem;
+  --tz-chart-in: #e0a820;
+  --tz-chart-out: #8b6914;
+  --tz-donut-1: #f0b429;
+  --tz-donut-2: #e09a16;
+  --tz-donut-3: #c47f0a;
+  --tz-donut-4: #8a5a08;
+  --tz-shadow: 0 1px 2px color-mix(in oklch, #18181b 4%, transparent);
+  background: var(--tz-bg);
+}
+
+@media (min-width: 640px) {
+  .taraz-page {
+    --tz-control-h: 2.625rem;
+    --tz-fs-xs: 0.75rem;
+    --tz-fs-sm: 0.8125rem;
+    --tz-fs-md: 0.9375rem;
+    --tz-fs-lg: 1rem;
+    --tz-fs-xl: 1.25rem;
+    --tz-fs-hero: 1.625rem;
+    --tz-lh: 1.7;
+  }
+}
+
+@media (min-width: 1024px) {
+  .taraz-page {
+    --tz-control-h: 2.75rem;
+    --tz-fs-xs: 0.8125rem;
+    --tz-fs-sm: 0.875rem;
+    --tz-fs-md: 0.9375rem;
+    --tz-fs-lg: 1rem;
+    --tz-fs-xl: 1.375rem;
+    --tz-fs-hero: 1.75rem;
+    --tz-lh: 1.75;
+  }
+}
+
+.dark .taraz-page {
+  --tz-shadow: 0 1px 0 color-mix(in oklch, #fff 4%, transparent);
+}
+
+/* Dark پیشفرض — deep charcoal + gold */
+.dark .taraz-page[data-ds="default"] {
+  --tz-yellow: #ffcc33;
+  --tz-yellow-deep: #f0b429;
+  --tz-yellow-ink: #12100a;
+  --tz-yellow-glow: color-mix(in oklch, #ffcc33 28%, transparent);
+  --tz-ink: #f7f7f8;
+  --tz-mute: color-mix(in oklch, #f7f7f8 48%, transparent);
+  --tz-line: color-mix(in oklch, #ffcc33 14%, color-mix(in oklch, #fff 6%, transparent));
+  --tz-panel: #12141a;
+  --tz-bg: #07080b;
+  --tz-sidebar: #0b0d12;
+  --tz-chrome: #0b0d12;
+  --tz-chrome-line: color-mix(in oklch, #ffcc33 12%, color-mix(in oklch, #fff 5%, transparent));
+  --tz-radius: 0.95rem;
+  --tz-radius-btn: 0.9rem;
+  --tz-radius-control: 0.85rem;
+  --tz-chart-in: #ffcc33;
+  --tz-chart-out: #c9890a;
+  --tz-donut-1: #ffcc33;
+  --tz-donut-2: #f0b429;
+  --tz-donut-3: #d4920f;
+  --tz-donut-4: #8f6410;
+  --tz-shadow: 0 18px 40px -28px color-mix(in oklch, #000 80%, transparent);
+  background:
+    radial-gradient(
+      ellipse 70% 45% at 88% -12%,
+      color-mix(in oklch, #ffcc33 11%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 50% 36% at -5% 108%,
+      color-mix(in oklch, #ffcc33 6%, transparent) 0%,
+      transparent 58%
+    ),
+    linear-gradient(
+      180deg,
+      #0c0e14 0%,
+      var(--tz-bg) 38%,
+      #060708 100%
+    );
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-sidebar {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, #ffcc33 4%, var(--tz-chrome)) 0%,
+      var(--tz-chrome) 28%
+    );
+  border-inline-end: 1px solid var(--tz-chrome-line);
+  box-shadow: inset -1px 0 0 color-mix(in oklch, #fff 3%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-topbar {
+  background: color-mix(in oklch, var(--tz-chrome) 78%, transparent);
+  border-bottom: 1px solid var(--tz-chrome-line);
+  box-shadow: 0 1px 0 color-mix(in oklch, #fff 3%, transparent) inset;
+  backdrop-filter: blur(18px) saturate(1.15);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-panel {
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in oklch, #ffcc33 3.5%, var(--tz-panel)) 0%,
+      var(--tz-panel) 36%
+    );
+  border: 1px solid var(--tz-line);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, #fff 5%, transparent),
+    0 16px 36px -28px color-mix(in oklch, #000 75%, transparent);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-btn-primary {
+  background: linear-gradient(180deg, #ffd54a 0%, #ffcc33 48%, #f0b429 100%) !important;
+  color: var(--tz-yellow-ink) !important;
+  box-shadow:
+    0 1px 0 color-mix(in oklch, #fff 35%, transparent) inset,
+    0 0 0 1px color-mix(in oklch, #ffcc33 40%, transparent),
+    0 10px 28px -8px color-mix(in oklch, #ffcc33 65%, transparent);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-btn-primary:hover {
+  background: linear-gradient(180deg, #ffe066 0%, #ffd54a 50%, #ffcc33 100%) !important;
+  filter: brightness(1.03);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-brand-mark {
+  background: linear-gradient(145deg, #ffe066 0%, #ffcc33 42%, #e8b40a 100%);
+  color: #12100a;
+  box-shadow:
+    0 1px 0 color-mix(in oklch, #fff 40%, transparent) inset,
+    0 0 0 1px color-mix(in oklch, #ffcc33 35%, transparent),
+    0 8px 22px -6px color-mix(in oklch, #ffcc33 55%, transparent);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-nav-link:hover {
+  background: color-mix(in oklch, #ffcc33 6%, transparent);
+  color: var(--tz-ink);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-nav-link[data-active="true"] {
+  background: color-mix(in oklch, #ffcc33 11%, transparent);
+  color: #fff8e7;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, #ffcc33 16%, transparent);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-nav-link[data-active="true"]::before {
+  background: var(--tz-yellow);
+  box-shadow: 0 0 12px color-mix(in oklch, #ffcc33 70%, transparent);
+  width: 0.22rem;
+  border-radius: 999px;
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-nav-link[data-active="true"] svg {
+  color: var(--tz-yellow);
+  opacity: 1;
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-balance-strip {
+  background:
+    radial-gradient(
+      ellipse 80% 90% at 100% 0%,
+      color-mix(in oklch, #ffcc33 14%, transparent) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      155deg,
+      color-mix(in oklch, #ffcc33 9%, var(--tz-panel)) 0%,
+      var(--tz-panel) 48%
+    );
+  border-color: color-mix(in oklch, #ffcc33 22%, var(--tz-line));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, #fff 6%, transparent),
+    0 20px 44px -30px color-mix(in oklch, #ffcc33 35%, transparent);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-balance {
+  text-shadow: 0 0 28px color-mix(in oklch, #ffcc33 18%, transparent);
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-sidebar-brand strong {
+  color: #fff8e7;
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-farsiui-credit {
+  border-color: color-mix(in oklch, #ffcc33 28%, var(--tz-line));
+  background: color-mix(in oklch, #ffcc33 8%, var(--tz-panel));
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-farsiui-credit:hover {
+  border-color: color-mix(in oklch, #ffcc33 45%, var(--tz-line));
+  background: color-mix(in oklch, #ffcc33 14%, var(--tz-panel));
+}
+
+.dark .taraz-page[data-ds="default"] .taraz-control {
+  background: color-mix(in oklch, #07080b 55%, var(--tz-panel)) !important;
+  border-color: color-mix(in oklch, #ffcc33 12%, var(--tz-line)) !important;
+}
+
+.dark .taraz-page[data-ds="default"] [data-slot="chart"] {
+  filter: drop-shadow(0 8px 18px color-mix(in oklch, #ffcc33 12%, transparent));
+}
+
+/* Mild DS shape reactions (non-default) */
+.style-vega .taraz-page:not([data-ds="default"]) {
+  --tz-radius: 1rem;
+  --tz-radius-btn: 1rem;
+  --tz-radius-control: 1rem;
+}
+
+.style-rose .taraz-page:not([data-ds="default"]) {
+  --tz-radius: 1.15rem;
+  --tz-radius-btn: 1.15rem;
+  --tz-radius-control: 1.15rem;
+}
+
+/* Nili: sharp chrome, cyan hairlines from DS tokens */
+.style-nili .taraz-page:not([data-ds="default"]) {
+  --tz-radius: 0.35rem;
+  --tz-radius-btn: 0.35rem;
+  --tz-radius-control: 0.35rem;
+  --tz-chrome: var(--sidebar);
+  --tz-chrome-line: var(--sidebar-border);
+}
+
+.style-khesht .taraz-page:not([data-ds="default"]) {
+  --tz-radius: 0.45rem;
+  --tz-radius-btn: 0.4rem;
+  --tz-radius-control: 0.4rem;
+}
+
+.style-glass .taraz-page:not([data-ds="default"]) {
+  --tz-radius: 0.95rem;
+  --tz-radius-btn: 0.95rem;
+  --tz-radius-control: 0.95rem;
+  --tz-chrome: var(--sidebar);
+  --tz-chrome-line: var(--sidebar-border);
+}
+
+.taraz-page .taraz-shell {
+  display: flex;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.taraz-page .taraz-sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: none;
+  height: 100dvh;
+  width: 16.75rem;
+  flex-shrink: 0;
+  flex-direction: column;
+  border-inline-end: 1px solid var(--tz-chrome-line);
+  background: var(--tz-chrome);
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+  transition: width 0.22s ease;
+}
+
+@media (min-width: 1024px) {
+  .taraz-page .taraz-sidebar {
+    display: flex;
+  }
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] {
+  width: 4.25rem;
+}
+
+.taraz-page .taraz-sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  min-height: 4.25rem;
+  padding: 1.1rem 0.85rem 1rem;
+  border-bottom: 1px solid var(--tz-line);
+}
+
+.taraz-page .taraz-sidebar-brand-link {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.taraz-page .taraz-sidebar-toggle {
+  align-self: center;
+}
+
+/* Collapsed: only the arrow stays in brand row (same place), logo hidden */
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-sidebar-brand {
+  justify-content: center;
+  padding-inline: 0.35rem;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-sidebar-brand-link {
+  display: none;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-sidebar-label {
+  display: none;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-nav {
+  padding-inline: 0.4rem;
+  align-items: center;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-nav-link {
+  justify-content: center;
+  width: 2.6rem;
+  padding: 0.7rem;
+  gap: 0;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-nav-link[data-active="true"]::before {
+  inset-inline-start: 0.1rem;
+  height: 1.1rem;
+  box-shadow: none;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-sidebar-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding-inline: 0.4rem;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-sidebar-foot > div {
+  justify-content: center;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-sidebar-foot .size-11 {
+  width: 2.35rem;
+  height: 2.35rem;
+}
+
+/* Ops dialog — portaled; follow DS, yellow only on پیشفرض (style-nova) */
+.taraz-ops-dialog {
+  --tz-yellow: var(--primary);
+  --tz-yellow-deep: var(--primary);
+  --tz-yellow-ink: var(--primary-foreground);
+  --tz-yellow-glow: color-mix(in oklch, var(--primary) 28%, transparent);
+  --tz-ink: var(--foreground);
+  --tz-mute: var(--muted-foreground);
+  --tz-line: var(--border);
+  --tz-panel: var(--popover);
+  --tz-control-h: 2.5rem;
+  --tz-radius-btn: var(--radius-lg);
+  --tz-radius-control: var(--radius-control);
+  --tz-fs-xs: 0.75rem;
+  --tz-fs-sm: 0.8125rem;
+  --tz-fs-md: 0.875rem;
+  --tz-fs-lg: 1rem;
+  gap: 1.15rem;
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  color: var(--tz-ink);
+}
+
+html.style-nova .taraz-ops-dialog {
+  --tz-yellow: #f0b429;
+  --tz-yellow-deep: #d9a116;
+  --tz-yellow-ink: #16120a;
+  --tz-yellow-glow: color-mix(in oklch, #f0b429 22%, transparent);
+  --tz-ink: #18181b;
+  --tz-mute: #71717a;
+  --tz-line: color-mix(in oklch, #18181b 10%, transparent);
+  --tz-panel: #ffffff;
+  --tz-radius-btn: 0.75rem;
+  --tz-radius-control: 0.75rem;
+  border-radius: 0.95rem;
+}
+
+html.dark.style-nova .taraz-ops-dialog,
+.dark html.style-nova .taraz-ops-dialog,
+html.style-nova.dark .taraz-ops-dialog {
+  --tz-yellow: #ffcc33;
+  --tz-yellow-deep: #f0b429;
+  --tz-yellow-ink: #12100a;
+  --tz-yellow-glow: color-mix(in oklch, #ffcc33 28%, transparent);
+  --tz-ink: #f7f7f8;
+  --tz-mute: color-mix(in oklch, #f7f7f8 48%, transparent);
+  --tz-line: color-mix(in oklch, #ffcc33 14%, color-mix(in oklch, #fff 6%, transparent));
+  --tz-panel: #12141a;
+}
+
+.taraz-ops-dialog .taraz-ops-title {
+  font-size: var(--tz-fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+  color: var(--tz-ink);
+}
+
+.taraz-ops-dialog .taraz-ops-desc {
+  font-size: var(--tz-fs-sm);
+  line-height: 1.55;
+  color: var(--tz-mute);
+}
+
+.taraz-ops-dialog .taraz-ops-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.taraz-ops-dialog .taraz-ops-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.taraz-ops-dialog .taraz-ops-field > label {
+  font-size: var(--tz-fs-sm);
+  font-weight: 600;
+  color: var(--tz-ink);
+}
+
+.taraz-ops-dialog .taraz-control {
+  height: var(--tz-control-h) !important;
+  min-height: var(--tz-control-h) !important;
+  border-radius: var(--tz-radius-control) !important;
+  font-size: var(--tz-fs-md) !important;
+}
+
+.taraz-ops-dialog .taraz-ops-readonly {
+  display: flex;
+  min-height: var(--tz-control-h);
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--tz-line);
+  border-radius: var(--tz-radius-control);
+  background: color-mix(in oklch, var(--tz-ink) 3%, transparent);
+  padding-inline: 0.85rem;
+  cursor: default;
+  font-size: var(--tz-fs-sm);
+}
+
+.taraz-ops-dialog .taraz-ops-hint {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--tz-fs-xs);
+  color: var(--tz-mute);
+  letter-spacing: 0.02em;
+  text-align: start;
+}
+
+.taraz-ops-dialog .taraz-ops-note {
+  min-height: 3.75rem !important;
+  height: auto !important;
+  resize: none;
+  padding-block: 0.6rem;
+}
+
+.taraz-ops-dialog .taraz-btn-md {
+  height: var(--tz-control-h) !important;
+  min-height: var(--tz-control-h);
+  border-radius: var(--tz-radius-btn) !important;
+  padding-inline: 1rem !important;
+  font-size: var(--tz-fs-md) !important;
+}
+
+.taraz-ops-dialog .taraz-btn-primary {
+  border-color: transparent !important;
+  background: var(--tz-yellow) !important;
+  color: var(--tz-yellow-ink) !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.taraz-ops-dialog .taraz-btn-primary:hover {
+  background: var(--tz-yellow-deep) !important;
+}
+
+.taraz-ops-dialog .taraz-ops-foot {
+  margin-inline: 0 !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 0.5rem;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.taraz-ops-dialog .taraz-amount {
+  letter-spacing: -0.04em;
+}
+
+.taraz-page .taraz-brand-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border-radius: 0.7rem;
+  background: var(--tz-yellow);
+  color: var(--tz-yellow-ink);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  box-shadow: 0 4px 12px var(--tz-yellow-glow);
+  user-select: none;
+}
+
+.taraz-page .taraz-brand-mark--sm {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.55rem;
+  font-size: 0.8rem;
+}
+
+.taraz-page .taraz-brand-mark--md {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+  font-size: 0.9rem;
+}
+
+.taraz-page .taraz-brand-mark--lg {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+}
+
+.dark .taraz-page .taraz-brand-mark {
+  color: #1a1400;
+}
+
+.taraz-page .taraz-sidebar-brand strong {
+  display: block;
+  font-size: var(--tz-fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.taraz-page .taraz-sidebar-brand-link .taraz-sidebar-label > span {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: var(--tz-fs-xs);
+  color: var(--tz-mute);
+}
+
+.taraz-page .taraz-nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 0.7rem;
+  overflow-y: auto;
+}
+
+.taraz-page .taraz-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.9rem;
+  padding: 0.82rem 0.95rem;
+  font-size: var(--tz-fs-md);
+  font-weight: 500;
+  color: var(--tz-mute);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.taraz-page .taraz-nav-link:hover {
+  background: color-mix(in oklch, var(--tz-ink) 4.5%, transparent);
+  color: var(--tz-ink);
+}
+
+/* Active: quiet surface + yellow marker — no yellow fill */
+.taraz-page .taraz-nav-link[data-active="true"] {
+  background: color-mix(in oklch, var(--tz-ink) 5.5%, transparent);
+  color: var(--tz-ink);
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.taraz-page .taraz-nav-link[data-active="true"]::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0.35rem;
+  top: 50%;
+  width: 0.22rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: var(--tz-yellow);
+  box-shadow: 0 0 0 3px var(--tz-yellow-glow);
+  transform: translateY(-50%);
+}
+
+.dark .taraz-page .taraz-nav-link[data-active="true"] {
+  background: color-mix(in oklch, var(--tz-ink) 8%, transparent);
+}
+
+.dark .taraz-page .taraz-nav-link[data-active="true"]::before {
+  box-shadow: 0 0 12px color-mix(in oklch, var(--tz-yellow) 55%, transparent);
+}
+
+.taraz-page .taraz-nav-link[data-active="true"] svg {
+  color: var(--tz-yellow-deep);
+  opacity: 1;
+}
+
+.dark .taraz-page .taraz-nav-link[data-active="true"] svg {
+  color: var(--tz-yellow);
+}
+
+.taraz-page .taraz-nav-link svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.taraz-page .taraz-sidebar-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--tz-line);
+  padding: 1rem 1.15rem;
+}
+
+.taraz-page .taraz-sidebar[data-collapsed="true"] .taraz-sidebar-farsiui:not(.is-compact) {
+  display: none;
+}
+
+.taraz-page .taraz-farsiui-credit {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 1px solid color-mix(in oklch, var(--tz-line) 85%, var(--tz-yellow));
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--tz-yellow) 10%, var(--tz-panel));
+  color: var(--tz-ink);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.taraz-page .taraz-farsiui-credit:hover {
+  border-color: color-mix(in oklch, var(--tz-yellow) 55%, var(--tz-line));
+  background: color-mix(in oklch, var(--tz-yellow) 18%, var(--tz-panel));
+}
+
+.taraz-page .taraz-farsiui-credit:active {
+  transform: scale(0.98);
+}
+
+.taraz-page .taraz-farsiui-credit-text {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.taraz-page .taraz-farsiui-credit strong {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--tz-yellow-deep);
+}
+
+.dark .taraz-page .taraz-farsiui-credit strong {
+  color: var(--tz-yellow);
+}
+
+.taraz-page .taraz-farsiui-credit.is-compact {
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border-radius: 0.7rem;
+}
+
+.taraz-page .taraz-farsiui-credit.is-compact .taraz-farsiui-credit-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.taraz-page .taraz-farsiui-credit-mark {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 0.35rem;
+  background: var(--tz-yellow);
+  color: #1a1408;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.taraz-page .taraz-sidebar-farsiui {
+  width: 100%;
+}
+
+.taraz-page .taraz-main {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+  flex: 1;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+.taraz-page .taraz-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  min-height: 3.5rem;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--tz-chrome-line);
+  background: color-mix(in oklch, var(--tz-chrome) 92%, transparent);
+  padding-inline: 0.65rem;
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .taraz-page .taraz-topbar {
+    min-height: 4.25rem;
+    gap: 0.75rem;
+    padding-inline: 1.5rem;
+  }
+}
+
+.taraz-page .taraz-topbar-center {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.taraz-page .taraz-topbar-center > * {
+  pointer-events: auto;
+  max-width: min(10.5rem, 36vw);
+}
+
+.taraz-page .taraz-topbar-ds {
+  max-width: 100%;
+}
+
+.taraz-page .taraz-topbar-ds button {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 1023px) {
+  .taraz-page .taraz-topbar-ds button {
+    height: 2.25rem;
+    padding-inline: 0.7rem;
+    gap: 0.3rem;
+  }
+
+  /* Keep label only — icon + chevron crowd the narrow center slot */
+  .taraz-page .taraz-topbar-ds button > svg {
+    display: none;
+  }
+}
+
+.taraz-page .taraz-topbar-start {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  /* Keep content clear of absolute-centered DS picker */
+  padding-inline-end: min(5.25rem, 24vw);
+}
+
+.taraz-page .taraz-topbar-end {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  padding-inline-start: min(5.25rem, 24vw);
+}
+
+@media (min-width: 1024px) {
+  .taraz-page .taraz-topbar-start {
+    padding-inline-end: min(8.5rem, 14vw);
+  }
+
+  .taraz-page .taraz-topbar-end {
+    padding-inline-start: min(8.5rem, 14vw);
+  }
+}
+
+.taraz-page .taraz-topbar-brand {
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .taraz-page .taraz-topbar-brand-text {
+    display: none;
+  }
+}
+
+/* display comes from Tailwind (`hidden lg:flex`) — do not override */
+.taraz-page .taraz-topbar-actions {
+  min-width: 0;
+  max-width: 100%;
+  flex-shrink: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.taraz-page .taraz-topbar-icons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+}
+
+.taraz-page .taraz-topbar-icons > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.taraz-page .taraz-mobile-pagehead {
+  padding: 0.85rem 0.75rem 0;
+}
+
+@media (min-width: 640px) {
+  .taraz-page .taraz-mobile-pagehead {
+    padding-inline: 1.25rem;
+  }
+}
+
+.taraz-page .taraz-body {
+  margin-inline: auto;
+  width: 100%;
+  max-width: min(1400px, 100%);
+  min-width: 0;
+  flex: 1;
+  padding: 0.85rem 0.75rem 1.5rem;
+  overflow-x: clip;
+}
+
+@media (min-width: 640px) {
+  .taraz-page .taraz-body {
+    padding: 1.5rem 1.25rem 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .taraz-page .taraz-body {
+    padding: 1.75rem 1.5rem 2.5rem;
+  }
+}
+
+.taraz-page .taraz-panel {
+  border: 1px solid var(--tz-line);
+  border-radius: var(--tz-radius);
+  background: var(--tz-panel);
+  box-shadow: var(--tz-shadow);
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.taraz-page .taraz-btn-primary {
+  border-color: transparent !important;
+  background: var(--tz-yellow) !important;
+  color: var(--tz-yellow-ink) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 18px var(--tz-yellow-glow);
+}
+
+.taraz-page .taraz-btn-primary:hover {
+  background: var(--tz-yellow-deep) !important;
+}
+
+.dark .taraz-page .taraz-btn-primary {
+  color: var(--tz-yellow-ink) !important;
+  box-shadow: 0 8px 22px color-mix(in oklch, var(--tz-yellow) 40%, transparent);
+}
+
+.taraz-page .taraz-btn-lg {
+  height: var(--tz-control-h) !important;
+  min-height: var(--tz-control-h);
+  border-radius: var(--tz-radius-btn) !important;
+  padding-inline: 1.15rem !important;
+  font-size: var(--tz-fs-md) !important;
+}
+
+.taraz-page .taraz-btn-md {
+  height: var(--tz-control-h) !important;
+  min-height: var(--tz-control-h);
+  border-radius: var(--tz-radius-btn) !important;
+  padding-inline: 1rem !important;
+  font-size: var(--tz-fs-md) !important;
+}
+
+/* Unified control height + radius (search / select / filters) */
+.taraz-page .taraz-control {
+  height: var(--tz-control-h) !important;
+  min-height: var(--tz-control-h) !important;
+  border-radius: var(--tz-radius-control) !important;
+  font-size: var(--tz-fs-md) !important;
+}
+
+.taraz-page .taraz-control-pill {
+  border-radius: var(--tz-radius-control) !important;
+}
+
+.taraz-page .taraz-icon-btn {
+  height: var(--tz-control-h) !important;
+  width: var(--tz-control-h) !important;
+  border-radius: var(--tz-radius-control) !important;
+}
+
+.taraz-page .taraz-donut .recharts-pie-sector {
+  outline: none;
+}
+
+.taraz-page h1,
+.taraz-page .taraz-title {
+  font-size: var(--tz-fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+
+.taraz-page h2,
+.taraz-page .taraz-subtitle {
+  font-size: var(--tz-fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+.taraz-page .taraz-muted {
+  color: var(--tz-mute);
+  font-size: var(--tz-fs-sm);
+  line-height: 1.65;
+}
+
+.taraz-page .taraz-caption {
+  font-size: var(--tz-fs-xs);
+  color: var(--tz-mute);
+  line-height: 1.5;
+}
+
+.taraz-page .taraz-body-text {
+  font-size: var(--tz-fs-md);
+  line-height: var(--tz-lh);
+}
+
+/* Numbers: proportional Persian digits — tabular-nums creates visible gaps in Vazirmatn */
+.taraz-page .taraz-num,
+.taraz-page .taraz-balance,
+.taraz-page .taraz-ref,
+.taraz-page .taraz-amount,
+.taraz-page [data-tz-num],
+.taraz-page .tabular-nums {
+  font-family: inherit !important;
+  font-variant-numeric: normal !important;
+  font-feature-settings: "kern" 1, "tnum" 0, "lnum" 0 !important;
+  font-kerning: normal !important;
+  letter-spacing: -0.04em !important;
+  word-spacing: normal !important;
+}
+
+.taraz-page .taraz-balance {
+  font-size: var(--tz-fs-hero);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.045em !important;
+}
+
+.taraz-page .taraz-ref {
+  font-size: var(--tz-fs-sm);
+  font-weight: 500;
+  direction: ltr;
+  unicode-bidi: isolate;
+  letter-spacing: -0.02em !important;
+}
+
+.taraz-page .taraz-amount {
+  font-size: var(--tz-fs-md);
+  letter-spacing: -0.045em !important;
+}
+
+.taraz-page table {
+  font-size: var(--tz-fs-sm);
+}
+
+.taraz-page th {
+  font-size: var(--tz-fs-xs) !important;
+  font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  .taraz-page th {
+    font-size: var(--tz-fs-sm) !important;
+  }
+}
+
+.taraz-page td {
+  font-size: var(--tz-fs-sm);
+}
+
+@media (min-width: 640px) {
+  .taraz-page td {
+    font-size: var(--tz-fs-md);
+  }
+}
+
+/* Map Tailwind size utilities → Persian scale (responsive via tokens) */
+.taraz-page .text-xs {
+  font-size: var(--tz-fs-xs) !important;
+}
+.taraz-page .text-sm {
+  font-size: var(--tz-fs-sm) !important;
+}
+.taraz-page .text-base {
+  font-size: var(--tz-fs-md) !important;
+}
+.taraz-page .text-lg {
+  font-size: var(--tz-fs-lg) !important;
+}
+.taraz-page .text-xl {
+  font-size: var(--tz-fs-xl) !important;
+}
+.taraz-page .text-2xl {
+  font-size: var(--tz-fs-hero) !important;
+}
+
+/* Recharts axis / pie labels */
+.taraz-page .recharts-text,
+.taraz-page .recharts-cartesian-axis-tick-value {
+  font-size: var(--tz-fs-xs) !important;
+  font-variant-numeric: normal !important;
+  letter-spacing: -0.04em !important;
+}
+
+.taraz-page .taraz-sheet-nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.9rem;
+  padding: 0.85rem 0.95rem;
+  font-size: var(--tz-fs-md);
+  font-weight: 500;
+  color: var(--tz-mute);
+}
+
+.taraz-page .taraz-sheet-nav a[data-active="true"] {
+  background: color-mix(in oklch, var(--tz-ink) 6%, transparent);
+  color: var(--tz-ink);
+  font-weight: 700;
+}
+
+.taraz-page .taraz-sheet-nav a[data-active="true"]::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0.35rem;
+  top: 50%;
+  width: 0.22rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: var(--tz-yellow);
+  transform: translateY(-50%);
+}
+
+/* List selection (accounts etc.) — no yellow wash */
+.taraz-page .taraz-row-active {
+  background: color-mix(in oklch, var(--tz-ink) 5%, transparent) !important;
+  box-shadow: none;
+  border-inline-start: 3px solid var(--tz-yellow);
+}
+
+.dark .taraz-page .taraz-row-active {
+  background: color-mix(in oklch, var(--tz-ink) 9%, transparent) !important;
+}
+
+.taraz-page .taraz-sort-btn {
+  width: 100%;
+  min-height: 1.5rem;
+  padding-block: 0.15rem;
+  cursor: pointer;
+}
+
+.taraz-page .taraz-sort-btn:hover svg {
+  opacity: 0.85;
+}
+
+/* Compact balance under charts */
+.taraz-page .taraz-balance-strip {
+  padding: 0.9rem 1rem 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .taraz-page .taraz-balance-strip {
+    padding: 1rem 1.25rem;
+  }
+}
+
+.taraz-page .taraz-balance-strip .taraz-balance {
+  font-size: clamp(1.2rem, 2.8vw, 1.55rem);
+  line-height: 1.2;
+}
+
+.taraz-page .taraz-balance-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 0.85rem;
+  border-top: 1px solid var(--tz-line);
+}
+
+@media (min-width: 640px) {
+  .taraz-page .taraz-balance-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.taraz-page .taraz-balance-metric {
+  min-width: 0;
+  padding: 0.7rem 0.65rem 0.15rem;
+}
+
+@media (min-width: 640px) {
+  .taraz-page .taraz-balance-metric {
+    padding: 0.75rem 0.85rem 0.1rem;
+    border-inline-start: 1px solid var(--tz-line);
+  }
+
+  .taraz-page .taraz-balance-metric:first-child {
+    border-inline-start: none;
+    padding-inline-start: 0;
+  }
+
+  .taraz-page .taraz-balance-metric:last-child {
+    padding-inline-end: 0;
+  }
+}
+
+.taraz-page .taraz-balance-metric .taraz-amount {
+  font-size: var(--tz-fs-sm);
+}
+
+@media (min-width: 640px) {
+  .taraz-page .taraz-balance-metric .taraz-amount {
+    font-size: var(--tz-fs-md);
+  }
+}
+
+/* Custom chart surfaces */
+.taraz-page .taraz-chart {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem 1rem 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .taraz-page .taraz-chart {
+    padding: 1.15rem 1.25rem 1rem;
+  }
+}
+
+.taraz-page .taraz-chart-flow::before {
+  content: none;
+}
+
+.dark .taraz-page .taraz-chart-flow::before {
+  content: "";
+  position: absolute;
+  inset-inline-end: -20%;
+  top: -40%;
+  width: 55%;
+  height: 80%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--tz-chart-in) 16%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.taraz-page .taraz-chart-donut::before {
+  content: none;
+}
+
+.taraz-page .taraz-chart-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.taraz-page .taraz-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.taraz-page .taraz-chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: var(--tz-fs-xs);
+  font-weight: 600;
+  background: color-mix(in oklch, var(--tz-ink) 4%, transparent);
+}
+
+.taraz-page .taraz-chart-legend span[data-tone="in"]::before,
+.taraz-page .taraz-chart-legend span[data-tone="out"]::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+}
+
+.taraz-page .taraz-chart-legend span[data-tone="in"]::before {
+  background: var(--tz-chart-in);
+}
+
+.taraz-page .taraz-chart-legend span[data-tone="out"]::before {
+  background: var(--tz-chart-out);
+}
+
+.taraz-page .taraz-donut-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .taraz-page .taraz-donut-layout {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+  }
+}
+
+.taraz-page .taraz-donut-legend {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.taraz-page .taraz-donut-legend li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: var(--tz-fs-sm);
+}
+
+.taraz-page .taraz-donut-legend li span:last-child {
+  color: var(--tz-mute);
+}
+
+/* Copyable bank fields (Sheba / card) */
+.taraz-page .taraz-copy-field {
+  border: 1px solid var(--tz-line);
+  border-radius: var(--tz-radius);
+  background: color-mix(in oklch, var(--tz-ink) 2.5%, transparent);
+  padding: 0.85rem 0.95rem;
+}
+
+.taraz-page .taraz-copy-value {
+  display: flex;
+  align-items: center;
+  min-height: var(--tz-control-h);
+  overflow-x: auto;
+  border-radius: var(--tz-radius-control);
+  border: 1px solid var(--tz-line);
+  background: var(--tz-panel);
+  padding-inline: 0.85rem;
+  font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+  font-size: var(--tz-fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  unicode-bidi: isolate;
+}
+
+/* Settings — yellow accent for tabs & switches */
+.taraz-page .taraz-settings-tabs {
+  gap: 0.15rem;
+}
+
+.taraz-page .taraz-settings-tabs [data-slot="tabs-trigger"] {
+  border-radius: 0;
+  color: var(--tz-mute);
+  background: transparent !important;
+  transition: color 0.15s ease;
+}
+
+.taraz-page .taraz-settings-tabs [data-slot="tabs-trigger"]::after {
+  background: var(--tz-yellow) !important;
+}
+
+.taraz-page .taraz-settings-tabs [data-slot="tabs-trigger"]:hover {
+  color: var(--tz-ink);
+  background: transparent !important;
+}
+
+.taraz-page .taraz-settings-tabs [data-slot="tabs-trigger"][data-active] {
+  color: var(--tz-ink) !important;
+  font-weight: 700;
+  background: transparent !important;
+}
+
+.taraz-page .taraz-switch[data-checked],
+.taraz-page .taraz-switch[data-state="checked"],
+.taraz-page .taraz-switch[aria-checked="true"] {
+  background: var(--tz-yellow) !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 12px var(--tz-yellow-glow);
+}
+
+.taraz-page .taraz-switch[data-checked] [data-slot="switch-thumb"],
+.taraz-page .taraz-switch[data-state="checked"] [data-slot="switch-thumb"],
+.taraz-page .taraz-switch[aria-checked="true"] [data-slot="switch-thumb"] {
+  background: #fff !important;
+  box-shadow: 0 1px 3px color-mix(in oklch, #000 18%, transparent);
+}
+
+.taraz-page .taraz-switch:focus-visible {
+  border-color: var(--tz-yellow) !important;
+  box-shadow: 0 0 0 3px var(--tz-yellow-glow) !important;
+}
+
+.taraz-page .taraz-settings-row {
+  border: 1px solid var(--tz-line);
+  border-radius: var(--tz-radius);
+  padding: 1.05rem 1.1rem;
+  background: color-mix(in oklch, var(--tz-ink) 1.8%, transparent);
+}
+
+.taraz-page .taraz-switch {
+  height: 1.35rem !important;
+  width: 2.4rem !important;
+}
+
+.taraz-page .taraz-switch [data-slot="switch-thumb"] {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  background: #fff !important;
+}

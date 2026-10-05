@@ -1,29 +1,23 @@
 "use client"
 
+import * as React from "react"
+import type { CSSProperties } from "react"
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
   XAxis,
   YAxis,
 } from "recharts"
 
-import { formatCount, formatPercent, formatToman } from "@/lib/format"
+import { formatPersianNumber } from "@/lib/digits"
+import { formatPercent, formatToman } from "@/lib/format"
 import {
-  categoryShareData,
-  channelSalesData,
+  reportBreakdown,
   salesChartData,
-  weeklyOrdersData,
 } from "@/lib/mock/stats"
 import {
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -35,42 +29,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { formatPersianNumber } from "@/lib/digits"
+import { Separator } from "@/components/ui/separator"
 
 const salesConfig = {
-  sales: { label: "فروش", color: "var(--chart-1)" },
-  target: { label: "هدف", color: "var(--chart-2)" },
+  sales: { label: "تحقق", color: "var(--tz-chart-in)" },
+  target: { label: "هدف", color: "var(--tz-chart-out)" },
 } satisfies ChartConfig
 
-const ordersConfig = {
-  orders: { label: "سفارش", color: "var(--chart-3)" },
-  returned: { label: "مرجوعی", color: "var(--chart-5)" },
-} satisfies ChartConfig
-
-const channelConfig = {
-  sales: { label: "سهم", color: "var(--chart-4)" },
-} satisfies ChartConfig
-
-const summary = [
-  { label: "مجموع فروش دوره", value: formatToman(401_200_000) },
-  { label: "میانگین ماهانه", value: formatToman(57_314_000) },
-  { label: "رشد نسبت به دوره قبل", value: formatPercent(12.4) },
-  { label: "سفارش‌های موفق", value: formatCount(1_284) },
+const breakdownRows = [
+  {
+    label: "ورود وجوه",
+    value: formatToman(reportBreakdown.inflow),
+    tone: "text-emerald-700 dark:text-emerald-400",
+  },
+  {
+    label: "خروج وجوه",
+    value: formatToman(reportBreakdown.outflow),
+    tone: "text-red-700 dark:text-red-400",
+  },
+  {
+    label: "کارمزدها",
+    value: formatToman(reportBreakdown.fees),
+    tone: "text-muted-foreground",
+  },
+  {
+    label: "خالص دوره",
+    value: formatToman(reportBreakdown.net),
+    tone: "font-semibold text-foreground",
+  },
 ]
 
 export function ReportsOverview() {
+  const [period, setPeriod] = React.useState("7m")
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-lg font-semibold tracking-tight">گزارش عملکرد</h1>
-          <p className="text-sm text-muted-foreground">
-            تحلیل فروش، سفارش‌ها و کانال‌های جذب بدون اتصال به داده زنده
-          </p>
-        </div>
+      <div className="flex justify-end">
         <Select
-          defaultValue="7m"
+          value={period}
+          onValueChange={(v) => v && setPeriod(v)}
           items={{
             "1m": "یک ماه اخیر",
             "3m": "سه ماه اخیر",
@@ -78,8 +75,11 @@ export function ReportsOverview() {
             "1y": "یک سال اخیر",
           }}
         >
-          <SelectTrigger className="w-[150px]" aria-label="بازه زمانی گزارش">
-            <SelectValue placeholder="بازه زمانی" />
+          <SelectTrigger
+            className="taraz-control taraz-control-pill w-full sm:w-40"
+            aria-label="بازه زمانی گزارش"
+          >
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="1m">یک ماه اخیر</SelectItem>
@@ -90,211 +90,128 @@ export function ReportsOverview() {
         </Select>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {summary.map((item) => (
-          <div
-            key={item.label}
-            className="rounded-xl border bg-background px-4 py-3"
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)]">
+        <section className="taraz-chart taraz-chart-flow taraz-panel min-w-0">
+          <div className="taraz-chart-head">
+            <div className="min-w-0">
+              <h2 className="taraz-subtitle">تحقق در برابر هدف</h2>
+              <p className="taraz-muted mt-0.5">ارقام ماهانه به تومان</p>
+            </div>
+            <div className="taraz-chart-legend">
+              <span data-tone="in">تحقق</span>
+              <span data-tone="out">هدف</span>
+              <span className="taraz-muted font-medium">
+                رشد {formatPercent(12.4)}
+              </span>
+            </div>
+          </div>
+          <ChartContainer
+            config={salesConfig}
+            className="aspect-[16/9] w-full max-h-[300px]"
+            initialDimension={{ width: 520, height: 280 }}
+            style={
+              {
+                "--color-sales": "var(--tz-chart-in)",
+                "--color-target": "var(--tz-chart-out)",
+              } as CSSProperties
+            }
           >
-            <p className="text-sm text-muted-foreground">{item.label}</p>
-            <p className="mt-1 text-base font-semibold tracking-normal whitespace-nowrap sm:text-lg">
-              {item.value}
-            </p>
-          </div>
-        ))}
+            <AreaChart
+              data={salesChartData}
+              margin={{ top: 12, right: 4, left: -8, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="tzReportSalesFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="0%"
+                    stopColor="var(--tz-chart-in)"
+                    stopOpacity={0.35}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="var(--tz-chart-in)"
+                    stopOpacity={0.02}
+                  />
+                </linearGradient>
+                <linearGradient id="tzReportTargetFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="0%"
+                    stopColor="var(--tz-chart-out)"
+                    stopOpacity={0.18}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="var(--tz-chart-out)"
+                    stopOpacity={0.02}
+                  />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                vertical={false}
+                stroke="var(--tz-line)"
+                strokeDasharray="4 6"
+              />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+                fontSize={11}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                width={40}
+                fontSize={11}
+                tickFormatter={(v) =>
+                  formatPersianNumber(Math.round(Number(v) / 1_000_000))
+                }
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Area
+                type="monotone"
+                dataKey="target"
+                stroke="var(--tz-chart-out)"
+                fill="url(#tzReportTargetFill)"
+                strokeWidth={1.75}
+                strokeDasharray="5 5"
+                activeDot={{ r: 4, strokeWidth: 0 }}
+              />
+              <Area
+                type="monotone"
+                dataKey="sales"
+                stroke="var(--tz-chart-in)"
+                fill="url(#tzReportSalesFill)"
+                strokeWidth={2.5}
+                activeDot={{ r: 4, strokeWidth: 0 }}
+              />
+            </AreaChart>
+          </ChartContainer>
+          <p className="taraz-caption mt-1">محور عمودی: میلیون تومان</p>
+        </section>
+
+        <section className="taraz-panel min-w-0 p-5 sm:p-6">
+          <h2 className="taraz-subtitle mb-4">جمع‌بندی دوره</h2>
+          <ul className="divide-y divide-[color:var(--tz-line)]">
+            {breakdownRows.map((row) => (
+              <li
+                key={row.label}
+                className="flex items-baseline justify-between gap-4 py-3.5"
+              >
+                <span className="taraz-muted">{row.label}</span>
+                <span className={`taraz-amount font-semibold ${row.tone}`}>
+                  {row.value}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <Separator className="my-4" />
+          <p className="taraz-muted leading-relaxed">
+            این گزارش بر اساس تراکنش‌های تأییدشده تراز محاسبه شده و کارمزد
+            درگاه‌ها را جدا نشان می‌دهد.
+          </p>
+        </section>
       </div>
-
-      <Tabs defaultValue="sales" className="gap-4">
-        <TabsList>
-          <TabsTrigger value="sales">فروش</TabsTrigger>
-          <TabsTrigger value="orders">سفارش‌ها</TabsTrigger>
-          <TabsTrigger value="channels">کانال‌ها</TabsTrigger>
-        </TabsList>
-
-        <TabsContent
-          value="sales"
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          <div className="rounded-xl border sm:col-span-2 lg:col-span-1">
-            <div className="border-b px-3 py-2.5">
-              <h3 className="text-sm font-medium">فروش در برابر هدف</h3>
-            </div>
-            <div className="p-3">
-              <ChartContainer
-                config={salesConfig}
-                className="aspect-[5/3] w-full max-h-[200px]"
-              >
-                <AreaChart
-                  data={salesChartData}
-                  margin={{ top: 6, right: 4, left: 4, bottom: 0 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    reversed
-                    tickMargin={6}
-                  />
-                  <YAxis
-                    orientation="right"
-                    tickLine={false}
-                    axisLine={false}
-                    width={36}
-                    tickFormatter={(v) =>
-                      formatPersianNumber(Number(v) / 1_000_000)
-                    }
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Area
-                    dataKey="target"
-                    type="monotone"
-                    stroke="var(--color-target)"
-                    fill="var(--color-target)"
-                    fillOpacity={0.08}
-                    strokeDasharray="4 4"
-                  />
-                  <Area
-                    dataKey="sales"
-                    type="monotone"
-                    stroke="var(--color-sales)"
-                    fill="var(--color-sales)"
-                    fillOpacity={0.16}
-                  />
-                </AreaChart>
-              </ChartContainer>
-            </div>
-          </div>
-
-          <div className="rounded-xl border">
-            <div className="border-b px-3 py-2.5">
-              <h3 className="text-sm font-medium">ترکیب دسته‌ها</h3>
-            </div>
-            <div className="p-3">
-              <ChartContainer
-                config={{ value: { label: "سهم" } }}
-                className="mx-auto aspect-square max-h-[180px] w-full"
-              >
-                <PieChart>
-                  <ChartTooltip
-                    content={<ChartTooltipContent nameKey="name" />}
-                  />
-                  <Pie
-                    data={categoryShareData}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={42}
-                    outerRadius={68}
-                  >
-                    {categoryShareData.map((entry) => (
-                      <Cell key={entry.name} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
-            </div>
-          </div>
-
-          <div className="rounded-xl border p-3">
-            <h3 className="mb-2.5 text-sm font-medium">نکات دوره</h3>
-            <ul className="space-y-2 text-sm leading-relaxed text-muted-foreground">
-              <li>بهترین ماه: شهریور با فروش بالای هدف</li>
-              <li>بیشترین سهم دسته: لوازم جانبی</li>
-              <li>پیشنهاد: کمپین برای دسته‌های تصویری و نمایشگر</li>
-            </ul>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="orders">
-          <div className="rounded-xl border">
-            <div className="border-b px-3 py-2.5">
-              <h3 className="text-sm font-medium">سفارش و مرجوعی هفتگی</h3>
-            </div>
-            <div className="p-3">
-              <ChartContainer
-                config={ordersConfig}
-                className="aspect-[5/3] w-full max-h-[220px]"
-              >
-                <BarChart
-                  data={weeklyOrdersData}
-                  margin={{ top: 6, right: 4, left: 4, bottom: 0 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="day"
-                    tickLine={false}
-                    axisLine={false}
-                    reversed
-                  />
-                  <YAxis
-                    orientation="right"
-                    tickLine={false}
-                    axisLine={false}
-                    width={32}
-                    tickFormatter={(v) => formatPersianNumber(Number(v))}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Bar dataKey="orders" fill="var(--color-orders)" radius={4} />
-                  <Bar
-                    dataKey="returned"
-                    fill="var(--color-returned)"
-                    radius={4}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="channels">
-          <div className="rounded-xl border">
-            <div className="border-b px-3 py-2.5">
-              <h3 className="text-sm font-medium">سهم کانال‌های فروش</h3>
-            </div>
-            <div className="p-3">
-              <ChartContainer
-                config={channelConfig}
-                dir="ltr"
-                className="aspect-[5/3] w-full max-h-[220px]"
-              >
-                <BarChart
-                  data={channelSalesData}
-                  layout="vertical"
-                  margin={{ top: 6, right: 12, left: 4, bottom: 6 }}
-                >
-                  <CartesianGrid horizontal={false} />
-                  <XAxis
-                    type="number"
-                    tickFormatter={(v) =>
-                      `${formatPersianNumber(Number(v))}٪`
-                    }
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="channel"
-                    width={88}
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar
-                    dataKey="sales"
-                    fill="var(--color-sales)"
-                    radius={[0, 4, 4, 0]}
-                    barSize={18}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
     </div>
   )
 }

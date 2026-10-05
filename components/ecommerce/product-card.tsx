@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ImageIcon, StarIcon } from "lucide-react"
+import type { CSSProperties } from "react"
+import { StarIcon } from "lucide-react"
 
 import { formatPersianNumber } from "@/lib/digits"
 import { formatCount, formatPercent, formatToman } from "@/lib/format"
@@ -15,34 +16,30 @@ import { cn } from "@/lib/utils"
 export function ProductWireframeMedia({
   className,
   label,
+  accent,
+  category,
 }: {
   className?: string
   label?: string
+  accent?: string
+  category?: Product["category"]
 }) {
   return (
     <div
-      className={cn(
-        "relative flex items-center justify-center overflow-hidden bg-muted/45",
-        className
-      )}
+      className={cn("ecom-media", className)}
       aria-hidden
+      style={
+        {
+          "--ecom-product": accent ?? "oklch(0.72 0.06 220)",
+        } as CSSProperties
+      }
     >
+      <div className="ecom-media-wash" />
       <div
-        className="absolute inset-0 opacity-50"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, color-mix(in oklch, var(--border) 90%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklch, var(--border) 90%, transparent) 1px, transparent 1px)",
-          backgroundSize: "18px 18px",
-        }}
+        className="ecom-media-shape"
+        data-kind={category ?? "electronics"}
       />
-      <div className="relative mx-4 flex w-full max-w-[72%] flex-col items-center rounded-lg border border-dashed border-muted-foreground/30 bg-background/70 px-4 py-5 shadow-xs">
-        <ImageIcon className="size-8 text-muted-foreground/75 stroke-[1.25]" />
-        {label ? (
-          <span className="mt-2 text-center text-[0.65rem] font-medium tracking-normal text-muted-foreground">
-            {label}
-          </span>
-        ) : null}
-      </div>
+      {label ? <span className="ecom-media-label">{label}</span> : null}
     </div>
   )
 }
@@ -56,8 +53,10 @@ export function ProductThumb({
 }) {
   return (
     <ProductWireframeMedia
-      className={cn("aspect-square rounded-none border-0", className)}
+      className={className}
       label={categoryLabels[product.category]}
+      accent={product.accent}
+      category={product.category}
     />
   )
 }
@@ -67,62 +66,53 @@ export function ProductCard({ product }: { product: Product }) {
   const outOfStock = product.stock <= 0
 
   return (
-    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border bg-card shadow-xs transition-shadow hover:shadow-sm">
+    <article className="ecom-card group">
       <Link
         href={`/examples/ecommerce/products/${product.id}`}
         className="relative block overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <ProductThumb product={product} />
         {discount > 0 ? (
-          <Badge className="absolute top-2 start-2 tracking-normal shadow-xs">
+          <Badge className="ecom-badge-sale ecom-num">
             {formatPercent(discount)}
           </Badge>
         ) : null}
         {outOfStock ? (
-          <Badge variant="secondary" className="absolute top-2 end-2 shadow-xs">
-            ناموجود
-          </Badge>
+          <Badge className="ecom-badge-out">ناموجود</Badge>
         ) : null}
       </Link>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2.5 border-t p-3">
+      <div className="ecom-card-body">
         <div className="min-w-0 space-y-1">
-          <p className="text-[0.65rem] font-medium tracking-normal text-muted-foreground">
-            {product.brand}
-          </p>
+          <p className="ecom-card-brand">{product.brand}</p>
           <Link
             href={`/examples/ecommerce/products/${product.id}`}
-            className="line-clamp-2 text-sm font-semibold leading-snug outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-ring"
+            className="ecom-card-title outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {product.name}
           </Link>
         </div>
 
-        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <span className="text-base font-semibold tracking-normal whitespace-nowrap">
-            {formatToman(product.price)}
-          </span>
+        <div className="ecom-card-price ecom-num">
+          <strong>{formatToman(product.price)}</strong>
           {product.compareAtPrice ? (
-            <span className="text-xs tracking-normal text-muted-foreground line-through whitespace-nowrap">
-              {formatToman(product.compareAtPrice)}
-            </span>
+            <s>{formatToman(product.compareAtPrice)}</s>
           ) : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 text-xs tracking-normal text-muted-foreground">
-          <span className="inline-flex items-center gap-1 text-foreground">
+        <div className="ecom-card-meta ecom-num">
+          <span className="star">
             <StarIcon className="size-3.5 fill-current" />
             {formatPersianNumber(product.rating, { useGrouping: false })}
           </span>
-          <span aria-hidden className="text-border">
-            ·
-          </span>
+          <span aria-hidden>·</span>
           <span>{formatCount(product.reviewCount)} نظر</span>
         </div>
 
         <Button
           size="sm"
-          className="mt-auto w-full"
+          className="ecom-card-cta"
+          data-outline={outOfStock ? "true" : "false"}
           variant={outOfStock ? "outline" : "default"}
           nativeButton={false}
           render={

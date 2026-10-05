@@ -14,7 +14,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "dashboard",
     title: "داشبورد",
     description:
-      "نمای کلی KPI، نمودارها، فعالیت‌ها و جداول یک پنل مدیریت فروش فارسی.",
+      "پنل مالی عملیاتی: موجودی، تسویه، تراکنش‌ها، طرف‌حساب‌ها و حساب‌های بانکی.",
     href: "/examples/dashboard",
     status: "ready",
   },

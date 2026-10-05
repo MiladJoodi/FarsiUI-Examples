@@ -96,8 +96,10 @@ export function ProductDetailView({ product }: { product: Product }) {
             {[0, 1, 2, 3].map((i) => (
               <ProductWireframeMedia
                 key={i}
+                accent={product.accent}
+                category={product.category}
                 className={cn(
-                  "aspect-square rounded-lg border border-border/70",
+                  "aspect-square overflow-hidden rounded-lg border border-border/70",
                   i === 0 && "ring-2 ring-primary/40 ring-offset-2"
                 )}
               />

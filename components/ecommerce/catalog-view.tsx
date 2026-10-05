@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import * as React from "react"
 
@@ -16,6 +17,7 @@ import {
   FiltersSidebar,
   type CatalogFiltersState,
 } from "@/components/ecommerce/product-filters"
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -109,78 +111,116 @@ export function CatalogView() {
 
   const title =
     activeFilters.category === "all"
-      ? "همه محصولات"
+      ? "منتخب اتلیه"
       : categoryLabels[activeFilters.category]
 
+  const showHero = !q && activeFilters.category === "all"
+
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-      <FiltersSidebar
-        value={activeFilters}
-        onChange={handleFiltersChange}
-        resultCount={filtered.length}
-      />
-
-      <div className="min-w-0 flex-1 space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="min-w-0">
-            <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
-              {title}
-            </h1>
-            <p className="text-sm tracking-normal text-muted-foreground">
-              {q
-                ? `نتایج جستجو برای «${q}» · ${formatCount(filtered.length)} کالا`
-                : `${formatCount(filtered.length)} کالا در فروشگاه نورا`}
+    <div>
+      {showHero ? (
+        <section className="ecom-hero" aria-label="پیشنهاد ویژه">
+          <div>
+            <span className="ecom-hero-kicker">
+              <span aria-hidden>●</span>
+              پیشنهاد هفته
+            </span>
+            <h2>خرید با سلیقه، نه فقط لیست کالا</h2>
+            <p>
+              اتلیهٔ نورا منتخب الکترونیک، پوشاک و خانه را مثل یک ویترین سردبیری
+              چیده است — فیلتر کن، مقایسه کن، سریع بخر.
             </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <FiltersSheetButton
-              value={activeFilters}
-              onChange={handleFiltersChange}
-              resultCount={filtered.length}
-            />
-            <Select
-              value={sort}
-              onValueChange={(v) => setSort((v as SortKey) ?? "featured")}
-              items={{
-                featured: "پیشنهادی",
-                "price-asc": "ارزان‌ترین",
-                "price-desc": "گران‌ترین",
-                rating: "بالاترین امتیاز",
-                discount: "بیشترین تخفیف",
-              }}
-            >
-              <SelectTrigger
-                className="w-full sm:w-[11.5rem]"
-                aria-label="مرتب‌سازی"
+            <div className="ecom-hero-actions">
+              <Button
+                className="ecom-hero-cta"
+                nativeButton={false}
+                render={
+                  <Link href="/examples/ecommerce?category=electronics" />
+                }
               >
-                <SelectValue placeholder="مرتب‌سازی" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="featured">پیشنهادی</SelectItem>
-                <SelectItem value="price-asc">ارزان‌ترین</SelectItem>
-                <SelectItem value="price-desc">گران‌ترین</SelectItem>
-                <SelectItem value="rating">بالاترین امتیاز</SelectItem>
-                <SelectItem value="discount">بیشترین تخفیف</SelectItem>
-              </SelectContent>
-            </Select>
+                الکترونیک منتخب
+              </Button>
+              <Button
+                className="ecom-hero-ghost"
+                variant="outline"
+                nativeButton={false}
+                render={<Link href="/examples/ecommerce?category=home" />}
+              >
+                خانه و آشپزخانه
+              </Button>
+            </div>
           </div>
-        </div>
+          <div className="ecom-hero-stage" aria-hidden>
+            <div className="ecom-hero-orb" />
+          </div>
+        </section>
+      ) : null}
 
-        {filtered.length === 0 ? (
-          <div className="rounded-xl border border-dashed px-4 py-16 text-center">
-            <p className="text-sm font-medium">محصولی پیدا نشد</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              فیلترها یا عبارت جستجو را تغییر دهید.
-            </p>
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <FiltersSidebar
+          value={activeFilters}
+          onChange={handleFiltersChange}
+          resultCount={filtered.length}
+        />
+
+        <div className="min-w-0 flex-1 space-y-4">
+          <div className="ecom-toolbar">
+            <div className="min-w-0">
+              <h1>{title}</h1>
+              <p className="ecom-num">
+                {q
+                  ? `نتایج «${q}» · ${formatCount(filtered.length)} کالا`
+                  : `${formatCount(filtered.length)} کالا در اتلیه`}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <FiltersSheetButton
+                value={activeFilters}
+                onChange={handleFiltersChange}
+                resultCount={filtered.length}
+              />
+              <Select
+                value={sort}
+                onValueChange={(v) => setSort((v as SortKey) ?? "featured")}
+                items={{
+                  featured: "پیشنهادی",
+                  "price-asc": "ارزان‌ترین",
+                  "price-desc": "گران‌ترین",
+                  rating: "بالاترین امتیاز",
+                  discount: "بیشترین تخفیف",
+                }}
+              >
+                <SelectTrigger
+                  className="w-full rounded-full sm:w-[11.5rem]"
+                  aria-label="مرتب‌سازی"
+                >
+                  <SelectValue placeholder="مرتب‌سازی" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="featured">پیشنهادی</SelectItem>
+                  <SelectItem value="price-asc">ارزان‌ترین</SelectItem>
+                  <SelectItem value="price-desc">گران‌ترین</SelectItem>
+                  <SelectItem value="rating">بالاترین امتیاز</SelectItem>
+                  <SelectItem value="discount">بیشترین تخفیف</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+
+          {filtered.length === 0 ? (
+            <div className="ecom-empty">
+              <p>محصولی پیدا نشد</p>
+              <p>فیلترها یا عبارت جستجو را تغییر دهید.</p>
+            </div>
+          ) : (
+            <div className="ecom-grid">
+              {filtered.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

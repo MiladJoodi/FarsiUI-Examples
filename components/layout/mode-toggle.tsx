@@ -37,21 +37,23 @@ export function ModeToggle() {
       aria-label={isDark ? "روشن کردن ظاهر" : "تاریک کردن ظاهر"}
       aria-pressed={isDark}
       title={isDark ? "حالت روشن" : "حالت تاریک"}
-      className="relative"
+      className="relative size-9 shrink-0"
       disabled={!mounted}
     >
-      <SunIcon
-        className={cn(
-          "size-4 transition-all",
-          isDark ? "scale-0 rotate-90 opacity-0" : "scale-100 rotate-0 opacity-100"
-        )}
-      />
-      <MoonIcon
-        className={cn(
-          "absolute size-4 transition-all",
-          isDark ? "scale-100 rotate-0 opacity-100" : "scale-0 -rotate-90 opacity-0"
-        )}
-      />
+      <span className="relative grid size-4 place-items-center">
+        <SunIcon
+          className={cn(
+            "size-4 transition-all",
+            isDark ? "scale-0 rotate-90 opacity-0" : "scale-100 rotate-0 opacity-100"
+          )}
+        />
+        <MoonIcon
+          className={cn(
+            "absolute size-4 transition-all",
+            isDark ? "scale-100 rotate-0 opacity-100" : "scale-0 -rotate-90 opacity-0"
+          )}
+        />
+      </span>
     </Button>
   )
 }

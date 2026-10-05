@@ -10,11 +10,13 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 
 import {
   DESIGN_SYSTEM_STORAGE_KEY,
-  isDarkDefaultDesignSystem,
+  forcesDarkThemeOnPath,
+  isAnalyticsLightStartDesignSystem,
   normalizeDesignSystemId,
   persistDesignSystemId,
   type DesignSystemCookieId,
@@ -28,7 +30,7 @@ export const DESIGN_SYSTEM_PRESETS = [
   {
     id: "default",
     label: "پیشفرض",
-    hint: "استاندارد و شفاف",
+    hint: "تیره و طلایی",
     styleName: "base-nova",
     styleRootClass: "style-nova",
   },
@@ -119,11 +121,14 @@ export function DesignSystemPreviewProvider({
     useState<DesignSystemId>(bootId)
   const [hydrated, setHydrated] = useState(false)
   const { setTheme, theme } = useTheme()
+  const pathname = usePathname()
   const designSystemIdRef = useRef(designSystemId)
   const themeRef = useRef(theme)
+  const pathnameRef = useRef(pathname)
 
   designSystemIdRef.current = designSystemId
   themeRef.current = theme
+  pathnameRef.current = pathname
 
   useLayoutEffect(() => {
     const raw = window.localStorage.getItem(DESIGN_SYSTEM_STORAGE_KEY)
@@ -151,19 +156,34 @@ export function DesignSystemPreviewProvider({
       if (!DESIGN_SYSTEM_PRESETS.some((preset) => preset.id === id)) return
 
       const prev = designSystemIdRef.current
-      const enteringDarkDefault = isDarkDefaultDesignSystem(id)
-      const leavingDarkDefault = isDarkDefaultDesignSystem(prev)
+      const path = pathnameRef.current
+      const enteringForceDark = forcesDarkThemeOnPath(id, path)
+      const leavingForceDark = forcesDarkThemeOnPath(prev, path)
+      const enteringAnalyticsLightStart = isAnalyticsLightStartDesignSystem(
+        id,
+        path
+      )
+      const leavingAnalyticsLightStart = isAnalyticsLightStartDesignSystem(
+        prev,
+        path
+      )
 
       persistDesignSystemId(id as DesignSystemCookieId)
       applyStyleRootClass(resolvePreset(id).styleRootClass)
       setDesignSystemIdState(id)
 
-      // Temporary dark for فیروزه/نیلی — does not overwrite user ModeToggle choice.
-      if (enteringDarkDefault && !leavingDarkDefault) {
-        const snapshot = themeRef.current ?? "system"
-        persistUserThemePreference(snapshot)
+      // Skin-driven theme entry (not a lock): ModeToggle can still change after.
+      if (enteringForceDark) {
+        if (!leavingForceDark) {
+          persistUserThemePreference(themeRef.current ?? "system")
+        }
         setTheme("dark")
-      } else if (!enteringDarkDefault && leavingDarkDefault) {
+      } else if (enteringAnalyticsLightStart) {
+        if (!leavingForceDark && !leavingAnalyticsLightStart) {
+          persistUserThemePreference(themeRef.current ?? "system")
+        }
+        setTheme("light")
+      } else if (leavingForceDark || leavingAnalyticsLightStart) {
         setTheme(readUserThemePreference() ?? "system")
       }
     },

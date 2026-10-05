@@ -2,14 +2,17 @@ import type { LucideIcon } from "lucide-react"
 import {
   LayoutDashboardIcon,
   UsersIcon,
-  ShoppingCartIcon,
-  PackageIcon,
+  ArrowLeftRightIcon,
+  LandmarkIcon,
   ChartColumnIcon,
   SettingsIcon,
 } from "lucide-react"
 
 /** Base path for the Dashboard reference example (internal nav only). */
 export const DASHBOARD_BASE = "/examples/dashboard"
+
+export const BRAND_NAME = "تراز"
+export const BRAND_TAGLINE = "عملیات مالی"
 
 export type NavItem = {
   title: string
@@ -18,14 +21,22 @@ export type NavItem = {
 }
 
 export const navItems: NavItem[] = [
-  { title: "داشبورد", href: DASHBOARD_BASE, icon: LayoutDashboardIcon },
-  { title: "کاربران", href: `${DASHBOARD_BASE}/users`, icon: UsersIcon },
+  { title: "امروز", href: DASHBOARD_BASE, icon: LayoutDashboardIcon },
   {
-    title: "سفارش‌ها",
+    title: "تراکنش‌ها",
     href: `${DASHBOARD_BASE}/orders`,
-    icon: ShoppingCartIcon,
+    icon: ArrowLeftRightIcon,
   },
-  { title: "محصولات", href: `${DASHBOARD_BASE}/products`, icon: PackageIcon },
+  {
+    title: "طرف‌حساب‌ها",
+    href: `${DASHBOARD_BASE}/users`,
+    icon: UsersIcon,
+  },
+  {
+    title: "حساب‌ها",
+    href: `${DASHBOARD_BASE}/products`,
+    icon: LandmarkIcon,
+  },
   {
     title: "گزارش‌ها",
     href: `${DASHBOARD_BASE}/reports`,
@@ -43,31 +54,31 @@ export const pageMeta: Record<
   { title: string; description?: string; breadcrumbs?: string[] }
 > = {
   [DASHBOARD_BASE]: {
-    title: "داشبورد",
-    description: "نمای کلی فروش و فعالیت‌های امروز",
+    title: "امروز",
+    description: "موجودی، تسویه و کارهای فوری روز",
   },
   [`${DASHBOARD_BASE}/users`]: {
-    title: "کاربران",
-    description: "مدیریت حساب‌های کاربران",
+    title: "طرف‌حساب‌ها",
+    description: "مشتریان، تأمین‌کنندگان و مانده‌ها",
   },
   [`${DASHBOARD_BASE}/orders`]: {
-    title: "سفارش‌ها",
-    description: "پیگیری و بررسی سفارش‌ها",
+    title: "تراکنش‌ها",
+    description: "دفتر ورود و خروج وجوه",
   },
   [`${DASHBOARD_BASE}/products`]: {
-    title: "محصولات",
-    description: "فهرست و وضعیت موجودی",
+    title: "حساب‌ها",
+    description: "حساب‌های بانکی و کیف پول‌ها",
   },
   [`${DASHBOARD_BASE}/reports`]: {
     title: "گزارش‌ها",
-    description: "خلاصه عملکرد فروش",
+    description: "خلاصه عملکرد مالی دوره",
   },
   [`${DASHBOARD_BASE}/settings`]: {
     title: "تنظیمات",
-    description: "مدیریت حساب، اعلان‌ها و ظاهر پنل",
+    description: "اعلان‌ها، امنیت برداشت و نمایش",
   },
 }
 
 export function getPageMeta(pathname: string) {
-  return pageMeta[pathname] ?? { title: "همیار" }
+  return pageMeta[pathname] ?? { title: BRAND_NAME }
 }

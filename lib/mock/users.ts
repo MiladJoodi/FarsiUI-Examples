@@ -1,4 +1,9 @@
-export type UserRole = "مدیر" | "پشتیبانی" | "فروشنده" | "مشتری"
+export type UserRole =
+  | "مشتری"
+  | "تأمین‌کننده"
+  | "پیمانکار"
+  | "کارمند"
+
 export type UserStatus = "فعال" | "معلق" | "غیرفعال"
 
 export type User = {
@@ -9,43 +14,70 @@ export type User = {
   status: UserStatus
   joinedAt: string
   city: string
+  /** Remaining balance with this counterparty (تومان) */
+  balance: number
+  /** @deprecated use balance */
   orders: number
   initials: string
+  lastActivity: string
+  phone: string
+  /** Public path under /avatar */
+  avatar: string
 }
+
+const AVATARS = [
+  "/avatar/01.jpg",
+  "/avatar/02.jpg",
+  "/avatar/03.jpg",
+  "/avatar/04.jpg",
+  "/avatar/05.jpg",
+] as const
 
 export const users: User[] = [
   {
     id: "u1",
-    name: "مینا اکبری",
-    email: "mina.akbari@example.com",
-    role: "مدیر",
+    name: "فروشگاه آریا",
+    email: "finance@arya-shop.ir",
+    role: "مشتری",
     status: "فعال",
     joinedAt: "1404/02/18",
     city: "تهران",
-    orders: 0,
-    initials: "م‌ا",
+    balance: 8_200_000,
+    orders: 8_200_000,
+    initials: "ف‌آ",
+    lastActivity: "امروز · ۱۰:۱۴",
+    phone: "۰۲۱۸۸۷۷۶۶۵۵",
+    avatar: AVATARS[0],
   },
   {
     id: "u2",
-    name: "کامران موسوی",
-    email: "kamran.mousavi@example.com",
-    role: "فروشنده",
+    name: "تأمین کالای پارس",
+    email: "ap@pars-supply.ir",
+    role: "تأمین‌کننده",
     status: "فعال",
     joinedAt: "1404/05/03",
     city: "اصفهان",
-    orders: 48,
-    initials: "ک‌م",
+    balance: -12_400_000,
+    orders: -12_400_000,
+    initials: "ت‌پ",
+    lastActivity: "دیروز · ۱۶:۴۰",
+    phone: "۰۳۱۳۱۲۳۴۵۶۷",
+    avatar: AVATARS[1],
   },
   {
     id: "u3",
     name: "زهرا قاسمی",
     email: "zahra.ghasemi@example.com",
-    role: "پشتیبانی",
+    role: "کارمند",
     status: "فعال",
     joinedAt: "1404/08/21",
     city: "شیراز",
+    balance: 0,
     orders: 0,
     initials: "ز‌ق",
+    lastActivity: "امروز · ۰۹:۰۲",
+    phone: "۰۹۱۷۱۲۳۴۵۶۷",
+    avatar: AVATARS[2],
   },
   {
     id: "u4",
@@ -55,19 +87,27 @@ export const users: User[] = [
     status: "معلق",
     joinedAt: "1405/01/14",
     city: "مشهد",
-    orders: 6,
+    balance: 1_150_000,
+    orders: 1_150_000,
     initials: "پ‌ش",
+    lastActivity: "۳ روز پیش",
+    phone: "۰۹۱۵۹۸۷۶۵۴۳",
+    avatar: AVATARS[3],
   },
   {
     id: "u5",
-    name: "الهام رضوی",
-    email: "elham.razavi@example.com",
-    role: "فروشنده",
+    name: "خدمات فنی رضوی",
+    email: "ops@razavi-tech.ir",
+    role: "پیمانکار",
     status: "فعال",
     joinedAt: "1405/03/02",
     city: "تبریز",
-    orders: 31,
-    initials: "ا‌ر",
+    balance: -4_800_000,
+    orders: -4_800_000,
+    initials: "خ‌ر",
+    lastActivity: "امروز · ۱۱:۳۰",
+    phone: "۰۴۱۳۳۳۱۲۱۲۱",
+    avatar: AVATARS[4],
   },
   {
     id: "u6",
@@ -77,19 +117,27 @@ export const users: User[] = [
     status: "غیرفعال",
     joinedAt: "1403/11/27",
     city: "کرج",
-    orders: 2,
+    balance: 0,
+    orders: 0,
     initials: "س‌ب",
+    lastActivity: "۲ ماه پیش",
+    phone: "۰۹۱۲۳۴۵۶۷۸۹",
+    avatar: AVATARS[0],
   },
   {
     id: "u7",
     name: "نرگس کاظمی",
     email: "narges.kazemi@example.com",
-    role: "پشتیبانی",
+    role: "کارمند",
     status: "فعال",
     joinedAt: "1405/06/19",
     city: "تهران",
+    balance: 0,
     orders: 0,
     initials: "ن‌ک",
+    lastActivity: "امروز · ۰۸:۴۵",
+    phone: "۰۹۱۲۱۱۱۲۲۳۳",
+    avatar: AVATARS[1],
   },
   {
     id: "u8",
@@ -99,19 +147,27 @@ export const users: User[] = [
     status: "فعال",
     joinedAt: "1405/07/01",
     city: "اهواز",
-    orders: 11,
+    balance: 3_600_000,
+    orders: 3_600_000,
     initials: "ب‌ی",
+    lastActivity: "دیروز · ۱۲:۱۰",
+    phone: "۰۹۱۶۷۷۸۸۹۹۰",
+    avatar: AVATARS[2],
   },
   {
     id: "u9",
-    name: "سحر نعمتی",
-    email: "sahar.nemati@example.com",
-    role: "فروشنده",
+    name: "چاپخانه ساحل",
+    email: "billing@sahel-print.ir",
+    role: "تأمین‌کننده",
     status: "فعال",
     joinedAt: "1405/04/11",
     city: "رشت",
-    orders: 22,
-    initials: "س‌ن",
+    balance: -2_250_000,
+    orders: -2_250_000,
+    initials: "چ‌س",
+    lastActivity: "۵ روز پیش",
+    phone: "۰۱۳۳۳۲۲۱۱۰۰",
+    avatar: AVATARS[3],
   },
   {
     id: "u10",
@@ -121,7 +177,11 @@ export const users: User[] = [
     status: "فعال",
     joinedAt: "1405/07/08",
     city: "قم",
-    orders: 4,
+    balance: 780_000,
+    orders: 780_000,
     initials: "آ‌ج",
+    lastActivity: "امروز · ۱۳:۲۰",
+    phone: "۰۹۱۲۵۵۵۶۶۷۷",
+    avatar: AVATARS[4],
   },
 ]

@@ -5,11 +5,32 @@
 export const DESIGN_SYSTEM_STORAGE_KEY = "design-system-preview"
 export const DESIGN_SYSTEM_COOKIE = "design-system-preview"
 
-/** فیروزه + نیلی — when picked in the UI, enter dark as the default. */
+/** پیشفرض + فیروزه + نیلی — picking these forces dark (dashboard / most examples). */
 export function isDarkDefaultDesignSystem(
   id: string | null | undefined
 ): boolean {
-  return id === "glass" || id === "nili"
+  return id === "default" || id === "glass" || id === "nili"
+}
+
+/**
+ * Analytics only: skin id `default` (پیشفرض) starts in light, but is still
+ * freely toggleable — unlike dashboard where پیشفرض forces dark.
+ */
+export function isAnalyticsLightStartDesignSystem(
+  id: string | null | undefined,
+  pathname: string | null | undefined
+): boolean {
+  return id === "default" && !!pathname?.startsWith("/examples/analytics")
+}
+
+/** Whether selecting this skin should force dark on the current route. */
+export function forcesDarkThemeOnPath(
+  id: string | null | undefined,
+  pathname: string | null | undefined
+): boolean {
+  if (id === "glass" || id === "nili") return true
+  if (id === "default") return !isAnalyticsLightStartDesignSystem(id, pathname)
+  return false
 }
 
 export const DESIGN_SYSTEM_IDS = [

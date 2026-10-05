@@ -39,23 +39,23 @@ export type Conversation = {
   messages: ChatMessage[]
 }
 
-export const assistantName = "نورا"
-export const assistantHint = "دستیار کاری برای نوشتن، تحلیل و کدنویسی"
+export const assistantName = "FarsiUI"
+export const assistantHint = "دستیار ساخت رابط فارسی"
 
 export const models: AssistantModel[] = [
   {
     id: "nora-25",
-    name: "نورا ۲٫۵",
+    name: "FarsiUI · استاندارد",
     hint: "تعادل کیفیت و سرعت",
   },
   {
     id: "nora-fast",
-    name: "نورا سریع",
+    name: "FarsiUI · سریع",
     hint: "پاسخ کوتاه‌تر برای کارهای روزمره",
   },
   {
     id: "nora-precise",
-    name: "نورا دقیق",
+    name: "FarsiUI · دقیق",
     hint: "تحلیل عمیق‌تر و استناد بیشتر",
   },
 ]
@@ -147,7 +147,7 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "فرم ثبت‌نام فارسی داریم؛ روی موبایل focus به پیام خطا نمی‌رود و ترتیب tab هم گیج‌کننده است. از کجا شروع کنم؟",
+            text: "فرم ثبت‌نام روی موبایل فوکوس خطا ندارد. از کجا شروع کنم؟",
           },
         ],
       },
@@ -158,15 +158,14 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "از اتصال معنایی برچسب و فیلد شروع کنید؛ بعد ترتیب فوکوس و اعلام خطا. برای RTL معمولاً مشکل از CSS نیست، از HTML ناقص است.",
+            text: "اول برچسب و فیلد را وصل کنید؛ بعد فوکوس خطای Submit.",
           },
           {
             type: "list",
             items: [
-              "هر Input باید با Label مرتبط باشد (`htmlFor` / `id`).",
-              "پیام خطا را با `aria-describedby` به همان فیلد وصل کنید.",
-              "بعد از Submit ناموفق، فوکوس را به اولین فیلد نامعتبر ببرید.",
-              "ترتیب tab را با DOM واقعی بسنجید، نه فقط ظاهر بصری.",
+              "`Label` را با `htmlFor` به Input وصل کنید.",
+              "خطا را با `aria-describedby` به فیلد ببندید.",
+              "بعد Submit، فوکوس روی اولین فیلد نامعتبر برود.",
             ],
           },
           {
@@ -182,7 +181,7 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "برای Field خودتان در FarsiUI چه الگویی پیشنهاد می‌کنی؟",
+            text: "در FarsiUI چه الگویی پیشنهاد می‌کنی؟",
           },
         ],
       },
@@ -193,7 +192,7 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "از `Field` + `FieldLabel` + `FieldError` استفاده کنید تا ارتباط برچسب و وضعیت خطا یکدست بماند:",
+            text: "از `Field` + `FieldLabel` + `FieldError` استفاده کنید:",
           },
           {
             type: "code",
@@ -203,10 +202,6 @@ export const conversations: Conversation[] = [
   <Input id="mobile" inputMode="tel" aria-invalid={Boolean(error)} />
   {error ? <FieldError>{error}</FieldError> : null}
 </Field>`,
-          },
-          {
-            type: "text",
-            text: "اگر چند خطا دارید، فقط اولین مورد را فوکوس کنید تا کاربر مسیر واضحی داشته باشد.",
           },
           {
             type: "sources",
@@ -232,7 +227,7 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "تابعی می‌خواهم که «۰۹۱۲۱۲۳۴۵۶۷» و «09121234567» را یکسان کند.",
+            text: "«۰۹۱۲…» و «0912…» را یکسان کن.",
           },
         ],
       },
@@ -243,7 +238,7 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "ابتدا ارقام را به لاتین برگردانید، فاصله و خط تیره را حذف کنید، بعد طول و پیش‌شماره را چک کنید:",
+            text: "ارقام را لاتین کنید، سپس طول و پیش‌شماره را بسنجید:",
           },
           {
             type: "code",
@@ -257,14 +252,6 @@ export const conversations: Conversation[] = [
   }
   return digits
 }`,
-          },
-          {
-            type: "list",
-            items: [
-              "خروجی را همیشه با صفر ابتدایی نگه دارید.",
-              "اعتبارسنجی نهایی را روی مقدار نرمال‌شده انجام دهید.",
-              "در UI می‌توانید نمایش فارسی و مقدار منطقی لاتین را جدا کنید.",
-            ],
           },
         ],
       },
@@ -286,7 +273,7 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "برای سبد خالی فروشگاه، یک متن کوتاه و حرفه‌ای پیشنهاد بده؛ نه رسمی خشک، نه خودمانی اغراق‌آمیز.",
+            text: "متن کوتاه برای سبد خالی می‌خواهم؛ نه خشک، نه اغراق‌آمیز.",
           },
         ],
       },
@@ -296,24 +283,12 @@ export const conversations: Conversation[] = [
         createdAt: "۱۶:۴۲",
         blocks: [
           {
-            type: "text",
-            text: "پیشنهاد اصلی:",
-          },
-          {
             type: "list",
             items: [
               "عنوان: سبد خرید خالی است",
-              "توضیح: هنوز کالایی انتخاب نکرده‌اید. از فروشگاه شروع کنید.",
+              "توضیح: هنوز کالایی انتخاب نکرده‌اید.",
               "CTA: مشاهده محصولات",
             ],
-          },
-          {
-            type: "text",
-            text: "اگر می‌خواهید کمی گرم‌تر باشد: «سبدتان خالی است. وقتی آماده‌اید، از کاتالوگ انتخاب کنید.» لحن برند را کوتاه و مستقیم نگه دارید.",
-          },
-          {
-            type: "sources",
-            sourceIds: ["s6", "s5"],
           },
         ],
       },
@@ -335,7 +310,7 @@ export const conversations: Conversation[] = [
         blocks: [
           {
             type: "text",
-            text: "برای PRهای UI فارسی، یک چک‌لیست فشرده می‌خواهم که در ریویو جا بماند.",
+            text: "چک‌لیست فشرده برای ریویو UI فارسی.",
           },
         ],
       },
@@ -347,20 +322,11 @@ export const conversations: Conversation[] = [
           {
             type: "list",
             items: [
-              "آیا اعداد و تاریخ در UI فارسی‌اند؟",
-              "آیا در عرض ۳۹۰px overflow افقی نیست؟",
-              "آیا حالت خالی و بارگذاری تعریف شده؟",
-              "آیا دکمه‌های فقط‌آیکن `aria-label` دارند؟",
-              "آیا محتوای LTR مثل کد و URL جهت درست دارند؟",
+              "اعداد و تاریخ فارسی‌اند؟",
+              "در ۳۹۰px overflow نیست؟",
+              "حالت خالی و بارگذاری هست؟",
+              "آیکن‌ها `aria-label` دارند؟",
             ],
-          },
-          {
-            type: "text",
-            text: "اگر فقط سه مورد را اجباری کنید، overflow موبایل، برچسب دسترس‌پذیری، و اعداد فارسی بیشترین بازگشت را دارند.",
-          },
-          {
-            type: "sources",
-            sourceIds: ["s4"],
           },
         ],
       },

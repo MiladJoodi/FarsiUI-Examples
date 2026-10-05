@@ -21,10 +21,14 @@ import {
   analyticsRanges,
   campaignRows,
   channelPerformance,
+  cityPerformance,
   deviceShare,
   funnelData,
+  hourlyTraffic,
+  periodGoals,
   reportUpdatedAt,
   revenueTrendData,
+  secondaryKpis,
   type AnalyticsRangeId,
   type CampaignRow,
 } from "@/lib/mock/analytics"
@@ -62,9 +66,31 @@ function formatDelta(delta: number, up: boolean) {
 }
 
 function formatKpiValue(kpi: (typeof analyticsKpis)[number]) {
-  if (kpi.valueKind === "toman") return formatToman(kpi.value)
+  if (kpi.valueKind === "toman") return formatCompactNumber(kpi.value)
   if (kpi.valueKind === "percent") return formatPercent(kpi.value)
-  return formatCount(kpi.value)
+  return formatCompactNumber(kpi.value)
+}
+
+/** Persian digits with locale grouping — keep ٬ (not ASCII ,) to avoid bidi gaps */
+function formatCompactNumber(value: number) {
+  return formatPersianNumber(value)
+}
+
+function KpiAmount({
+  kpi,
+  className,
+}: {
+  kpi: (typeof analyticsKpis)[number]
+  className?: string
+}) {
+  return (
+    <span className={className}>
+      <span className="ax-num">{formatKpiValue(kpi)}</span>
+      {kpi.valueKind === "toman" ? (
+        <span className="ax-unit"> تومان</span>
+      ) : null}
+    </span>
+  )
 }
 
 function showAnalyticsToast(title: string, description: string) {
@@ -89,33 +115,92 @@ export function AnalyticsView() {
 
   const rangeMeta =
     analyticsRanges.find((item) => item.id === range) ?? analyticsRanges[1]
-  const revenueKpi = analyticsKpis.find((k) => k.id === "revenue")!
-  const satelliteKpis = analyticsKpis.filter((k) => k.id !== "revenue")
+  const channelLabel =
+    CHANNEL_FILTERS.find((c) => c.id === channel)?.label ?? "همه"
+  const revenueKpi = analyticsKpis[0]!
+  const companionKpis = analyticsKpis.slice(1)
 
   return (
-    <div>
-      <header className="ax-hero">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="ax-kicker">تحلیل عملکرد</p>
-            <span className="ax-live">
-              <span className="ax-live-dot" aria-hidden />
-              زنده
-            </span>
-          </div>
-          <h1 className="ax-title">سیگنال‌های رشد را یک‌جا ببینید</h1>
-          <p className="ax-lead">
-            روند درآمد، قیف تبدیل و بازده کانال‌ها در بازهٔ انتخابی — آخرین
-            به‌روزرسانی {reportUpdatedAt}
-          </p>
+    <div className="ax-root">
+      <section className="ax-spotlight" aria-label="شاخص اصلی">
+        <div className="ax-spotlight-top">
+          <span className="ax-live">
+            <span className="ax-live-dot" aria-hidden />
+            زنده
+          </span>
+          <p className="ax-spotlight-updated">{reportUpdatedAt}</p>
         </div>
 
-        <div className="ax-controls">
-          <div
-            className="ax-range"
-            role="group"
-            aria-label="بازه زمانی"
+        <p className="ax-spotlight-label">{revenueKpi.label}</p>
+        <p className="ax-spotlight-value">
+          <KpiAmount kpi={revenueKpi} />
+        </p>
+        <p className="ax-spotlight-trend">
+          <span
+            className="ax-delta"
+            data-up={revenueKpi.up ? "true" : "false"}
           >
+            {revenueKpi.up ? (
+              <ArrowUpRightIcon
+                className="size-3.5 rtl:-scale-x-100"
+                aria-hidden
+              />
+            ) : (
+              <ArrowDownRightIcon
+                className="size-3.5 rtl:-scale-x-100"
+                aria-hidden
+              />
+            )}
+            {formatDelta(revenueKpi.delta, revenueKpi.up)}
+          </span>
+          <span className="ax-spotlight-compare">
+            {rangeMeta.compareLabel}
+          </span>
+          <span className="ax-spotlight-dot ax-hide-mobile" aria-hidden />
+          <span className="ax-spotlight-hint ax-hide-mobile">
+            {revenueKpi.context}
+          </span>
+        </p>
+
+        <ul className="ax-companions" aria-label="شاخص‌های همراه">
+          {companionKpis.map((kpi) => {
+            const shortLabel =
+              kpi.id === "orders"
+                ? "سفارش"
+                : kpi.id === "conversion"
+                  ? "تبدیل"
+                  : kpi.id === "aov"
+                    ? "سبد"
+                    : kpi.label
+            return (
+              <li key={kpi.id} className="ax-companion">
+                <span className="ax-companion-label">
+                  <span className="ax-companion-label-full">{kpi.label}</span>
+                  <span className="ax-companion-label-short">{shortLabel}</span>
+                </span>
+                <div className="ax-companion-row">
+                  <span className="ax-companion-value">
+                    <KpiAmount kpi={kpi} />
+                  </span>
+                  <span
+                    className="ax-delta ax-delta-plain"
+                    data-up={kpi.up ? "true" : "false"}
+                  >
+                    {formatDelta(kpi.delta, kpi.up)}
+                  </span>
+                </div>
+                <span className="ax-companion-hint ax-hide-mobile">
+                  {kpi.context}
+                </span>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+
+      <div className="ax-dock" aria-label="فیلترهای گزارش">
+        <div className="ax-dock-scroll">
+          <div className="ax-range" role="group" aria-label="بازه زمانی">
             {analyticsRanges.map((item) => (
               <button
                 key={item.id}
@@ -124,16 +209,21 @@ export function AnalyticsView() {
                 aria-pressed={range === item.id}
                 onClick={() => setRange(item.id)}
               >
-                {item.label}
+                <span className="ax-range-full">{item.label}</span>
+                <span className="ax-range-short">
+                  {item.id === "7d"
+                    ? "۷ روز"
+                    : item.id === "30d"
+                      ? "۳۰ روز"
+                      : item.id === "90d"
+                        ? "۹۰ روز"
+                        : "۱۴۰۴"}
+                </span>
               </button>
             ))}
           </div>
-
-          <div
-            className="ax-channel-row"
-            role="group"
-            aria-label="فیلتر کانال"
-          >
+          <span className="ax-dock-sep" aria-hidden />
+          <div className="ax-channel-row" role="group" aria-label="فیلتر کانال">
             {CHANNEL_FILTERS.map((item) => (
               <button
                 key={item.id}
@@ -146,93 +236,26 @@ export function AnalyticsView() {
               </button>
             ))}
           </div>
-
-          <Button
-            className="ax-export"
-            variant="outline"
-            onClick={() =>
-              showAnalyticsToast(
-                "خروجی خلاصه آماده شد",
-                `بازه ${rangeMeta.label} · فیلتر ${CHANNEL_FILTERS.find((c) => c.id === channel)?.label} — نمونه نمایشی`
-              )
-            }
-          >
-            <DownloadIcon data-icon="inline-start" />
-            خروجی خلاصه
-          </Button>
         </div>
-      </header>
-
-      <section className="ax-focal" aria-label="شاخص کانونی">
-        <div className="ax-focal-grid">
-          <div>
-            <p className="ax-focal-label">{revenueKpi.label}</p>
-            <p className="ax-focal-value">{formatKpiValue(revenueKpi)}</p>
-            <div className="ax-focal-meta">
-              <span
-                className="ax-delta"
-                data-up={revenueKpi.up ? "true" : "false"}
-              >
-                {revenueKpi.up ? (
-                  <ArrowUpRightIcon
-                    className="size-3.5 rtl:-scale-x-100"
-                    aria-hidden
-                  />
-                ) : (
-                  <ArrowDownRightIcon
-                    className="size-3.5 rtl:-scale-x-100"
-                    aria-hidden
-                  />
-                )}
-                {formatDelta(revenueKpi.delta, revenueKpi.up)}
-              </span>
-              <span>
-                {rangeMeta.compareLabel} · {revenueKpi.context}
-              </span>
-            </div>
-          </div>
-
-          <div className="ax-meters" aria-label="شاخص‌های همراه">
-            {satelliteKpis.map((kpi) => {
-              const fill = Math.min(100, Math.max(18, 40 + kpi.delta * 6))
-              return (
-                <div
-                  key={kpi.id}
-                  className="ax-meter"
-                  data-tone={kpi.up ? "ok" : "warn"}
-                >
-                  <div className="ax-meter-top">
-                    <span className="ax-meter-label">{kpi.label}</span>
-                    <span className="ax-meter-value">
-                      {formatKpiValue(kpi)}
-                    </span>
-                  </div>
-                  <div className="ax-meter-track" aria-hidden>
-                    <div
-                      className="ax-meter-fill"
-                      style={{ width: `${fill}%` }}
-                    />
-                  </div>
-                  <div className="ax-meter-top">
-                    <span className="ax-meter-label">{kpi.context}</span>
-                    <span
-                      className="ax-delta"
-                      data-up={kpi.up ? "true" : "false"}
-                    >
-                      {formatDelta(kpi.delta, kpi.up)}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+        <Button
+          className="ax-export"
+          variant="outline"
+          onClick={() =>
+            showAnalyticsToast(
+              "خروجی آماده شد",
+              `${rangeMeta.label} · ${channelLabel}`
+            )
+          }
+        >
+          <DownloadIcon data-icon="inline-start" />
+          <span className="ax-export-label">خروجی</span>
+        </Button>
+      </div>
 
       <div className="ax-rail" role="tablist" aria-label="نماهای تحلیل">
         {(
           [
-            { id: "overview", label: "نمای تحلیلی" },
+            { id: "overview", label: "تحلیل" },
             { id: "channels", label: "کانال‌ها" },
             { id: "campaigns", label: "کمپین‌ها" },
           ] as const
@@ -260,6 +283,8 @@ export function AnalyticsView() {
 
 function OverviewPane() {
   const maxFunnel = funnelData[0]?.value ?? 1
+  const maxHour = Math.max(...hourlyTraffic.map((h) => h.value))
+  const topCampaigns = campaignRows.filter((c) => c.status === "فعال").slice(0, 4)
 
   return (
     <div>
@@ -389,6 +414,182 @@ function OverviewPane() {
           </div>
         </section>
       </div>
+
+      <section className="ax-extra" aria-label="شاخص‌های تکمیلی">
+        {secondaryKpis.map((kpi) => (
+          <article key={kpi.id} className="ax-extra-item">
+            <p className="ax-extra-label">{kpi.label}</p>
+            <p className="ax-extra-value">
+              <KpiAmount kpi={kpi} />
+            </p>
+            <div className="ax-extra-foot">
+              <span
+                className="ax-delta ax-delta-plain"
+                data-up={kpi.up ? "true" : "false"}
+              >
+                {formatDelta(kpi.delta, kpi.up)}
+              </span>
+              <span className="ax-extra-hint">{kpi.context}</span>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="ax-frame ax-goals-frame" aria-label="اهداف دوره">
+        <div className="ax-frame-head">
+          <div>
+            <h2>اهداف دوره</h2>
+            <p>پیشرفت نسبت به هدف تعریف‌شده برای مهر</p>
+          </div>
+        </div>
+        <div className="ax-frame-body">
+          <div className="ax-goals">
+            {periodGoals.map((goal) => {
+              const pct = Math.min(
+                100,
+                Math.round((goal.current / goal.target) * 1000) / 10
+              )
+              return (
+                <div key={goal.id} className="ax-goal">
+                  <div className="ax-goal-top">
+                    <span className="ax-goal-label">{goal.label}</span>
+                    <span className="ax-goal-pct">
+                      {formatPersianNumber(pct)}٪
+                    </span>
+                  </div>
+                  <div className="ax-goal-track" aria-hidden>
+                    <div
+                      className="ax-goal-fill"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <p className="ax-goal-meta">
+                    {formatPersianNumber(goal.current)} از{" "}
+                    {formatPersianNumber(goal.target)} {goal.unit}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <div className="ax-grid-3">
+        <section className="ax-frame">
+          <div className="ax-frame-head">
+            <div>
+              <h2>کانال‌های برتر</h2>
+              <p>سهم درآمد در بازهٔ جاری</p>
+            </div>
+          </div>
+          <div className="ax-frame-body">
+            <ul className="ax-mini-list">
+              {channelPerformance.slice(0, 4).map((row) => (
+                <li key={row.channel} className="ax-mini-row">
+                  <span className="ax-mini-name">{row.channel}</span>
+                  <span className="ax-mini-val">
+                    {formatPersianNumber(row.share)}٪
+                  </span>
+                  <span className="ax-mini-sub">
+                    {formatPersianNumber(row.revenue)} م
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="ax-frame">
+          <div className="ax-frame-head">
+            <div>
+              <h2>شهرهای پرتراکنش</h2>
+              <p>تمرکز جغرافیایی سفارش موفق</p>
+            </div>
+          </div>
+          <div className="ax-frame-body">
+            <ul className="ax-mini-list">
+              {cityPerformance.map((row) => (
+                <li key={row.city} className="ax-mini-row">
+                  <span className="ax-mini-name">{row.city}</span>
+                  <span className="ax-mini-val">
+                    {formatPersianNumber(row.share)}٪
+                  </span>
+                  <span className="ax-mini-sub">
+                    {formatPersianNumber(row.orders)} سفارش
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="ax-frame">
+          <div className="ax-frame-head">
+            <div>
+              <h2>ساعات اوج</h2>
+              <p>شدت نشست در ساعات منتخب امروز</p>
+            </div>
+          </div>
+          <div className="ax-frame-body">
+            <div className="ax-hours" role="img" aria-label="نمودار ساعات اوج">
+              {hourlyTraffic.map((slot) => (
+                <div key={slot.hour} className="ax-hour">
+                  <div className="ax-hour-bar-wrap" aria-hidden>
+                    <div
+                      className="ax-hour-bar"
+                      style={{ height: `${(slot.value / maxHour) * 100}%` }}
+                    />
+                  </div>
+                  <span className="ax-hour-label">{slot.hour}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section className="ax-frame">
+        <div className="ax-frame-head">
+          <div>
+            <h2>کمپین‌های فعال</h2>
+            <p>نگاهی سریع به بازده کمپین‌های در حال اجرا</p>
+          </div>
+        </div>
+        <div className="ax-frame-body ax-frame-body-flush">
+          <div className="ax-sheet ax-sheet-flush" role="region" aria-label="کمپین‌های فعال">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">کمپین</th>
+                  <th scope="col">کانال</th>
+                  <th scope="col">ROAS</th>
+                  <th scope="col">تبدیل</th>
+                  <th scope="col">درآمد</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topCampaigns.map((row) => (
+                  <tr key={row.id}>
+                    <td className="font-medium">{row.name}</td>
+                    <td>{row.channel}</td>
+                    <td>
+                      {row.roas === 0 ? "—" : formatPersianNumber(row.roas)}
+                    </td>
+                    <td>
+                      {row.conv === 0
+                        ? "—"
+                        : `${formatPersianNumber(row.conv)}٪`}
+                    </td>
+                    <td>
+                      {row.revenue === 0 ? "—" : formatToman(row.revenue)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       <InsightsBlock />
     </div>

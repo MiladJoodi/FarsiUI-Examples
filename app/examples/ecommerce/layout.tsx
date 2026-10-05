@@ -4,6 +4,8 @@ import { Suspense } from "react"
 import { CartProvider } from "@/components/ecommerce/cart-context"
 import { StoreHeader } from "@/components/ecommerce/store-header"
 
+import "@/styles/ecommerce.css"
+
 export default function EcommerceExampleLayout({
   children,
 }: {
@@ -11,17 +13,15 @@ export default function EcommerceExampleLayout({
 }) {
   return (
     <CartProvider>
-      <div className="flex min-h-full flex-col overflow-x-hidden">
+      <div className="ecom-page flex min-h-full flex-col overflow-x-hidden">
         <Suspense
           fallback={
-            <header className="sticky top-0 z-20 h-[9.5rem] border-b bg-background" />
+            <header className="ecom-header h-[9.5rem]" />
           }
         >
           <StoreHeader />
         </Suspense>
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
-          {children}
-        </div>
+        <div className="ecom-body">{children}</div>
       </div>
     </CartProvider>
   )

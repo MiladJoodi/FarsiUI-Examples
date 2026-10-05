@@ -5,11 +5,11 @@ import {
   AlignLeftIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ClockIcon,
   MapPinIcon,
   PlusIcon,
   UsersIcon,
 } from "lucide-react"
+import { toast } from "sonner"
 
 import {
   addDays,
@@ -48,39 +48,59 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
 type CalView = "month" | "week" | "day" | "agenda"
+type CalDensity = "compact" | "cozy" | "roomy"
+type CalPalette = "vivid" | "ink" | "sunset"
 
-const HOURS = Array.from({ length: 12 }, (_, i) => i + 8) // 08–19
+type CalPrefs = {
+  density: CalDensity
+  palette: CalPalette
+  weekend: boolean
+  showTime: boolean
+}
 
-function categoryTone(category: EventCategory) {
-  switch (category) {
-    case "جلسه":
-      return "bg-primary/15 text-primary ring-1 ring-primary/25"
-    case "ددلاین":
-      return "bg-destructive/10 text-destructive ring-1 ring-destructive/20"
-    case "یادآوری":
-      return "bg-amber-500/15 text-amber-800 ring-1 ring-amber-500/25 dark:text-amber-300"
-    default:
-      return "bg-muted text-muted-foreground ring-1 ring-border"
+const DEFAULT_PREFS: CalPrefs = {
+  density: "cozy",
+  palette: "vivid",
+  weekend: true,
+  showTime: true,
+}
+
+const PREFS_KEY = "farsiui-cal-prefs"
+
+function loadPrefs(): CalPrefs {
+  if (typeof window === "undefined") return DEFAULT_PREFS
+  try {
+    const raw = window.localStorage.getItem(PREFS_KEY)
+    if (!raw) return DEFAULT_PREFS
+    return { ...DEFAULT_PREFS, ...JSON.parse(raw) }
+  } catch {
+    return DEFAULT_PREFS
   }
 }
 
-function categoryPanelTone(category: EventCategory) {
-  switch (category) {
-    case "جلسه":
-      return "border-primary/15 bg-primary/5"
-    case "ددلاین":
-      return "border-destructive/15 bg-destructive/5"
-    case "یادآوری":
-      return "border-amber-500/20 bg-amber-500/10"
-    default:
-      return "border-border bg-muted/40"
-  }
+const HOURS = Array.from({ length: 12 }, (_, i) => i + 8)
+
+function isWeekendDate(day: Date) {
+  const d = day.getDay()
+  return d === 4 || d === 5 // پنج‌شنبه و جمعه
+}
+
+function showCalToast(title: string, description: string) {
+  toast.custom(
+    () => (
+      <div className="cal-toast" role="status">
+        <span className="cal-toast-mark" aria-hidden />
+        <div>
+          <p className="cal-toast-title">{title}</p>
+          <p className="cal-toast-desc">{description}</p>
+        </div>
+      </div>
+    ),
+    { duration: 4000 }
+  )
 }
 
 function getAttendeeProfile(name: string) {
@@ -109,12 +129,20 @@ function StatusBadge({ status }: { status: CalendarEvent["status"] }) {
   return <Badge variant={variant}>{status}</Badge>
 }
 
+function timeStartsInHour(persianTime: string, hour: number) {
+  const latin = persianTime
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .slice(0, 2)
+  return Number(latin) === hour
+}
+
 export function CalendarExampleView() {
   const [today, setToday] = React.useState<Date | null>(null)
   const [cursor, setCursor] = React.useState<Date | null>(null)
   const [selectedDay, setSelectedDay] = React.useState<Date | null>(null)
   const [view, setView] = React.useState<CalView>("month")
   const [query, setQuery] = React.useState("")
+  const [prefs, setPrefs] = React.useState<CalPrefs>(DEFAULT_PREFS)
   const [activeCategories, setActiveCategories] = React.useState<
     Record<EventCategory, boolean>
   >({
@@ -131,7 +159,24 @@ export function CalendarExampleView() {
     setToday(now)
     setCursor(now)
     setSelectedDay(now)
+    setPrefs(loadPrefs())
   }, [])
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    window.localStorage.setItem(PREFS_KEY, JSON.stringify(prefs))
+  }, [prefs])
+
+  function updatePrefs(patch: Partial<CalPrefs>) {
+    setPrefs((prev) => ({ ...prev, ...patch }))
+  }
+
+  function createAt(day: Date, hour?: number) {
+    const label = hour
+      ? `${formatJalaliFull(day)} · ${toPersianDigits(String(hour).padStart(2, "0"))}:۰۰`
+      : formatJalaliFull(day)
+    showCalToast("اسلات خالی", `برای ${label} می‌توانید رویداد بسازید (نمایشی).`)
+  }
 
   const allEvents = React.useMemo(
     () => (today ? buildEventsAround(today) : []),
@@ -201,42 +246,57 @@ export function CalendarExampleView() {
   const upcoming = events
     .filter((e) => e.dateKey >= toDateKey(today) && e.status !== "لغوشده")
     .slice(0, 5)
+  const todayEvents = eventsByDay.get(toDateKey(today)) ?? []
 
   function toggleCategory(id: EventCategory) {
     setActiveCategories((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-            تقویم تیم
-          </h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
-            جلسات، ددلاین‌ها و یادآوری‌های فضای کاری همیار — تاریخ‌ها شمسی نمایش
-            داده می‌شوند.
+    <div
+      className="cal-studio"
+      data-density={prefs.density}
+      data-palette={prefs.palette}
+      data-weekend={prefs.weekend ? "on" : "off"}
+      data-show-time={prefs.showTime ? "on" : "off"}
+    >
+      <header className="cal-hero">
+        <div>
+          <p className="cal-kicker">تقویم شمسی</p>
+          <h1 className="cal-title">برنامهٔ تیم در یک نگاه</h1>
+          <p className="cal-lead">
+            چهار نما، فیلتر زنده، و تنظیمات نمایش — دابل‌کلیک روی روز برای نمای
+            روزانه؛ کلیک روی اسلات خالی برای ساخت رویداد.
           </p>
         </div>
         <Button
-          className="w-full shrink-0 sm:w-auto"
+          className="cal-btn cal-btn-primary"
           onClick={() =>
-            toast.success("فرم رویداد جدید در این نمونه فقط نمایشی است")
+            showCalToast(
+              "رویداد جدید",
+              "فرم ایجاد در این نمونه فقط نمایشی است."
+            )
           }
         >
           <PlusIcon data-icon="inline-start" />
           رویداد جدید
         </Button>
-      </div>
+      </header>
 
-      <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Button variant="outline" size="sm" onClick={goToday}>
+      <div className="cal-strip">
+        <div className="cal-nav">
+          <Button
+            variant="outline"
+            size="sm"
+            className="cal-btn cal-btn-ghost"
+            onClick={goToday}
+          >
             امروز
           </Button>
           <Button
             variant="outline"
             size="icon-sm"
+            className="cal-btn cal-btn-ghost"
             aria-label="بازه قبلی"
             onClick={goPrev}
           >
@@ -245,31 +305,40 @@ export function CalendarExampleView() {
           <Button
             variant="outline"
             size="icon-sm"
+            className="cal-btn cal-btn-ghost"
             aria-label="بازه بعدی"
             onClick={goNext}
           >
             <ChevronLeftIcon className="size-4" />
           </Button>
-          <p className="ms-1 min-w-0 text-sm font-medium sm:ms-2">
-            {titleLabel}
-          </p>
+          <p className="cal-month-label cal-num">{titleLabel}</p>
         </div>
 
-        <Tabs
-          value={view}
-          onValueChange={(v) => setView((v as CalView) ?? "month")}
-          className="w-full lg:w-auto"
-        >
-          <TabsList className="h-auto w-full flex-wrap justify-start sm:w-auto">
-            <TabsTrigger value="month">ماه</TabsTrigger>
-            <TabsTrigger value="week">هفته</TabsTrigger>
-            <TabsTrigger value="day">روز</TabsTrigger>
-            <TabsTrigger value="agenda">فهرست</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="cal-views" role="tablist" aria-label="نمای تقویم">
+          {(
+            [
+              ["month", "ماه"],
+              ["week", "هفته"],
+              ["day", "روز"],
+              ["agenda", "فهرست"],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              className="cal-view-btn"
+              aria-pressed={view === id}
+              aria-selected={view === id}
+              onClick={() => setView(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
 
         <SearchField
-          wrapperClassName="lg:ms-auto lg:max-w-xs"
+          wrapperClassName="cal-search"
           placeholder="جستجوی رویداد، مکان یا شرکت‌کننده…"
           aria-label="جستجوی رویدادها"
           value={query}
@@ -277,19 +346,26 @@ export function CalendarExampleView() {
         />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_17.5rem]">
-        <div className="min-w-0 space-y-4">
+      <div className="cal-layout">
+        <div className="min-w-0">
           {view === "month" ? (
             <MonthView
               cursor={cursor}
               today={today}
               selectedDay={selectedDay}
               eventsByDay={eventsByDay}
+              weekendOn={prefs.weekend}
               onSelectDay={(day) => {
                 setSelectedDay(day)
                 setCursor(day)
               }}
+              onOpenDay={(day) => {
+                setSelectedDay(day)
+                setCursor(day)
+                setView("day")
+              }}
               onOpenEvent={setSelectedEvent}
+              onCreateDay={(day) => createAt(day)}
             />
           ) : null}
           {view === "week" ? (
@@ -298,8 +374,10 @@ export function CalendarExampleView() {
               today={today}
               selectedDay={selectedDay}
               eventsByDay={eventsByDay}
+              weekendOn={prefs.weekend}
               onSelectDay={setSelectedDay}
               onOpenEvent={setSelectedEvent}
+              onCreateSlot={(day, hour) => createAt(day, hour)}
             />
           ) : null}
           {view === "day" ? (
@@ -307,18 +385,19 @@ export function CalendarExampleView() {
               day={selectedDay}
               events={selectedDayEvents}
               onOpenEvent={setSelectedEvent}
+              onCreateSlot={(hour) => createAt(selectedDay, hour)}
             />
           ) : null}
           {view === "agenda" ? (
-            <AgendaView events={upcoming.length ? upcoming : events.slice(0, 8)} onOpenEvent={setSelectedEvent} />
+            <AgendaView
+              events={upcoming.length ? upcoming : events.slice(0, 8)}
+              onOpenEvent={setSelectedEvent}
+            />
           ) : null}
         </div>
 
-        <aside className="hidden space-y-4 xl:block">
-          <div
-            data-slot="card"
-            className="rounded-xl border bg-card p-3 text-card-foreground shadow-xs"
-          >
+        <aside className="cal-side">
+          <div className="cal-side-card">
             <Calendar
               mode="single"
               selected={selectedDay}
@@ -334,88 +413,130 @@ export function CalendarExampleView() {
             />
           </div>
 
-          <div
-            data-slot="card"
-            className="rounded-xl border bg-card p-4 text-card-foreground shadow-xs"
-          >
-            <p className="text-sm font-medium">دسته‌بندی‌ها</p>
-            <ul className="mt-3 space-y-2">
-              {calendarCategories.map((cat) => (
-                <li key={cat.id}>
+          <div className="cal-side-card">
+            <p className="cal-side-title">سفارشی‌سازی</p>
+            <p className="cal-side-sub">تراکم، پالت و نمایش</p>
+            <div className="cal-prefs">
+              <p className="cal-pref-label">تراکم</p>
+              <div className="cal-pref-row">
+                {(
+                  [
+                    ["compact", "فشرده"],
+                    ["cozy", "متعادل"],
+                    ["roomy", "باز"],
+                  ] as const
+                ).map(([id, label]) => (
                   <button
+                    key={id}
                     type="button"
-                    aria-pressed={activeCategories[cat.id]}
-                    onClick={() => toggleCategory(cat.id)}
-                    className={cn(
-                      "flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-start text-sm transition-colors",
-                      activeCategories[cat.id]
-                        ? "border-border bg-muted/40"
-                        : "border-transparent opacity-50 hover:opacity-80"
-                    )}
+                    className="cal-pref-chip"
+                    data-active={prefs.density === id ? "true" : "false"}
+                    onClick={() => updatePrefs({ density: id })}
                   >
-                    <span className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "size-2.5 rounded-full",
-                          categoryTone(cat.id).split(" ")[0]
-                        )}
-                        aria-hidden
-                      />
-                      {cat.label}
-                    </span>
+                    {label}
                   </button>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+              <p className="cal-pref-label">پالت رنگ</p>
+              <div className="cal-pref-row">
+                {(
+                  [
+                    ["vivid", "زنده"],
+                    ["ink", "مرکّب"],
+                    ["sunset", "غروب"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="cal-pref-chip"
+                    data-active={prefs.palette === id ? "true" : "false"}
+                    onClick={() => updatePrefs({ palette: id })}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <label className="cal-pref-toggle">
+                <input
+                  type="checkbox"
+                  checked={prefs.weekend}
+                  onChange={(e) => updatePrefs({ weekend: e.target.checked })}
+                />
+                برجسته کردن آخر هفته
+              </label>
+              <label className="cal-pref-toggle">
+                <input
+                  type="checkbox"
+                  checked={prefs.showTime}
+                  onChange={(e) => updatePrefs({ showTime: e.target.checked })}
+                />
+                نمایش ساعت روی کارت‌ها
+              </label>
+            </div>
           </div>
 
-          <div
-            data-slot="card"
-            className="rounded-xl border bg-card p-4 text-card-foreground shadow-xs"
-          >
-            <p className="text-sm font-medium">رویدادهای امروز</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {formatJalaliFull(today)}
-            </p>
-            <Separator className="my-3" />
-            {(eventsByDay.get(toDateKey(today)) ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                رویدادی برای امروز ثبت نشده است.
+          <div className="cal-side-card">
+            <p className="cal-side-title">دسته‌بندی‌ها</p>
+            <p className="cal-side-sub">برای فیلتر روی هر مورد بزنید</p>
+            <div className="cal-cats">
+              {calendarCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className="cal-cat"
+                  aria-pressed={activeCategories[cat.id]}
+                  onClick={() => toggleCategory(cat.id)}
+                >
+                  <span className="cal-dot" data-cat={cat.id} aria-hidden />
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="cal-side-card">
+            <p className="cal-side-title">امروز</p>
+            <p className="cal-side-sub cal-num">{formatJalaliFull(today)}</p>
+            {todayEvents.length === 0 ? (
+              <p className="mt-3 text-sm text-muted-foreground">
+                رویدادی برای امروز نیست.
               </p>
             ) : (
-              <ul className="space-y-2">
-                {(eventsByDay.get(toDateKey(today)) ?? []).map((event) => (
-                  <li key={event.id}>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedEvent(event)}
-                      className="w-full rounded-lg border px-2.5 py-2 text-start text-sm hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                    >
-                      <span className="font-medium">{event.title}</span>
-                      <span className="mt-0.5 block text-xs text-muted-foreground">
-                        {event.startTime}–{event.endTime}
-                      </span>
-                    </button>
-                  </li>
+              <div className="cal-today-list">
+                {todayEvents.map((event) => (
+                  <button
+                    key={event.id}
+                    type="button"
+                    className="cal-today-item"
+                    data-cat={event.category}
+                    onClick={() => setSelectedEvent(event)}
+                  >
+                    <strong>{event.title}</strong>
+                    <span className="cal-num">
+                      {event.startTime}–{event.endTime}
+                    </span>
+                  </button>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </aside>
       </div>
 
-      {/* Mobile categories strip */}
-      <div className="flex flex-wrap gap-2 xl:hidden">
+      <div className="cal-mobile-cats">
         {calendarCategories.map((cat) => (
-          <Button
+          <button
             key={cat.id}
-            size="sm"
-            variant={activeCategories[cat.id] ? "secondary" : "outline"}
+            type="button"
+            className="cal-cat"
+            style={{ width: "auto" }}
             aria-pressed={activeCategories[cat.id]}
             onClick={() => toggleCategory(cat.id)}
           >
+            <span className="cal-dot" data-cat={cat.id} aria-hidden />
             {cat.label}
-          </Button>
+          </button>
         ))}
       </div>
 
@@ -434,82 +555,96 @@ function MonthView({
   today,
   selectedDay,
   eventsByDay,
+  weekendOn,
   onSelectDay,
+  onOpenDay,
   onOpenEvent,
+  onCreateDay,
 }: {
   cursor: Date
   today: Date
   selectedDay: Date
   eventsByDay: Map<string, CalendarEvent[]>
+  weekendOn: boolean
   onSelectDay: (day: Date) => void
+  onOpenDay: (day: Date) => void
   onOpenEvent: (event: CalendarEvent) => void
+  onCreateDay: (day: Date) => void
 }) {
   const days = monthGrid(cursor)
   const month = cursor.getMonth()
 
   return (
-    <div
-      data-slot="card"
-      className="overflow-hidden rounded-xl border bg-card text-card-foreground shadow-xs"
-    >
-      <div className="grid grid-cols-7 border-b bg-muted/30">
+    <div className="cal-panel">
+      <div className="cal-weekdays">
         {WEEKDAY_HEADERS.map((label) => (
-          <div
-            key={label}
-            className="px-1 py-2 text-center text-xs font-medium text-muted-foreground sm:text-sm"
-          >
+          <div key={label} className="cal-weekday">
             {label}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 auto-rows-[minmax(5.5rem,1fr)] sm:auto-rows-[minmax(6.5rem,1fr)]">
+      <div className="cal-month-grid">
         {days.map((day) => {
           const key = toDateKey(day)
           const dayEvents = eventsByDay.get(key) ?? []
           const outside = day.getMonth() !== month
           const isToday = sameDay(day, today)
           const isSelected = sameDay(day, selectedDay)
+          const weekend = weekendOn && isWeekendDate(day)
           return (
             <div
               key={key}
-              className={cn(
-                "flex min-h-0 flex-col border-b border-e p-1 sm:p-1.5",
-                outside && "bg-muted/20 text-muted-foreground"
-              )}
+              className="cal-cell"
+              data-outside={outside ? "true" : "false"}
+              data-selected={isSelected ? "true" : "false"}
+              data-weekend={weekend ? "true" : "false"}
+              onDoubleClick={() => onOpenDay(day)}
             >
-              <button
-                type="button"
-                onClick={() => onSelectDay(day)}
-                aria-label={formatJalaliFull(day)}
-                aria-current={isToday ? "date" : undefined}
-                className={cn(
-                  "mb-1 flex size-7 items-center justify-center rounded-full text-xs tabular-nums sm:size-8 sm:text-sm",
-                  isSelected && "bg-primary text-primary-foreground",
-                  isToday && !isSelected && "ring-1 ring-primary",
-                  "hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                )}
-              >
-                {toPersianDigits(formatJalaliDay(day))}
-              </button>
-              <div className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-hidden">
+              <div className="cal-cell-top">
+                <button
+                  type="button"
+                  onClick={() => onSelectDay(day)}
+                  aria-label={formatJalaliFull(day)}
+                  aria-current={isToday ? "date" : undefined}
+                  className="cal-day-btn cal-num"
+                  data-today={isToday ? "true" : "false"}
+                >
+                  {toPersianDigits(formatJalaliDay(day))}
+                </button>
+                {!outside && dayEvents.length === 0 ? (
+                  <button
+                    type="button"
+                    className="cal-cell-add"
+                    aria-label={`افزودن رویداد در ${formatJalaliFull(day)}`}
+                    onClick={() => onCreateDay(day)}
+                  >
+                    +
+                  </button>
+                ) : null}
+              </div>
+              <div className="cal-events">
                 {dayEvents.slice(0, 3).map((event) => (
                   <button
                     key={event.id}
                     type="button"
+                    className="cal-chip"
+                    data-cat={event.category}
                     onClick={() => onOpenEvent(event)}
-                    className={cn(
-                      "truncate rounded-md px-1 py-0.5 text-start text-[0.65rem] leading-tight sm:text-xs",
-                      categoryTone(event.category)
-                    )}
                   >
-                    <span className="hidden sm:inline">{event.startTime} </span>
+                    <span className="cal-chip-time cal-num">
+                      {event.startTime}{" "}
+                    </span>
                     {event.title}
                   </button>
                 ))}
                 {dayEvents.length > 3 ? (
-                  <span className="px-1 text-[0.65rem] text-muted-foreground">
+                  <button
+                    type="button"
+                    className="cal-more cal-num"
+                    onClick={() => onOpenDay(day)}
+                  >
                     +{toPersianDigits(dayEvents.length - 3)} مورد
-                  </span>
+                  </button>
                 ) : null}
               </div>
             </div>
@@ -525,47 +660,45 @@ function WeekView({
   today,
   selectedDay,
   eventsByDay,
+  weekendOn,
   onSelectDay,
   onOpenEvent,
+  onCreateSlot,
 }: {
   cursor: Date
   today: Date
   selectedDay: Date
   eventsByDay: Map<string, CalendarEvent[]>
+  weekendOn: boolean
   onSelectDay: (day: Date) => void
   onOpenEvent: (event: CalendarEvent) => void
+  onCreateSlot: (day: Date, hour: number) => void
 }) {
   const days = weekDays(cursor)
 
   return (
-    <div
-      data-slot="card"
-      className="overflow-hidden rounded-xl border bg-card text-card-foreground shadow-xs"
-    >
-      <div className="grid grid-cols-[3rem_repeat(7,minmax(0,1fr))] border-b sm:grid-cols-[3.5rem_repeat(7,minmax(0,1fr))]">
-        <div className="border-e bg-muted/20" />
+    <div className="cal-panel">
+      <div className="cal-week-head">
+        <div />
         {days.map((day) => {
           const isToday = sameDay(day, today)
           const isSelected = sameDay(day, selectedDay)
+          const weekend = weekendOn && isWeekendDate(day)
           return (
             <button
               key={toDateKey(day)}
               type="button"
+              className="cal-week-day"
+              data-selected={isSelected ? "true" : "false"}
+              data-weekend={weekend ? "true" : "false"}
               onClick={() => onSelectDay(day)}
-              className={cn(
-                "border-e px-1 py-2 text-center last:border-e-0",
-                isSelected && "bg-primary/10",
-                "hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-              )}
             >
-              <p className="text-[0.65rem] text-muted-foreground sm:text-xs">
+              <p className="cal-week-day-name">
                 {formatJalaliWeekdayShort(day)}
               </p>
               <p
-                className={cn(
-                  "mx-auto mt-1 flex size-7 items-center justify-center rounded-full text-sm font-medium tabular-nums",
-                  isToday && "bg-primary text-primary-foreground"
-                )}
+                className="cal-week-day-num cal-num"
+                data-today={isToday ? "true" : "false"}
               >
                 {toPersianDigits(formatJalaliDay(day))}
               </p>
@@ -574,104 +707,109 @@ function WeekView({
         })}
       </div>
 
-      <div className="max-h-[min(32rem,70vh)] overflow-auto">
-        <div className="grid min-w-[40rem] grid-cols-[3rem_repeat(7,minmax(0,1fr))] sm:min-w-0 sm:grid-cols-[3.5rem_repeat(7,minmax(0,1fr))]">
-          {HOURS.map((hour) => (
-            <React.Fragment key={hour}>
-              <div className="border-b border-e px-1 py-3 text-center text-[0.65rem] tabular-nums text-muted-foreground sm:text-xs">
-                {toPersianDigits(String(hour).padStart(2, "0"))}
-              </div>
-              {days.map((day) => {
-                const key = toDateKey(day)
-                const slotEvents = (eventsByDay.get(key) ?? []).filter((e) =>
-                  timeStartsInHour(e.startTime, hour)
-                )
-                return (
-                  <div
-                    key={`${key}-${hour}`}
-                    className="min-h-14 border-b border-e p-0.5 last:border-e-0"
-                  >
-                    {slotEvents.map((event) => (
-                      <button
-                        key={event.id}
-                        type="button"
-                        onClick={() => onOpenEvent(event)}
-                        className={cn(
-                          "mb-0.5 w-full truncate rounded-md px-1 py-1 text-start text-[0.65rem] sm:text-xs",
-                          categoryTone(event.category)
-                        )}
-                      >
-                        {event.title}
-                      </button>
-                    ))}
-                  </div>
-                )
-              })}
-            </React.Fragment>
-          ))}
-        </div>
+      <div className="cal-week-body">
+        {HOURS.map((hour) => (
+          <div key={hour} className="cal-week-row">
+            <div className="cal-hour cal-num">
+              {toPersianDigits(String(hour).padStart(2, "0"))}
+            </div>
+            {days.map((day) => {
+              const key = toDateKey(day)
+              const slotEvents = (eventsByDay.get(key) ?? []).filter((e) =>
+                timeStartsInHour(e.startTime, hour)
+              )
+              const weekend = weekendOn && isWeekendDate(day)
+              return (
+                <button
+                  key={`${key}-${hour}`}
+                  type="button"
+                  className="cal-slot"
+                  data-weekend={weekend ? "true" : "false"}
+                  aria-label={`اسلات ${toPersianDigits(String(hour))} در ${formatJalaliFull(day)}`}
+                  onClick={() => {
+                    if (slotEvents[0]) onOpenEvent(slotEvents[0])
+                    else onCreateSlot(day, hour)
+                  }}
+                >
+                  {slotEvents.map((event) => (
+                    <span
+                      key={event.id}
+                      className="cal-chip"
+                      data-cat={event.category}
+                    >
+                      {event.title}
+                    </span>
+                  ))}
+                </button>
+              )
+            })}
+          </div>
+        ))}
       </div>
     </div>
   )
-}
-
-function timeStartsInHour(persianTime: string, hour: number) {
-  const latin = persianTime
-    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
-    .slice(0, 2)
-  return Number(latin) === hour
 }
 
 function DayView({
   day,
   events,
   onOpenEvent,
+  onCreateSlot,
 }: {
   day: Date
   events: CalendarEvent[]
   onOpenEvent: (event: CalendarEvent) => void
+  onCreateSlot: (hour: number) => void
 }) {
   return (
-    <div
-      data-slot="card"
-      className="rounded-xl border bg-card p-4 text-card-foreground shadow-xs sm:p-5"
-    >
-      <div className="mb-4">
-        <h2 className="text-base font-semibold">
-          {formatJalaliWeekday(day)}، {formatJalaliFull(day)}
+    <div className="cal-panel cal-day-timeline">
+      <div className="cal-list-head">
+        <h2>
+          {formatJalaliWeekday(day).trim()}، {formatJalaliFull(day)}
         </h2>
-        <p className="text-sm text-muted-foreground">
-          {toPersianDigits(events.length)} رویداد در این روز
+        <p className="cal-num">
+          {toPersianDigits(events.length)} رویداد · روی ساعت خالی بزنید
         </p>
       </div>
-      {events.length === 0 ? (
-        <p className="rounded-lg border border-dashed px-4 py-10 text-center text-sm text-muted-foreground">
-          رویدادی برای این روز نیست.
-        </p>
-      ) : (
-        <ul className="space-y-2">
-          {events.map((event) => (
-            <li key={event.id}>
+      <div className="cal-day-grid">
+        {HOURS.map((hour) => {
+          const slotEvents = events.filter((e) =>
+            timeStartsInHour(e.startTime, hour)
+          )
+          return (
+            <div key={hour} className="cal-day-row">
+              <div className="cal-hour cal-num">
+                {toPersianDigits(String(hour).padStart(2, "0"))}
+              </div>
               <button
                 type="button"
-                onClick={() => onOpenEvent(event)}
-                className="flex w-full flex-col gap-1 rounded-xl border px-3 py-3 text-start hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:flex-row sm:items-center sm:justify-between"
+                className="cal-day-slot"
+                onClick={() => {
+                  if (slotEvents[0]) onOpenEvent(slotEvents[0])
+                  else onCreateSlot(hour)
+                }}
               >
-                <div className="min-w-0">
-                  <p className="font-medium">{event.title}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {event.startTime}–{event.endTime} · {event.location}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{event.category}</Badge>
-                  <StatusBadge status={event.status} />
-                </div>
+                {slotEvents.length === 0 ? (
+                  <span className="cal-slot-hint">افزودن</span>
+                ) : (
+                  slotEvents.map((event) => (
+                    <span
+                      key={event.id}
+                      className="cal-day-block"
+                      data-cat={event.category}
+                    >
+                      <strong>{event.title}</strong>
+                      <em className="cal-num">
+                        {event.startTime}–{event.endTime} · {event.location}
+                      </em>
+                    </span>
+                  ))
+                )}
               </button>
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -684,42 +822,37 @@ function AgendaView({
   onOpenEvent: (event: CalendarEvent) => void
 }) {
   return (
-    <div
-      data-slot="card"
-      className="rounded-xl border bg-card p-4 text-card-foreground shadow-xs sm:p-5"
-    >
-      <h2 className="text-base font-semibold">رویدادهای نزدیک</h2>
-      <p className="mt-0.5 text-sm text-muted-foreground">
-        رویدادهای پیش‌رو بر اساس فیلتر فعال
-      </p>
-      <Separator className="my-4" />
+    <div className="cal-panel cal-list">
+      <div className="cal-list-head">
+        <h2>رویدادهای نزدیک</h2>
+        <p>بر اساس فیلتر و بازهٔ فعال</p>
+      </div>
       {events.length === 0 ? (
-        <p className="text-sm text-muted-foreground">موردی برای نمایش نیست.</p>
+        <p className="cal-empty">موردی برای نمایش نیست.</p>
       ) : (
-        <ul className="space-y-3">
+        <div className="cal-rows">
           {events.map((event) => (
-            <li key={event.id}>
-              <button
-                type="button"
-                onClick={() => onOpenEvent(event)}
-                className="grid w-full gap-1 rounded-xl border px-3 py-3 text-start hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:grid-cols-[7rem_1fr_auto] sm:items-center"
-              >
-                <span className="text-xs tracking-normal text-muted-foreground sm:text-sm">
-                  {formatJalaliFull(new Date(event.dateKey + "T12:00:00"))}
+            <button
+              key={event.id}
+              type="button"
+              className="cal-row"
+              onClick={() => onOpenEvent(event)}
+            >
+              <span className="cal-row-time cal-num">
+                {formatJalaliFull(new Date(event.dateKey + "T12:00:00"))}
+              </span>
+              <span>
+                <span className="cal-row-title">{event.title}</span>
+                <span className="cal-row-meta cal-num">
+                  {event.startTime}–{event.endTime} · {event.location}
                 </span>
-                <span className="min-w-0">
-                  <span className="block font-medium">{event.title}</span>
-                  <span className="mt-0.5 block text-xs text-muted-foreground">
-                    {event.startTime}–{event.endTime} · {event.location}
-                  </span>
-                </span>
-                <Badge variant="outline" className="w-fit">
-                  {event.category}
-                </Badge>
-              </button>
-            </li>
+              </span>
+              <span className="cal-tag" data-cat={event.category}>
+                {event.category}
+              </span>
+            </button>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   )
@@ -740,140 +873,111 @@ function EventDialog({
 
   return (
     <Dialog open={Boolean(event)} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="gap-0 overflow-hidden p-0 sm:max-w-lg"
-        dir="rtl"
-      >
+      <DialogContent className="cal-event-dialog gap-0 p-0 sm:max-w-md" dir="rtl">
         {event ? (
           <>
-        <div
-          className={cn(
-            "border-b px-5 pt-5 pb-4",
-            categoryPanelTone(event.category)
-          )}
-        >
-          <DialogHeader className="space-y-3 text-start">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                variant="outline"
-                className={cn("border-0", categoryTone(event.category))}
-              >
-                {event.category}
-              </Badge>
-              <StatusBadge status={event.status} />
-            </div>
-            <DialogTitle className="text-xl leading-snug sm:text-2xl">
-              {event.title}
-            </DialogTitle>
-            <DialogDescription className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
-              <span className="inline-flex items-center gap-1.5 tracking-normal text-foreground/80">
-                <ClockIcon className="size-4 shrink-0 opacity-70" aria-hidden />
-                {eventDate}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-background/70 px-2 py-1 text-xs font-medium tracking-normal ring-1 ring-border/60">
-                {event.startTime}
-                <span className="text-muted-foreground" aria-hidden>
-                  –
+            <DialogHeader className="cal-event-head space-y-0 text-start">
+              <div className="cal-event-meta">
+                <span className="cal-tag" data-cat={event.category}>
+                  {event.category}
                 </span>
-                {event.endTime}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-        </div>
-
-        <div className="space-y-4 px-5 py-4 text-sm">
-          {hasLocation ? (
-            <div className="flex gap-3 rounded-xl border bg-card px-3 py-3 shadow-xs">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <MapPinIcon className="size-4 text-muted-foreground" aria-hidden />
-              </span>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-muted-foreground">مکان</p>
-                <p className="mt-0.5 font-medium leading-snug">{event.location}</p>
+                <StatusBadge status={event.status} />
               </div>
-            </div>
-          ) : null}
+              <DialogTitle className="cal-event-title">
+                {event.title}
+              </DialogTitle>
+              <DialogDescription className="cal-event-when">
+                <span className="cal-num">{eventDate}</span>
+                <span className="cal-event-dot" aria-hidden>
+                  ·
+                </span>
+                <span className="cal-num">
+                  {event.startTime} – {event.endTime}
+                </span>
+              </DialogDescription>
+            </DialogHeader>
 
-          {event.description ? (
-            <div className="flex gap-3 rounded-xl border bg-muted/25 px-3 py-3">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-background">
-                <AlignLeftIcon
-                  className="size-4 text-muted-foreground"
-                  aria-hidden
-                />
-              </span>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-muted-foreground">
-                  توضیحات
-                </p>
-                <p className="mt-1 leading-relaxed text-foreground/90">
-                  {event.description}
-                </p>
-              </div>
-            </div>
-          ) : null}
+            <div className="cal-event-body">
+              {hasLocation ? (
+                <div className="cal-event-row">
+                  <MapPinIcon className="cal-event-ico" aria-hidden />
+                  <div>
+                    <p className="cal-event-label">مکان</p>
+                    <p className="cal-event-value">{event.location}</p>
+                  </div>
+                </div>
+              ) : null}
 
-          <div>
-            <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-              <UsersIcon className="size-3.5" aria-hidden />
-              شرکت‌کنندگان
-              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[0.65rem] tracking-normal text-foreground">
-                {formatCount(attendees.length)}
-              </span>
-            </p>
-            <ul className="divide-y overflow-hidden rounded-xl border bg-card shadow-xs">
-              {attendees.map((person) => (
-                <li
-                  key={person.name}
-                  className="flex items-center gap-3 px-3 py-2.5"
-                >
-                  <Avatar size="sm">
-                    <AvatarFallback className="text-[0.65rem]">
-                      {person.initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium leading-snug">{person.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {person.role}
+              {event.description ? (
+                <div className="cal-event-row">
+                  <AlignLeftIcon className="cal-event-ico" aria-hidden />
+                  <div>
+                    <p className="cal-event-label">توضیحات</p>
+                    <p className="cal-event-value cal-event-desc">
+                      {event.description}
                     </p>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+                </div>
+              ) : null}
 
-        <DialogFooter className="-mx-0 -mb-0 flex-col gap-2 bg-muted/20 px-5 py-4 sm:flex-row sm:justify-between">
-          <div className="flex w-full flex-wrap gap-2 sm:w-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 sm:flex-none"
-              onClick={() => toast.message("ویرایش در این نمونه فعال نیست")}
-            >
-              ویرایش
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex-1 text-destructive hover:bg-destructive/10 hover:text-destructive sm:flex-none"
-              onClick={() => {
-                toast.message("حذف فقط نمایشی است")
-                onOpenChange(false)
-              }}
-            >
-              حذف
-            </Button>
-          </div>
-          <Button
-            size="sm"
-            className="w-full sm:w-auto"
-            onClick={() => onOpenChange(false)}
-          >
-            بستن
-          </Button>
-        </DialogFooter>
+              {attendees.length > 0 ? (
+                <div className="cal-event-row">
+                  <UsersIcon className="cal-event-ico" aria-hidden />
+                  <div className="min-w-0 flex-1">
+                    <p className="cal-event-label">
+                      شرکت‌کنندگان
+                      <span className="cal-num">
+                        {" "}
+                        · {formatCount(attendees.length)}
+                      </span>
+                    </p>
+                    <ul className="cal-event-people">
+                      {attendees.map((person) => (
+                        <li key={person.name}>
+                          <Avatar size="sm">
+                            <AvatarFallback className="text-[0.6rem]">
+                              {person.initials}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0">
+                            <p>{person.name}</p>
+                            <span>{person.role}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <DialogFooter className="cal-event-foot">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => {
+                  showCalToast("حذف", "فقط نمایشی است.")
+                  onOpenChange(false)
+                }}
+              >
+                حذف
+              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    showCalToast("ویرایش", "در این نمونه فعال نیست.")
+                  }
+                >
+                  ویرایش
+                </Button>
+                <Button size="sm" onClick={() => onOpenChange(false)}>
+                  بستن
+                </Button>
+              </div>
+            </DialogFooter>
           </>
         ) : null}
       </DialogContent>
