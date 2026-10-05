@@ -5,33 +5,8 @@
 export const DESIGN_SYSTEM_STORAGE_KEY = "design-system-preview"
 export const DESIGN_SYSTEM_COOKIE = "design-system-preview"
 
-/** پیشفرض + فیروزه + نیلی — picking these forces dark (dashboard / most examples). */
-export function isDarkDefaultDesignSystem(
-  id: string | null | undefined
-): boolean {
-  return id === "default" || id === "glass" || id === "nili"
-}
-
-/**
- * Analytics only: skin id `default` (پیشفرض) starts in light, but is still
- * freely toggleable — unlike dashboard where پیشفرض forces dark.
- */
-export function isAnalyticsLightStartDesignSystem(
-  id: string | null | undefined,
-  pathname: string | null | undefined
-): boolean {
-  return id === "default" && !!pathname?.startsWith("/examples/analytics")
-}
-
-/** Whether selecting this skin should force dark on the current route. */
-export function forcesDarkThemeOnPath(
-  id: string | null | undefined,
-  pathname: string | null | undefined
-): boolean {
-  if (id === "glass" || id === "nili") return true
-  if (id === "default") return !isAnalyticsLightStartDesignSystem(id, pathname)
-  return false
-}
+/** App fallback / first-load skin — «پیشفرض». */
+export const DEFAULT_DESIGN_SYSTEM_ID = "default" as const
 
 export const DESIGN_SYSTEM_IDS = [
   "default",
@@ -56,11 +31,11 @@ export const DESIGN_SYSTEM_STYLE_CLASS: Record<DesignSystemCookieId, string> = {
 export function normalizeDesignSystemId(
   value: string | null | undefined
 ): DesignSystemCookieId {
-  if (!value) return "comfort"
+  if (!value) return DEFAULT_DESIGN_SYSTEM_ID
   const id = value === "aether" ? "glass" : value
   return (DESIGN_SYSTEM_IDS as readonly string[]).includes(id)
     ? (id as DesignSystemCookieId)
-    : "comfort"
+    : DEFAULT_DESIGN_SYSTEM_ID
 }
 
 /** Persist choice for SSR (cookie) + client restore (localStorage). */
@@ -77,17 +52,17 @@ export function persistDesignSystemId(id: DesignSystemCookieId) {
 /**
  * Blocking bootstrap for first child of body — no DOMContentLoaded.
  * Prefers localStorage, then document.cookie; applies style-* immediately.
- * Default: comfort (style-vega) to match components.json base-vega.
+ * Fallback: پیشفرض (style-nova).
  */
 export const DESIGN_SYSTEM_BOOTSTRAP_SCRIPT = `
   try {
     var key = '${DESIGN_SYSTEM_STORAGE_KEY}';
     var cookieName = '${DESIGN_SYSTEM_COOKIE}';
     var fromCookie = (document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)')) || [])[1];
-    var ds = localStorage.getItem(key) || (fromCookie ? decodeURIComponent(fromCookie) : '') || 'comfort';
+    var ds = localStorage.getItem(key) || (fromCookie ? decodeURIComponent(fromCookie) : '') || '${DEFAULT_DESIGN_SYSTEM_ID}';
     if (ds === 'aether') { ds = 'glass'; localStorage.setItem(key, ds); }
     var map = { default: 'style-nova', comfort: 'style-vega', glass: 'style-glass', rose: 'style-rose', nili: 'style-nili', khesht: 'style-khesht' };
-    if (!map[ds]) ds = 'comfort';
+    if (!map[ds]) ds = '${DEFAULT_DESIGN_SYSTEM_ID}';
     document.cookie = cookieName + '=' + ds + ';path=/;max-age=31536000;samesite=lax';
     try { localStorage.setItem(key, ds); } catch (_) {}
     var styleClass = map[ds];

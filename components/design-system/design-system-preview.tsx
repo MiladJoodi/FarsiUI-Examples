@@ -6,25 +6,17 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
-  useRef,
   useState,
   type ReactNode,
 } from "react"
-import { usePathname } from "next/navigation"
-import { useTheme } from "next-themes"
 
 import {
+  DEFAULT_DESIGN_SYSTEM_ID,
   DESIGN_SYSTEM_STORAGE_KEY,
-  forcesDarkThemeOnPath,
-  isAnalyticsLightStartDesignSystem,
   normalizeDesignSystemId,
   persistDesignSystemId,
   type DesignSystemCookieId,
 } from "@/lib/design-system"
-import {
-  persistUserThemePreference,
-  readUserThemePreference,
-} from "@/lib/theme-preference"
 
 export const DESIGN_SYSTEM_PRESETS = [
   {
@@ -73,7 +65,7 @@ export const DESIGN_SYSTEM_PRESETS = [
 
 export type DesignSystemId = (typeof DESIGN_SYSTEM_PRESETS)[number]["id"]
 
-const DEFAULT_DESIGN_SYSTEM: DesignSystemId = "comfort"
+const DEFAULT_DESIGN_SYSTEM: DesignSystemId = DEFAULT_DESIGN_SYSTEM_ID
 
 type DesignSystemPreviewContextType = {
   designSystemId: DesignSystemId
@@ -120,15 +112,6 @@ export function DesignSystemPreviewProvider({
   const [designSystemId, setDesignSystemIdState] =
     useState<DesignSystemId>(bootId)
   const [hydrated, setHydrated] = useState(false)
-  const { setTheme, theme } = useTheme()
-  const pathname = usePathname()
-  const designSystemIdRef = useRef(designSystemId)
-  const themeRef = useRef(theme)
-  const pathnameRef = useRef(pathname)
-
-  designSystemIdRef.current = designSystemId
-  themeRef.current = theme
-  pathnameRef.current = pathname
 
   useLayoutEffect(() => {
     const raw = window.localStorage.getItem(DESIGN_SYSTEM_STORAGE_KEY)
@@ -151,44 +134,12 @@ export function DesignSystemPreviewProvider({
     applyStyleRootClass(resolvePreset(designSystemId).styleRootClass)
   }, [designSystemId, hydrated])
 
-  const setDesignSystemId = useCallback(
-    (id: DesignSystemId) => {
-      if (!DESIGN_SYSTEM_PRESETS.some((preset) => preset.id === id)) return
-
-      const prev = designSystemIdRef.current
-      const path = pathnameRef.current
-      const enteringForceDark = forcesDarkThemeOnPath(id, path)
-      const leavingForceDark = forcesDarkThemeOnPath(prev, path)
-      const enteringAnalyticsLightStart = isAnalyticsLightStartDesignSystem(
-        id,
-        path
-      )
-      const leavingAnalyticsLightStart = isAnalyticsLightStartDesignSystem(
-        prev,
-        path
-      )
-
-      persistDesignSystemId(id as DesignSystemCookieId)
-      applyStyleRootClass(resolvePreset(id).styleRootClass)
-      setDesignSystemIdState(id)
-
-      // Skin-driven theme entry (not a lock): ModeToggle can still change after.
-      if (enteringForceDark) {
-        if (!leavingForceDark) {
-          persistUserThemePreference(themeRef.current ?? "system")
-        }
-        setTheme("dark")
-      } else if (enteringAnalyticsLightStart) {
-        if (!leavingForceDark && !leavingAnalyticsLightStart) {
-          persistUserThemePreference(themeRef.current ?? "system")
-        }
-        setTheme("light")
-      } else if (leavingForceDark || leavingAnalyticsLightStart) {
-        setTheme(readUserThemePreference() ?? "system")
-      }
-    },
-    [setTheme]
-  )
+  const setDesignSystemId = useCallback((id: DesignSystemId) => {
+    if (!DESIGN_SYSTEM_PRESETS.some((preset) => preset.id === id)) return
+    persistDesignSystemId(id as DesignSystemCookieId)
+    applyStyleRootClass(resolvePreset(id).styleRootClass)
+    setDesignSystemIdState(id)
+  }, [])
 
   const preset = resolvePreset(designSystemId)
 

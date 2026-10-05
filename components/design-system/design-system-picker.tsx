@@ -138,7 +138,7 @@ function DesignTriggerButton({
 }: React.ComponentProps<typeof Button> & { open?: boolean }) {
   const { designSystemId, presets } = useDesignSystemPreview()
   const active =
-    presets.find((preset) => preset.id === designSystemId) ?? presets[1]
+    presets.find((preset) => preset.id === designSystemId) ?? presets[0]
 
   return (
     <Button

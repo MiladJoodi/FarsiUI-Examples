@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useRef, type ReactNode } from "react"
-import { useTheme } from "next-themes"
+import type { ReactNode } from "react"
 
 import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { useDesignSystemPreview } from "@/components/design-system/design-system-preview"
@@ -9,35 +8,8 @@ import { ModeToggle } from "@/components/layout/mode-toggle"
 
 import "@/styles/analytics.css"
 
-/**
- * Analytics: skin «پیشفرض» opens in light once on entry.
- * Dark/light toggle stays free after that — پیشفرض is only a skin name.
- * Leaving the page while on پیشفرض restores dashboard’s dark entry for that skin.
- */
 export function AnalyticsShell({ children }: { children: ReactNode }) {
   const { designSystemId } = useDesignSystemPreview()
-  const { setTheme } = useTheme()
-  const designSystemIdRef = useRef(designSystemId)
-  const didApplyLightStart = useRef(false)
-  designSystemIdRef.current = designSystemId
-
-  useEffect(() => {
-    if (designSystemId !== "default") {
-      didApplyLightStart.current = false
-      return
-    }
-    if (didApplyLightStart.current) return
-    didApplyLightStart.current = true
-    setTheme("light")
-  }, [designSystemId, setTheme])
-
-  useEffect(() => {
-    return () => {
-      if (designSystemIdRef.current === "default") {
-        setTheme("dark")
-      }
-    }
-  }, [setTheme])
 
   return (
     <div className="analytics-page" data-ds={designSystemId}>
