@@ -14,7 +14,9 @@
   --ax-up: oklch(0.52 0.13 150);
   --ax-down: oklch(0.52 0.15 25);
   position: relative;
+  display: flex;
   min-height: 100dvh;
+  flex-direction: column;
   color: var(--foreground);
   background: var(--background) !important;
   overflow-x: clip;
@@ -38,6 +40,49 @@
   border-bottom: 1px solid var(--ax-line) !important;
   background: color-mix(in oklch, var(--background) 84%, transparent) !important;
   backdrop-filter: blur(14px);
+}
+
+.analytics-page .ax-farsiui-credit-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 1rem 1.5rem;
+}
+
+.analytics-page .ax-farsiui-credit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  border: 1px solid color-mix(in oklch, var(--ax-line) 85%, var(--ax-signal));
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--ax-signal) 8%, var(--ax-panel));
+  color: var(--ax-ink);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    background 160ms var(--ax-ease),
+    border-color 160ms var(--ax-ease),
+    transform 160ms var(--ax-ease);
+}
+
+.analytics-page .ax-farsiui-credit:hover {
+  border-color: color-mix(in oklch, var(--ax-signal) 45%, var(--ax-line));
+  background: color-mix(in oklch, var(--ax-signal) 14%, var(--ax-panel));
+}
+
+.analytics-page .ax-farsiui-credit:active {
+  transform: scale(0.98);
+}
+
+.analytics-page .ax-farsiui-credit-prefix {
+  color: var(--ax-mute);
+}
+
+.analytics-page .ax-farsiui-credit strong {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--ax-signal);
 }
 
 .ax-brand-name {

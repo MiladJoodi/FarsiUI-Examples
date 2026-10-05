@@ -29,6 +29,18 @@ export function AnalyticsShell({ children }: { children: ReactNode }) {
       <div className="ax-stage mx-auto w-full max-w-6xl flex-1 px-4 py-4 sm:px-6 sm:py-5">
         {children}
       </div>
+      <footer className="ax-farsiui-credit-wrap">
+        <a
+          href="https://farsiui.ir"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ax-farsiui-credit"
+          title="ساخته‌شده با FarsiUI"
+        >
+          <span className="ax-farsiui-credit-prefix">ساخته‌شده با</span>
+          <strong>FarsiUI</strong>
+        </a>
+      </footer>
     </div>
   )
 }
