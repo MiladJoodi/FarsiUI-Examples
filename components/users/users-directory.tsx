@@ -87,6 +87,7 @@ export function UsersDirectory() {
           </InputGroupAddon>
           <InputGroupInput
             placeholder="جستجو بر اساس نام، ایمیل یا شهر…"
+            aria-label="جستجوی کاربران"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -149,15 +150,14 @@ function UserCard({ user }: { user: User }) {
           <div className="min-w-0 flex-1">
             <CardTitle className="truncate">{user.name}</CardTitle>
             <CardDescription
-              className="mt-1 flex items-center gap-1 truncate"
+              className="mt-1 flex min-w-0 items-center gap-1"
               dir="ltr"
             >
               <MailIcon className="size-3.5 shrink-0" />
-              {user.email}
+              <span className="truncate">{user.email}</span>
             </CardDescription>
           </div>
           <EntityActionsMenu label={`عملیات کاربر ${user.name}`}>
-            <DropdownMenuItem>مشاهده پروفایل</DropdownMenuItem>
             <DropdownMenuItem>ارسال پیام</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">تعلیق حساب</DropdownMenuItem>

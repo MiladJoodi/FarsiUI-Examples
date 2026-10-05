@@ -51,7 +51,7 @@ export function StatsCards() {
             className="absolute inset-y-0 start-0 w-1 bg-primary/80"
           />
           <p className="text-sm text-muted-foreground">{item.label}</p>
-          <p className="mt-0.5 text-lg font-semibold tracking-tight sm:text-xl">
+          <p className="mt-0.5 text-base font-semibold tracking-tight sm:text-lg">
             {item.value}
           </p>
           <div

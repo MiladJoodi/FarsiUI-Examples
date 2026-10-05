@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import {
   getDefaultClassNames,
   type DayButton,
@@ -10,7 +10,9 @@ import {
 import { DayPicker } from "react-day-picker"
 import {
   formatNumber,
+  normalizeDigits,
   resolveNumericLocale,
+  toPersianDigits,
 } from "@/lib/digits"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
@@ -49,6 +51,21 @@ function Calendar({
             month: "short",
             calendar: "persian",
           }),
+        formatCaption: (date) =>
+          date.toLocaleString(locale?.code ?? "fa-IR", {
+            month: "long",
+            year: "numeric",
+            calendar: "persian",
+          }),
+        formatDay: (date) =>
+          toPersianDigits(
+            normalizeDigits(
+              date.toLocaleString(locale?.code ?? "fa-IR", {
+                day: "numeric",
+                calendar: "persian",
+              })
+            )
+          ),
         formatWeekdayName: (date) => {
           // ش ی د س چ پ ج
           const labels = ["ی", "د", "س", "چ", "پ", "ج", "ش"]
@@ -166,13 +183,13 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
+              <ChevronLeftIcon className={cn("size-4 rtl:rotate-180", className)} {...props} />
             )
           }
 
           if (orientation === "right") {
             return (
-              <ChevronRightIcon className={cn("size-4", className)} {...props} />
+              <ChevronRightIcon className={cn("size-4 rtl:rotate-180", className)} {...props} />
             )
           }
 

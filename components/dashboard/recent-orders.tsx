@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { formatJalaliDate, formatToman } from "@/lib/format"
+import { DASHBOARD_BASE } from "@/lib/navigation"
 import { recentOrders } from "@/lib/mock/orders"
 import {
   DashboardPanel,
@@ -31,7 +32,12 @@ export function RecentOrders() {
             پنج سفارش اخیر ثبت‌شده در سامانه
           </DashboardPanelDescription>
         </div>
-        <Button variant="outline" size="sm" render={<Link href="/orders" />}>
+        <Button
+          variant="outline"
+          size="sm"
+          nativeButton={false}
+          render={<Link href={`${DASHBOARD_BASE}/orders`} />}
+        >
           مشاهده همه
         </Button>
       </DashboardPanelHeader>

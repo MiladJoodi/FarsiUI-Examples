@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { BellIcon, SearchIcon } from "lucide-react"
 
-import { getPageMeta } from "@/lib/navigation"
+import { DASHBOARD_BASE, getPageMeta } from "@/lib/navigation"
 import { ModeToggle } from "@/components/layout/mode-toggle"
 import { DesignSystemPicker } from "@/components/design-system/design-system-picker"
 import {
@@ -29,67 +29,99 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
+function HeaderSearchField({
+  id,
+  className,
+}: {
+  id: string
+  className?: string
+}) {
+  return (
+    <InputGroup className={className}>
+      <InputGroupAddon align="inline-start">
+        <SearchIcon className="size-4" />
+      </InputGroupAddon>
+      <InputGroupInput
+        id={id}
+        placeholder="جستجو در پنل…"
+        aria-label="جستجو در پنل"
+      />
+    </InputGroup>
+  )
+}
+
 export function SiteHeader() {
   const pathname = usePathname()
   const meta = getPageMeta(pathname)
-  const showBreadcrumb =
-    Boolean(meta.breadcrumbs?.length) && meta.breadcrumbs![0] !== meta.title
+  const isHome = pathname === DASHBOARD_BASE
+  const showBreadcrumb = !isHome
 
   return (
-    <header className="sticky top-0 z-20 grid h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b bg-background/95 px-3 backdrop-blur supports-backdrop-filter:bg-background/80 sm:px-4">
-      <div className="flex min-w-0 items-center gap-2 justify-self-start">
+    <header className="relative sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 px-3 backdrop-blur supports-backdrop-filter:bg-background/80 sm:gap-3 sm:px-4">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
         <SidebarTrigger className="-ms-1" />
         <Separator orientation="vertical" className="me-1 hidden h-4 sm:block" />
         <div className="min-w-0">
-          <h1 className="truncate text-sm font-medium sm:text-base">
-            {meta.title}
-          </h1>
           {showBreadcrumb ? (
-            <Breadcrumb className="hidden md:block">
-              <BreadcrumbList className="text-xs">
+            <Breadcrumb>
+              <BreadcrumbList className="text-xs sm:text-sm">
                 <BreadcrumbItem>
-                  <BreadcrumbLink render={<Link href="/" />}>
+                  <BreadcrumbLink render={<Link href={DASHBOARD_BASE} />}>
                     داشبورد
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{meta.breadcrumbs![0]}</BreadcrumbPage>
+                  <BreadcrumbPage>{meta.title}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
-          ) : meta.description ? (
-            <p className="hidden truncate text-xs text-muted-foreground lg:block">
-              {meta.description}
-            </p>
           ) : null}
         </div>
       </div>
 
-      <div className="justify-self-center">
-        <DesignSystemPicker />
+      <div className="pointer-events-none absolute inset-x-0 flex justify-center px-2">
+        <div className="pointer-events-auto max-w-[min(100%,16rem)] sm:max-w-none">
+          <DesignSystemPicker />
+        </div>
       </div>
 
-      <div className="flex items-center justify-self-end gap-1 sm:gap-1.5">
-        <InputGroup className="hidden h-8 w-40 lg:flex xl:w-52">
-          <InputGroupAddon align="inline-start">
-            <SearchIcon className="size-4" />
-          </InputGroupAddon>
-          <InputGroupInput placeholder="جستجو در پنل…" />
-        </InputGroup>
+      {/* RTL DOM order = visual start→end: search → alerts → theme → avatar */}
+      <div className="flex flex-1 shrink-0 items-center justify-end gap-1 sm:gap-1.5">
+        <HeaderSearchField
+          id="header-search-desktop"
+          className="hidden h-8 w-36 lg:flex xl:w-48"
+        />
 
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="lg:hidden"
-          aria-label="جستجو"
-        >
-          <SearchIcon className="size-4" />
-        </Button>
+        <Popover>
+          <PopoverTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="lg:hidden"
+                aria-label="جستجو در پنل"
+              />
+            }
+          >
+            <SearchIcon className="size-4" />
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-[min(18rem,calc(100vw-1.5rem))] p-2">
+            <HeaderSearchField
+              id="header-search-mobile"
+              className="h-9 w-full"
+            />
+          </PopoverContent>
+        </Popover>
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -148,7 +180,9 @@ export function SiteHeader() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem render={<Link href="/settings" />}>
+            <DropdownMenuItem
+              render={<Link href={`${DASHBOARD_BASE}/settings`} />}
+            >
               تنظیمات
             </DropdownMenuItem>
             <DropdownMenuItem>خروج</DropdownMenuItem>

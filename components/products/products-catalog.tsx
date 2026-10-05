@@ -82,18 +82,24 @@ export function ProductsCatalog() {
           </InputGroupAddon>
           <InputGroupInput
             placeholder="جستجوی نام محصول…"
+            aria-label="جستجوی محصولات"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </InputGroup>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div
+        className="flex flex-wrap gap-2"
+        role="group"
+        aria-label="فیلتر دسته‌بندی"
+      >
         {productCategories.map((item) => (
           <Button
             key={item}
             size="sm"
             variant={category === item ? "default" : "outline"}
+            aria-pressed={category === item}
             onClick={() => setCategory(item)}
           >
             {item}

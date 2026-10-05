@@ -8,6 +8,9 @@ import {
   SettingsIcon,
 } from "lucide-react"
 
+/** Base path for the Dashboard reference example (internal nav only). */
+export const DASHBOARD_BASE = "/examples/dashboard"
+
 export type NavItem = {
   title: string
   href: string
@@ -15,39 +18,51 @@ export type NavItem = {
 }
 
 export const navItems: NavItem[] = [
-  { title: "داشبورد", href: "/", icon: LayoutDashboardIcon },
-  { title: "کاربران", href: "/users", icon: UsersIcon },
-  { title: "سفارش‌ها", href: "/orders", icon: ShoppingCartIcon },
-  { title: "محصولات", href: "/products", icon: PackageIcon },
-  { title: "گزارش‌ها", href: "/reports", icon: ChartColumnIcon },
-  { title: "تنظیمات", href: "/settings", icon: SettingsIcon },
+  { title: "داشبورد", href: DASHBOARD_BASE, icon: LayoutDashboardIcon },
+  { title: "کاربران", href: `${DASHBOARD_BASE}/users`, icon: UsersIcon },
+  {
+    title: "سفارش‌ها",
+    href: `${DASHBOARD_BASE}/orders`,
+    icon: ShoppingCartIcon,
+  },
+  { title: "محصولات", href: `${DASHBOARD_BASE}/products`, icon: PackageIcon },
+  {
+    title: "گزارش‌ها",
+    href: `${DASHBOARD_BASE}/reports`,
+    icon: ChartColumnIcon,
+  },
+  {
+    title: "تنظیمات",
+    href: `${DASHBOARD_BASE}/settings`,
+    icon: SettingsIcon,
+  },
 ]
 
 export const pageMeta: Record<
   string,
   { title: string; description?: string; breadcrumbs?: string[] }
 > = {
-  "/": {
+  [DASHBOARD_BASE]: {
     title: "داشبورد",
     description: "نمای کلی فروش و فعالیت‌های امروز",
   },
-  "/users": {
+  [`${DASHBOARD_BASE}/users`]: {
     title: "کاربران",
     description: "مدیریت حساب‌های کاربران",
   },
-  "/orders": {
+  [`${DASHBOARD_BASE}/orders`]: {
     title: "سفارش‌ها",
     description: "پیگیری و بررسی سفارش‌ها",
   },
-  "/products": {
+  [`${DASHBOARD_BASE}/products`]: {
     title: "محصولات",
     description: "فهرست و وضعیت موجودی",
   },
-  "/reports": {
+  [`${DASHBOARD_BASE}/reports`]: {
     title: "گزارش‌ها",
     description: "خلاصه عملکرد فروش",
   },
-  "/settings": {
+  [`${DASHBOARD_BASE}/settings`]: {
     title: "تنظیمات",
     description: "مدیریت حساب، اعلان‌ها و ظاهر پنل",
   },

@@ -7,6 +7,9 @@ import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
 const Select = SelectPrimitive.Root
 
+/** Map of value → Persian label for Base UI Select.Value display. */
+export type SelectItems = Record<string, React.ReactNode>
+
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
     <SelectPrimitive.Group

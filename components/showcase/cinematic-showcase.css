@@ -1,0 +1,120 @@
+/* 15s product reel — camera only; screenshot pixels untouched */
+
+@keyframes reel-intro {
+  /* 0–3s: wide → slow push into main UI */
+  0% {
+    transform: translate3d(0, 24px, -140px) rotateX(6deg) rotateY(-9deg) scale(0.86);
+  }
+  100% {
+    transform: translate3d(0, -4px, 20px) rotateX(1deg) rotateY(-1deg) scale(1.04);
+  }
+}
+
+@keyframes reel-close-a {
+  /* Component close-up — bias into control cluster */
+  0% {
+    transform: translate3d(2%, 4%, 10px) rotateY(-4deg) rotateX(2deg) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-3%, -6%, 90px) rotateY(3deg) rotateX(-1deg) scale(1.32);
+  }
+}
+
+@keyframes reel-close-b {
+  0% {
+    transform: translate3d(-4%, 2%, 20px) rotateY(5deg) rotateX(1deg) scale(1.14);
+  }
+  100% {
+    transform: translate3d(2%, -5%, 100px) rotateY(-2deg) rotateX(-1.5deg) scale(1.36);
+  }
+}
+
+@keyframes reel-sweep-a {
+  /* Sweep across UI with depth */
+  0% {
+    transform: translate3d(6%, 8px, -40px) rotateY(10deg) rotateX(3deg) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-7%, -10px, 50px) rotateY(-6deg) rotateX(-1deg) scale(1.16);
+  }
+}
+
+@keyframes reel-sweep-b {
+  0% {
+    transform: translate3d(-5%, 10px, -30px) rotateY(-8deg) rotateX(2deg) scale(1.1);
+  }
+  100% {
+    transform: translate3d(6%, -8px, 45px) rotateY(5deg) rotateX(-2deg) scale(1.18);
+  }
+}
+
+@keyframes reel-outro {
+  /* 11–15s: ease out to balanced centered full view */
+  0% {
+    transform: translate3d(0, -8px, 70px) rotateX(-1deg) rotateY(2deg) scale(1.14);
+  }
+  100% {
+    transform: translate3d(0, 6px, -60px) rotateX(3deg) rotateY(-4deg) scale(0.94);
+  }
+}
+
+@keyframes reel-depth {
+  0% {
+    opacity: 0.2;
+    transform: translateZ(-140px) scale(1);
+  }
+  100% {
+    opacity: 0.42;
+    transform: translateZ(-70px) scale(1.14);
+  }
+}
+
+.reel-cam-intro {
+  animation: reel-intro 3000ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.reel-cam-close-a {
+  animation: reel-close-a 2000ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+.reel-cam-close-b {
+  animation: reel-close-b 2000ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+.reel-cam-sweep-a {
+  animation: reel-sweep-a 2000ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.reel-cam-sweep-b {
+  animation: reel-sweep-b 2000ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.reel-cam-outro {
+  animation: reel-outro 4000ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.reel-depth {
+  animation: reel-depth 3000ms ease-in-out both;
+}
+
+.reel-depth-short {
+  animation: reel-depth 2000ms ease-in-out both;
+}
+
+.reel-depth-outro {
+  animation: reel-depth 4000ms ease-in-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-cam-intro,
+  .reel-cam-close-a,
+  .reel-cam-close-b,
+  .reel-cam-sweep-a,
+  .reel-cam-sweep-b,
+  .reel-cam-outro,
+  .reel-depth,
+  .reel-depth-short,
+  .reel-depth-outro {
+    animation: none !important;
+  }
+}

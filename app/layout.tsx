@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import { cookies } from "next/headers"
+import Script from "next/script"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/layout/theme-provider"
@@ -44,8 +45,8 @@ const vazirmatn = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "همیار — پنل مدیریت",
-  description: "نمونه پنل مدیریت فارسی و RTL با FarsiUI",
+  title: "نمونه‌های FarsiUI",
+  description: "نمونه‌های مستقل فارسی و RTL با FarsiUI",
   icons: {
     icon: [{ url: "/favicon.png", type: "image/png" }],
     shortcut: "/favicon.png",
@@ -80,7 +81,9 @@ export default async function RootLayout({
         suppressHydrationWarning
         className={cn(styleRootClass, "min-h-full flex flex-col font-sans")}
       >
-        <script
+        <Script
+          id="farsiui-design-system-bootstrap"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: DESIGN_SYSTEM_BOOTSTRAP_SCRIPT }}
         />
         <ThemeProvider

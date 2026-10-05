@@ -64,13 +64,21 @@ export function ReportsOverview() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold tracking-tight">گزارش عملکرد</h2>
+          <h1 className="text-lg font-semibold tracking-tight">گزارش عملکرد</h1>
           <p className="text-sm text-muted-foreground">
             تحلیل فروش، سفارش‌ها و کانال‌های جذب بدون اتصال به داده زنده
           </p>
         </div>
-        <Select defaultValue="7m">
-          <SelectTrigger className="w-[150px]">
+        <Select
+          defaultValue="7m"
+          items={{
+            "1m": "یک ماه اخیر",
+            "3m": "سه ماه اخیر",
+            "7m": "هفت ماه اخیر",
+            "1y": "یک سال اخیر",
+          }}
+        >
+          <SelectTrigger className="w-[150px]" aria-label="بازه زمانی گزارش">
             <SelectValue placeholder="بازه زمانی" />
           </SelectTrigger>
           <SelectContent>
@@ -110,10 +118,19 @@ export function ReportsOverview() {
             </div>
             <div className="p-4">
               <ChartContainer config={salesConfig} className="aspect-video w-full">
-                <AreaChart data={salesChartData}>
+                <AreaChart
+                  data={salesChartData}
+                  margin={{ top: 8, right: 4, left: 8, bottom: 0 }}
+                >
                   <CartesianGrid vertical={false} />
-                  <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    axisLine={false}
+                    reversed
+                  />
                   <YAxis
+                    orientation="right"
                     tickLine={false}
                     axisLine={false}
                     width={48}
@@ -185,13 +202,22 @@ export function ReportsOverview() {
             </div>
             <div className="p-4">
               <ChartContainer config={ordersConfig} className="aspect-video w-full">
-                <BarChart data={weeklyOrdersData}>
+                <BarChart
+                  data={weeklyOrdersData}
+                  margin={{ top: 8, right: 4, left: 8, bottom: 0 }}
+                >
                   <CartesianGrid vertical={false} />
-                  <XAxis dataKey="day" tickLine={false} axisLine={false} />
-                  <YAxis
+                  <XAxis
+                    dataKey="day"
                     tickLine={false}
                     axisLine={false}
-                    width={32}
+                    reversed
+                  />
+                  <YAxis
+                    orientation="right"
+                    tickLine={false}
+                    axisLine={false}
+                    width={36}
                     tickFormatter={(v) => formatPersianNumber(Number(v))}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
@@ -219,6 +245,7 @@ export function ReportsOverview() {
                   <CartesianGrid horizontal={false} />
                   <XAxis
                     type="number"
+                    reversed
                     tickFormatter={(v) => `${formatPersianNumber(Number(v))}٪`}
                     tickLine={false}
                     axisLine={false}
@@ -226,12 +253,17 @@ export function ReportsOverview() {
                   <YAxis
                     type="category"
                     dataKey="channel"
+                    orientation="right"
                     width={96}
                     tickLine={false}
                     axisLine={false}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="sales" fill="var(--color-sales)" radius={4} />
+                  <Bar
+                    dataKey="sales"
+                    fill="var(--color-sales)"
+                    radius={[4, 0, 0, 4]}
+                  />
                 </BarChart>
               </ChartContainer>
             </div>

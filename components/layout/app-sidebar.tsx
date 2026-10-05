@@ -10,7 +10,7 @@ import {
   UserIcon,
 } from "lucide-react"
 
-import { navItems } from "@/lib/navigation"
+import { DASHBOARD_BASE, navItems } from "@/lib/navigation"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -45,7 +45,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              render={<Link href="/" />}
+              render={<Link href={DASHBOARD_BASE} />}
               className="gap-3"
             >
               <span className="relative flex size-8 shrink-0 overflow-hidden rounded-lg">
@@ -76,8 +76,8 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {navItems.map((item) => {
                 const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
+                  item.href === DASHBOARD_BASE
+                    ? pathname === DASHBOARD_BASE
                     : pathname.startsWith(item.href)
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -105,6 +105,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 render={
                   <SidebarMenuButton
                     size="lg"
+                    aria-label="منوی حساب کاربری"
                     className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
                   />
                 }
@@ -141,7 +142,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                     پروفایل
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    render={<Link href="/settings" />}
+                    render={<Link href={`${DASHBOARD_BASE}/settings`} />}
                   >
                     <SettingsIcon />
                     تنظیمات حساب

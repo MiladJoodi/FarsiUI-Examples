@@ -28,7 +28,6 @@ export function SettingsPanels() {
   const [emailNotif, setEmailNotif] = React.useState(true)
   const [orderNotif, setOrderNotif] = React.useState(true)
   const [stockNotif, setStockNotif] = React.useState(false)
-  const [compact, setCompact] = React.useState(false)
 
   return (
     <div className="space-y-4">
@@ -155,6 +154,11 @@ export function SettingsPanels() {
               <Select
                 value={theme ?? "system"}
                 onValueChange={(value) => setTheme(value ?? "system")}
+                items={{
+                  light: "روشن",
+                  dark: "تاریک",
+                  system: "سیستم",
+                }}
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="انتخاب تم" />
@@ -169,19 +173,6 @@ export function SettingsPanels() {
                 تم تاریک و روشن با توکن‌های FarsiUI هماهنگ است.
               </FieldDescription>
             </Field>
-            <Field orientation="horizontal" className="items-center justify-between gap-4">
-              <div className="space-y-1">
-                <FieldLabel>چیدمان فشرده</FieldLabel>
-                <FieldDescription>
-                  فاصله‌ها و ارتفاع ردیف‌های جدول کمتر شود.
-                </FieldDescription>
-              </div>
-              <Switch
-                checked={compact}
-                onCheckedChange={setCompact}
-                aria-label="چیدمان فشرده"
-              />
-            </Field>
           </FieldGroup>
         </TabsContent>
 
@@ -189,7 +180,13 @@ export function SettingsPanels() {
           <FieldGroup>
             <Field>
               <FieldLabel>منطقه زمانی</FieldLabel>
-              <Select defaultValue="tehran">
+              <Select
+                defaultValue="tehran"
+                items={{
+                  tehran: "تهران (ایران)",
+                  utc: "زمان جهانی",
+                }}
+              >
                 <SelectTrigger className="w-[220px]">
                   <SelectValue />
                 </SelectTrigger>
@@ -201,7 +198,7 @@ export function SettingsPanels() {
             </Field>
             <Field>
               <FieldLabel>زبان رابط</FieldLabel>
-              <Select defaultValue="fa">
+              <Select defaultValue="fa" items={{ fa: "فارسی" }}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue />
                 </SelectTrigger>

@@ -46,6 +46,7 @@ export function OrdersBoard() {
           </InputGroupAddon>
           <InputGroupInput
             placeholder="جستجوی شماره سفارش یا مشتری…"
+            aria-label="جستجوی سفارش‌ها"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />

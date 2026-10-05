@@ -64,7 +64,7 @@ export function WeeklyOrdersChart() {
         >
           <BarChart
             data={weeklyOrdersData}
-            margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            margin={{ top: 8, right: 4, left: 8, bottom: 0 }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
@@ -72,11 +72,13 @@ export function WeeklyOrdersChart() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
+              reversed
             />
             <YAxis
+              orientation="right"
               tickLine={false}
               axisLine={false}
-              width={32}
+              width={36}
               tickFormatter={(v) => formatPersianNumber(Number(v))}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
@@ -165,18 +167,20 @@ export function ChannelSalesChart() {
           <BarChart
             data={channelSalesData}
             layout="vertical"
-            margin={{ top: 4, right: 12, left: 8, bottom: 4 }}
+            margin={{ top: 4, right: 8, left: 12, bottom: 4 }}
           >
             <CartesianGrid horizontal={false} />
             <XAxis
               type="number"
               tickLine={false}
               axisLine={false}
+              reversed
               tickFormatter={(v) => `${formatPersianNumber(Number(v))}٪`}
             />
             <YAxis
               type="category"
               dataKey="channel"
+              orientation="right"
               width={88}
               tickLine={false}
               axisLine={false}
@@ -185,7 +189,7 @@ export function ChannelSalesChart() {
             <Bar
               dataKey="sales"
               fill="var(--color-sales)"
-              radius={[0, 4, 4, 0]}
+              radius={[4, 0, 0, 4]}
             />
           </BarChart>
         </ChartContainer>

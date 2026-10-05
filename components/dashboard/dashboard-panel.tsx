@@ -47,9 +47,9 @@ export function DashboardPanelHeader({
 export function DashboardPanelTitle({
   className,
   ...props
-}: React.ComponentProps<"h2">) {
+}: React.ComponentProps<"h3">) {
   return (
-    <h2 className={cn("text-sm font-medium", className)} {...props} />
+    <h3 className={cn("text-sm font-medium", className)} {...props} />
   )
 }
 

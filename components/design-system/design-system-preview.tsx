@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react"
@@ -18,6 +19,10 @@ import {
   persistDesignSystemId,
   type DesignSystemCookieId,
 } from "@/lib/design-system"
+import {
+  persistUserThemePreference,
+  readUserThemePreference,
+} from "@/lib/theme-preference"
 
 export const DESIGN_SYSTEM_PRESETS = [
   {
@@ -113,7 +118,12 @@ export function DesignSystemPreviewProvider({
   const [designSystemId, setDesignSystemIdState] =
     useState<DesignSystemId>(bootId)
   const [hydrated, setHydrated] = useState(false)
-  const { setTheme } = useTheme()
+  const { setTheme, theme } = useTheme()
+  const designSystemIdRef = useRef(designSystemId)
+  const themeRef = useRef(theme)
+
+  designSystemIdRef.current = designSystemId
+  themeRef.current = theme
 
   useLayoutEffect(() => {
     const raw = window.localStorage.getItem(DESIGN_SYSTEM_STORAGE_KEY)
@@ -139,12 +149,22 @@ export function DesignSystemPreviewProvider({
   const setDesignSystemId = useCallback(
     (id: DesignSystemId) => {
       if (!DESIGN_SYSTEM_PRESETS.some((preset) => preset.id === id)) return
+
+      const prev = designSystemIdRef.current
+      const enteringDarkDefault = isDarkDefaultDesignSystem(id)
+      const leavingDarkDefault = isDarkDefaultDesignSystem(prev)
+
       persistDesignSystemId(id as DesignSystemCookieId)
       applyStyleRootClass(resolvePreset(id).styleRootClass)
       setDesignSystemIdState(id)
-      // Only on picker select — not on hydrate — so ModeToggle light still sticks.
-      if (isDarkDefaultDesignSystem(id)) {
+
+      // Temporary dark for فیروزه/نیلی — does not overwrite user ModeToggle choice.
+      if (enteringDarkDefault && !leavingDarkDefault) {
+        const snapshot = themeRef.current ?? "system"
+        persistUserThemePreference(snapshot)
         setTheme("dark")
+      } else if (!enteringDarkDefault && leavingDarkDefault) {
+        setTheme(readUserThemePreference() ?? "system")
       }
     },
     [setTheme]

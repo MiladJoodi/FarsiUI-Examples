@@ -5,42 +5,53 @@ import { MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { persistUserThemePreference } from "@/lib/theme-preference"
+import { cn } from "@/lib/utils"
 
+/**
+ * Binary light/dark toggle. First visit uses ThemeProvider defaultTheme="system".
+ * After the user toggles once, preference is stored as light or dark.
+ */
 export function ModeToggle() {
-  const { setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const isDark = mounted && resolvedTheme === "dark"
+
+  const toggle = () => {
+    const next = isDark ? "light" : "dark"
+    persistUserThemePreference(next)
+    setTheme(next)
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label="تغییر ظاهر"
-            className="relative"
-          />
-        }
-      >
-        <SunIcon className="size-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-        <MoonIcon className="absolute size-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-36">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          روشن
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          تاریک
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          سیستم
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-sm"
+      onClick={toggle}
+      aria-label={isDark ? "روشن کردن ظاهر" : "تاریک کردن ظاهر"}
+      aria-pressed={isDark}
+      title={isDark ? "حالت روشن" : "حالت تاریک"}
+      className="relative"
+      disabled={!mounted}
+    >
+      <SunIcon
+        className={cn(
+          "size-4 transition-all",
+          isDark ? "scale-0 rotate-90 opacity-0" : "scale-100 rotate-0 opacity-100"
+        )}
+      />
+      <MoonIcon
+        className={cn(
+          "absolute size-4 transition-all",
+          isDark ? "scale-100 rotate-0 opacity-100" : "scale-0 -rotate-90 opacity-0"
+        )}
+      />
+    </Button>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckIcon, SlidersHorizontalIcon } from "lucide-react"
+import { CheckIcon, ChevronDownIcon, SlidersHorizontalIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import {
@@ -99,7 +99,7 @@ function DesignSystemGrid({ onSelect }: { onSelect?: () => void }) {
     useDesignSystemPreview()
 
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
       {presets.map((preset) => {
         const selected = designSystemId === preset.id
         return (
@@ -113,9 +113,10 @@ function DesignSystemGrid({ onSelect }: { onSelect?: () => void }) {
             className={cn(
               "relative flex cursor-pointer flex-col gap-1.5 rounded-xl border p-2 text-start transition-colors",
               selected
-                ? "border-primary/50 bg-accent/40"
+                ? "border-primary/50 bg-accent/40 ring-1 ring-primary/25"
                 : "border-border/70 hover:bg-muted/50"
             )}
+            aria-pressed={selected}
           >
             {selected ? (
               <CheckIcon className="absolute top-2 end-2 size-3.5 text-primary" />
@@ -146,22 +147,33 @@ function DesignTriggerButton({
   return (
     <Button
       type="button"
-      variant="default"
+      variant="outline"
       size="sm"
       aria-label={`دیزاین‌سیستم: ${active.label}`}
+      title={`دیزاین‌سیستم: ${active.label}`}
       aria-haspopup="dialog"
       aria-expanded={open}
       className={cn(
-        "h-9 shrink-0 cursor-pointer gap-2 px-3.5 text-sm font-medium shadow-sm",
+        "h-9 gap-2 rounded-full border-primary/35 bg-primary/8 px-3.5 font-medium text-foreground shadow-sm",
+        "hover:border-primary/50 hover:bg-primary/12",
+        "focus-visible:ring-2 focus-visible:ring-ring/40",
         className
       )}
       {...props}
     >
-      <SlidersHorizontalIcon className="size-4 shrink-0" />
-      <span className="truncate">دیزاین‌سیستم</span>
-      <span className="hidden rounded-md bg-primary-foreground/15 px-1.5 py-0.5 text-[0.6875rem] font-medium sm:inline">
-        {active.label}
+      <SlidersHorizontalIcon className="size-4 shrink-0 text-primary" />
+      <span className="flex min-w-0 items-center gap-1.5 text-sm">
+        <span className="hidden text-muted-foreground sm:inline">
+          دیزاین‌سیستم
+        </span>
+        <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden>
+          ·
+        </span>
+        <span className="truncate font-semibold tracking-tight">
+          {active.label}
+        </span>
       </span>
+      <ChevronDownIcon className="size-3.5 shrink-0 opacity-55" />
     </Button>
   )
 }
@@ -171,19 +183,17 @@ function DesktopPicker() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={<DesignTriggerButton open={open} />}
-      />
+      <PopoverTrigger render={<DesignTriggerButton open={open} />} />
       <PopoverContent
         align="center"
         side="bottom"
         sideOffset={8}
-        className="w-[min(22.5rem,calc(100vw-1.5rem))] gap-3 p-3.5"
+        className="w-[min(28rem,calc(100vw-1.5rem))] gap-3 p-3.5"
       >
         <PopoverHeader>
           <PopoverTitle>دیزاین‌سیستم</PopoverTitle>
           <PopoverDescription>
-            ظاهر پنل را بین استایل‌های FarsiUI عوض کنید
+            یکی از استایل‌های FarsiUI را انتخاب کنید — بلافاصله اعمال می‌شود
           </PopoverDescription>
         </PopoverHeader>
         <DesignSystemGrid onSelect={() => setOpen(false)} />
@@ -198,11 +208,11 @@ function MobilePicker() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger render={<DesignTriggerButton open={open} />} />
-      <DrawerContent className="max-h-[min(88vh,32rem)] rounded-t-2xl">
+      <DrawerContent className="max-h-[min(88vh,36rem)] rounded-t-2xl">
         <DrawerHeader className="pb-2 text-start">
           <DrawerTitle>دیزاین‌سیستم</DrawerTitle>
           <DrawerDescription>
-            ظاهر پنل را بین استایل‌های FarsiUI عوض کنید
+            یکی از استایل‌های FarsiUI را انتخاب کنید — بلافاصله اعمال می‌شود
           </DrawerDescription>
         </DrawerHeader>
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-6">
@@ -213,6 +223,7 @@ function MobilePicker() {
   )
 }
 
+/** Prominent design-system control — place centered in example headers. */
 export function DesignSystemPicker({ className }: { className?: string }) {
   const isMobile = useIsMobile()
   const [mounted, setMounted] = React.useState(false)
@@ -222,7 +233,7 @@ export function DesignSystemPicker({ className }: { className?: string }) {
   }, [])
 
   return (
-    <div className={cn("flex min-w-0 items-center", className)}>
+    <div className={cn("flex min-w-0 items-center justify-center", className)}>
       {!mounted ? (
         <DesignTriggerButton open={false} />
       ) : isMobile ? (
@@ -231,5 +242,47 @@ export function DesignSystemPicker({ className }: { className?: string }) {
         <DesktopPicker />
       )}
     </div>
+  )
+}
+
+/**
+ * Centers DesignSystemPicker in a sticky header row.
+ * Put start content on the right (RTL start) and end actions on the left.
+ */
+export function ExampleHeaderChrome({
+  start,
+  end,
+  className,
+  innerClassName,
+}: {
+  start: React.ReactNode
+  end?: React.ReactNode
+  className?: string
+  innerClassName?: string
+}) {
+  return (
+    <header
+      className={cn(
+        "sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80",
+        className
+      )}
+    >
+      <div
+        className={cn(
+          "relative mx-auto flex h-14 max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4",
+          innerClassName
+        )}
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-2">{start}</div>
+        <div className="pointer-events-none absolute inset-x-0 flex justify-center px-2">
+          <div className="pointer-events-auto max-w-[min(100%,16rem)] sm:max-w-none">
+            <DesignSystemPicker />
+          </div>
+        </div>
+        <div className="flex flex-1 items-center justify-end gap-1 sm:gap-1.5">
+          {end}
+        </div>
+      </div>
+    </header>
   )
 }

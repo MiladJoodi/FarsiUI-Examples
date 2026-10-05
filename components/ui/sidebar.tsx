@@ -270,7 +270,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <PanelLeftIcon className="rtl:rotate-180 rtl:rotate-180" />
+      <PanelLeftIcon className="rtl:rotate-180" />
       <span className="sr-only">باز و بسته کردن نوار کناری</span>
     </Button>
   )
