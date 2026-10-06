@@ -8,12 +8,17 @@ export const authBrandName = "همیار"
 export const authBrandTagline = "فضای کاری تیم‌های محصول فارسی"
 
 /** Demo credentials that succeed on login (UI-only) */
-export const demoCredentials = {
+export const demoCredentials: {
+  email: string
+  mobile: string
+  password: string
+  otp: string
+} = {
   email: "info@farsiui.ir",
   mobile: "09121234567",
   password: "farsiui",
   otp: "123456",
-} as const
+}
 
 export function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())

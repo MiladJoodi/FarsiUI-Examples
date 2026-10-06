@@ -14,7 +14,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "dashboard",
     title: "داشبورد",
     description:
-      "پنل مالی عملیاتی: موجودی، تسویه، تراکنش‌ها، طرف‌حساب‌ها و حساب‌های بانکی.",
+      "پنل مالی برای مدیریت موجودی، تسویه‌ها، تراکنش‌ها و حساب‌های بانکی.",
     href: "/examples/dashboard",
     status: "ready",
   },
@@ -22,15 +22,15 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "analytics",
     title: "تحلیل‌ها",
     description:
-      "متریک‌ها، روندها، مقایسه و گزارش‌های تحلیلی با فیلتر و ویژوال‌سازی.",
+      "نمایش متریک‌ها، روندها و مقایسه داده‌ها با فیلترها و نمودارهای تحلیلی.",
     href: "/examples/analytics",
     status: "ready",
   },
   {
     id: "tasks",
-    title: "کارنما",
+    title: "مدیریت کارها",
     description:
-      "میز دستورکار آتلیه: چینش وضعیت، دفتر دستورها، اولویت و هماهنگی تیم.",
+      "مدیریت پروژه‌ها و وظایف با برد، لیست، اولویت و وضعیت پیشرفت.",
     href: "/examples/tasks",
     status: "ready",
   },
@@ -38,15 +38,15 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "calendar",
     title: "تقویم",
     description:
-      "ساعت، تقویم شمسی، مناسبت‌ها، اوقات شرعی و تبدیل تاریخ.",
+      "تقویم شمسی برای مدیریت رویدادها، قرارها و برنامه‌های روزانه.",
     href: "/examples/calendar",
     status: "ready",
   },
   {
     id: "team-chat",
-    title: "هم‌صدا",
+    title: "گفتگوی تیمی",
     description:
-      "گفتگوی تیمی شبیه تلگرام: پوشه، لیست و حباب پیام RTL.",
+      "فضای گفت‌وگوی تیمی برای کانال‌ها، پیام‌ها، پاسخ‌ها و فایل‌های پیوست.",
     href: "/examples/team-chat",
     status: "ready",
   },
@@ -54,7 +54,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "ecommerce",
     title: "فروشگاه",
     description:
-      "فروشگاه، کاتالوگ، سبد خرید و تجربه خرید فارسی و RTL.",
+      "فروشگاه فارسی با محصولات، دسته‌بندی‌ها، سبد خرید و فرایند پرداخت.",
     href: "/examples/ecommerce",
     status: "ready",
   },
@@ -62,7 +62,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "ai-assistant",
     title: "دستیار هوش مصنوعی",
     description:
-      "دستیار هوش مصنوعی با گفت‌وگو، پیشنهاد و تعامل طبیعی فارسی.",
+      "رابط گفت‌وگو با دستیار هوش مصنوعی برای پرسش، پاسخ و انجام کارها.",
     href: "/examples/ai-assistant",
     status: "ready",
   },
@@ -70,7 +70,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "landing",
     title: "صفحه فرود",
     description:
-      "صفحه فرود بازاریابی با سلسله‌مراتب بصری و CTAهای واضح.",
+      "صفحه معرفی محصول با بخش‌های اصلی، مزایا، نمونه‌ها و دعوت به اقدام.",
     href: "/examples/landing",
     status: "ready",
   },
@@ -78,7 +78,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "blog",
     title: "وبلاگ",
     description:
-      "فهرست مطالب، مقاله و خوانایی تایپوگرافی فارسی برای وبلاگ.",
+      "وبلاگ فارسی با فهرست مطالب، دسته‌بندی‌ها و صفحه خواندن مقاله.",
     href: "/examples/blog",
     status: "ready",
   },
@@ -86,7 +86,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "settings",
     title: "تنظیمات",
     description:
-      "تنظیمات حساب، اعلان‌ها، ظاهر و ترجیحات سامانه.",
+      "مدیریت اطلاعات حساب، اعلان‌ها، ظاهر و سایر تنظیمات کاربر.",
     href: "/examples/settings",
     status: "ready",
   },
@@ -94,7 +94,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "authentication",
     title: "احراز هویت",
     description:
-      "ورود، ثبت‌نام، بازیابی رمز و جریان‌های احراز هویت فارسی.",
+      "صفحات ورود، ثبت‌نام، بازیابی رمز و تأیید هویت کاربر.",
     href: "/examples/authentication",
     status: "ready",
   },
@@ -102,7 +102,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "pricing",
     title: "قیمت‌گذاری",
     description:
-      "جدول قیمت‌گذاری، پلن‌ها، مقایسه ویژگی‌ها و انتخاب اشتراک.",
+      "نمایش پلن‌ها، مقایسه امکانات و انتخاب اشتراک مناسب.",
     href: "/examples/pricing",
     status: "ready",
   },

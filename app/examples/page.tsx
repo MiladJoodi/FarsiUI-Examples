@@ -1,7 +1,6 @@
 import Link from "next/link"
 
 import { EXAMPLES, type ExampleMeta } from "@/lib/examples"
-import { toPersianDigits } from "@/lib/digits"
 import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
 import { cn } from "@/lib/utils"
@@ -41,21 +40,23 @@ function ExampleCard({ example }: { example: ExampleMeta }) {
 }
 
 export default function ExamplesHubPage() {
-  const readyCount = EXAMPLES.filter((e) => e.status === "ready").length
-
   return (
     <div className="min-h-full">
       <ExampleHeaderChrome
         innerClassName="max-w-6xl sm:px-6"
         start={
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold tracking-tight">
-              نمونه‌های FarsiUI
-            </p>
-            <p className="hidden truncate text-xs text-muted-foreground sm:block">
-              {toPersianDigits(readyCount)} نمونه · RTL و فارسی
-            </p>
-          </div>
+          <a
+            href="/"
+            className="me-1.5 flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span
+              aria-hidden="true"
+              className="text-[0.98rem] leading-none font-extrabold tracking-tight text-primary"
+            >
+              فارسیUI
+            </span>
+            <span className="sr-only">FarsiUI</span>
+          </a>
         }
         end={<ModeToggle />}
       />
@@ -66,8 +67,16 @@ export default function ExamplesHubPage() {
             نمونه‌های FarsiUI
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-            مجموعه‌ای از نمونه‌های مستقل و نزدیک به محصول واقعی برای نمایش قدرت
-            FarsiUI در رابط‌های فارسی و راست‌چین.
+            اینجا می‌توانید نمونه‌هایی از رابط‌های فارسی و راست‌چین ساخته‌شده با{" "}
+            <a
+              href="https://farsiui.ir"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-inherit no-underline hover:underline underline-offset-2"
+            >
+              FarsiUI
+            </a>{" "}
+            را ببینید.
           </p>
         </div>
 
