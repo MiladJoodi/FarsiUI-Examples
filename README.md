@@ -2,25 +2,24 @@
 
 A showcase of real Persian / RTL product screens built with [FarsiUI](https://farsiui.ir).
 
-The point is simple: not another English SaaS template flipped to RTL — but interfaces that feel native for Persian users from the start. Numbers, dates, density, type, and design systems are treated as first-class product decisions.
+Not an English SaaS template flipped to RTL — interfaces designed for Persian users from the start: numbers, dates, density, type, and design systems as product decisions.
 
-Browse everything from the [examples hub](/examples).
+Live demo: [farsiui-examples.vercel.app/examples](https://farsiui-examples.vercel.app/examples)
 
 ## Examples
 
-- [Dashboard](/examples/dashboard) — ops money panel: balances, settlements, transactions
-- [Analytics](/examples/analytics) — metrics, trends, and reporting
-- [Tasks](/examples/tasks) — atelier-style kanban and work board
-- [Calendar](/examples/calendar) — Jalali calendar, prayer times, holidays
-- [Team chat](/examples/team-chat) — Telegram-like team messenger
-- [Ecommerce](/examples/ecommerce) — store, catalog, cart, checkout
-- [AI assistant](/examples/ai-assistant) — Persian chat assistant
-- [Landing](/examples/landing) — marketing landing page
-- [Blog](/examples/blog) — posts, categories, reading layout
-- [Settings](/examples/settings) — account and preference screens
-- [Authentication](/examples/authentication) — login, signup, recovery
-- [Pricing](/examples/pricing) — plans, comparison, FAQ
-- [Contact](/examples/contact) — simple contact form
+- [Dashboard](https://farsiui-examples.vercel.app/examples/dashboard) — financial panel for balances, settlements, transactions, and bank accounts
+- [Analytics](https://farsiui-examples.vercel.app/examples/analytics) — metrics, trends, filters, and charts
+- [Tasks](https://farsiui-examples.vercel.app/examples/tasks) — projects and tasks with board, list, priority, and progress
+- [Calendar](https://farsiui-examples.vercel.app/examples/calendar) — Jalali calendar for events, appointments, and daily plans
+- [Team chat](https://farsiui-examples.vercel.app/examples/team-chat) — team messaging with channels, replies, and attachments
+- [Ecommerce](https://farsiui-examples.vercel.app/examples/ecommerce) — Persian store with catalog, cart, and checkout
+- [AI assistant](https://farsiui-examples.vercel.app/examples/ai-assistant) — chat UI for questions, answers, and tasks
+- [Landing](https://farsiui-examples.vercel.app/examples/landing) — product landing with benefits, samples, and CTAs
+- [Blog](https://farsiui-examples.vercel.app/examples/blog) — Persian blog with posts, categories, and article pages
+- [Settings](https://farsiui-examples.vercel.app/examples/settings) — account, notifications, appearance, and preferences
+- [Authentication](https://farsiui-examples.vercel.app/examples/authentication) — login, signup, password recovery, and verification
+- [Pricing](https://farsiui-examples.vercel.app/examples/pricing) — plans, feature comparison, and subscription choice
 
 ## Run
 

@@ -45,7 +45,7 @@ export default function ExamplesHubPage() {
       <ExampleHeaderChrome
         innerClassName="max-w-6xl sm:px-6"
         start={
-          <a
+          <Link
             href="/"
             className="me-1.5 flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
@@ -56,7 +56,7 @@ export default function ExamplesHubPage() {
               فارسیUI
             </span>
             <span className="sr-only">FarsiUI</span>
-          </a>
+          </Link>
         }
         end={<ModeToggle />}
       />
