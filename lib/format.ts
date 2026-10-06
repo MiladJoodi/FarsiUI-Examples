@@ -10,7 +10,7 @@ export function formatPercent(value: number): string {
   return `${formatPersianNumber(value)}٪`
 }
 
-/** نمایش تاریخ جلالی نمونه‌ای مثل ۱۴۰۵/۰۷/۱۲ */
+/** نمایش تاریخ جلالی دمویی مثل ۱۴۰۵/۰۷/۱۲ */
 export function formatJalaliDate(value: string): string {
   return toPersianDigits(value)
 }

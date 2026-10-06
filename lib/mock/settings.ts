@@ -34,7 +34,7 @@ export const settingsSections: SettingsSectionMeta[] = [
   {
     id: "appearance",
     title: "ظاهر",
-    description: "تراکم رابط و نحوهٔ نمایش فهرست‌ها در این نمونه.",
+    description: "تراکم رابط و نحوهٔ نمایش فهرست‌ها در این دمو.",
   },
   {
     id: "notifications",

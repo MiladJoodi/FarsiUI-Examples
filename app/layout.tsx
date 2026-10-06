@@ -45,8 +45,8 @@ const vazirmatn = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "نمونه‌های FarsiUI",
-  description: "نمونه‌های مستقل فارسی و RTL با FarsiUI",
+  title: "دموهای FarsiUI",
+  description: "دموهای مستقل فارسی و RTL با FarsiUI",
   icons: {
     icon: [{ url: "/favicon.png", type: "image/png" }],
     shortcut: "/favicon.png",

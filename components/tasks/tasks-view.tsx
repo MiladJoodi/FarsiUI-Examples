@@ -1089,7 +1089,7 @@ function CreateTaskDialog({
     onCreate({
       id,
       title: trimmed,
-      description: "وظیفهٔ جدید ثبت‌شده در کارنما (نمونه بدون سرور).",
+      description: "وظیفهٔ جدید ثبت‌شده در کارنما (دمو بدون سرور).",
       status: "جدید",
       priority,
       assigneeId,

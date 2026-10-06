@@ -76,7 +76,7 @@ export function AuthVerify({
     setOtp("")
     setError(null)
     toast.message("کد دوباره ارسال شد", {
-      description: `کد نمونه: ${toPersianDigits(demoCredentials.otp)}`,
+      description: `کد دمو: ${toPersianDigits(demoCredentials.otp)}`,
     })
   }
 
@@ -147,7 +147,7 @@ export function AuthVerify({
             <p className="auth-otp-hint">
               ارسال به <span dir="ltr">{target}</span>
               {" · "}
-              کد نمونه: <span>{toPersianDigits(demoCredentials.otp)}</span>
+              کد دمو: <span>{toPersianDigits(demoCredentials.otp)}</span>
             </p>
           </div>
 

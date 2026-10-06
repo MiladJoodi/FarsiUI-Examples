@@ -234,7 +234,7 @@ export function SettingsView({
   function handleSave() {
     setSaved(cloneSettings(draft))
     toast.success("تغییرات ذخیره شد", {
-      description: "این ذخیره فقط در همین نمونه نگه داشته می‌شود.",
+      description: "این ذخیره فقط در همین دمو نگه داشته می‌شود.",
     })
   }
 
@@ -262,7 +262,7 @@ export function SettingsView({
     setPasswordError(null)
     setPassword({ current: "", next: "", confirm: "" })
     toast.success("رمز عبور به‌روزرسانی شد", {
-      description: "در این نمونه تغییری در سرور رخ نمی‌دهد.",
+      description: "در این دمو تغییری در سرور رخ نمی‌دهد.",
     })
   }
 
@@ -274,7 +274,7 @@ export function SettingsView({
 
   function confirmDeleteAccount() {
     setDeleteOpen(false)
-    toast.message("حذف حساب در این نمونه غیرفعال است")
+    toast.message("حذف حساب در این دمو غیرفعال است")
   }
 
   return (
@@ -285,7 +285,7 @@ export function SettingsView({
             تنظیمات
           </h1>
           <p className="text-[0.8rem] leading-relaxed text-muted-foreground">
-            حساب، ظاهر، حریم خصوصی و امنیت — تغییرات فقط در این نمونه است.
+            حساب، ظاهر، حریم خصوصی و امنیت — تغییرات فقط در این دمو است.
           </p>
         </div>
         {dirty ? (
@@ -490,7 +490,7 @@ export function SettingsView({
           <AlertDialogHeader>
             <AlertDialogTitle>حذف حساب کاربری؟</AlertDialogTitle>
             <AlertDialogDescription>
-              این عمل در محصول واقعی غیرقابل بازگشت است. در این نمونه فقط پیام
+              این عمل در محصول واقعی غیرقابل بازگشت است. در این دمو فقط پیام
               نمایشی نشان داده می‌شود.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -1163,7 +1163,7 @@ function PreferencesSection({
   return (
     <SettingsCard
       title="زبان، زمان و نمایش"
-      description="ترجیحات محلی این نمونه."
+      description="ترجیحات محلی این دمو."
       icon={Settings2Icon}
     >
       <FieldGroup className="gap-3.5">
@@ -1183,7 +1183,7 @@ function PreferencesSection({
               <SelectItem value="fa">فارسی</SelectItem>
             </SelectContent>
           </Select>
-          <FieldDescription>فقط فارسی در این نمونه.</FieldDescription>
+          <FieldDescription>فقط فارسی در این دمو.</FieldDescription>
         </Field>
 
         <Field>

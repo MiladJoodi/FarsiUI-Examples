@@ -87,7 +87,7 @@ export const sources: SourceRef[] = [
   },
   {
     id: "s5",
-    title: "نمونه کاتالوگ فروشگاه نورا",
+    title: "دمو کاتالوگ فروشگاه نورا",
     kind: "file",
     detail: "lib/mock/ecommerce.ts",
   },
@@ -118,7 +118,7 @@ export const suggestedPrompts = [
   },
   {
     id: "sp3",
-    title: "نمونه کد اعتبارسنجی",
+    title: "دمو کد اعتبارسنجی",
     prompt:
       "یک تابع TypeScript کوتاه برای نرمال‌سازی شماره موبایل ایران بنویس که ارقام فارسی را هم بپذیرد.",
   },

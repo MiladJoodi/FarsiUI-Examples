@@ -184,7 +184,7 @@ export const tasks: Task[] = [
   },
   {
     id: "T-110",
-    title: "عکس محصول نمونه",
+    title: "عکس محصول دمو",
     description: "عکاسی از سه محصول شاخص برای کارت ویترین.",
     status: "تکمیل‌شده",
     priority: "متوسط",

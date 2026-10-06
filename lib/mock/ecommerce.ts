@@ -45,7 +45,7 @@ export function productAccent(product: Pick<Product, "category" | "accent">) {
   return categoryAccents[product.category] ?? product.accent
 }
 
-/** نگاشت نام رنگ فارسی به نمونهٔ بصری */
+/** نگاشت نام رنگ فارسی به دموی بصری */
 export const colorSwatches: Record<string, string> = {
   مشکی: "#1c1c1c",
   سفید: "#f4f1ec",

@@ -358,7 +358,7 @@ export function AiAssistantView() {
             <SheetHeader className="text-start">
               <SheetTitle>تنظیمات دستیار</SheetTitle>
               <SheetDescription>
-                این تنظیمات فقط در همین نمونه اعمال می‌شوند.
+                این تنظیمات فقط در همین دمو اعمال می‌شوند.
               </SheetDescription>
             </SheetHeader>
             <div className="space-y-4 px-4 pb-6">
@@ -882,7 +882,7 @@ function SourcesPanel({
           <Separator />
           <div>
             <p className="mb-2 text-xs font-medium text-muted-foreground">
-              کتابخانه نمونه
+              کتابخانه دمو
             </p>
             <ul className="space-y-1.5">
               {sources.slice(0, 4).map((source) => (

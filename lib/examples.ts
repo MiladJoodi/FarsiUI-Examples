@@ -70,7 +70,7 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "landing",
     title: "صفحه فرود",
     description:
-      "صفحه معرفی محصول با بخش‌های اصلی، مزایا، نمونه‌ها و دعوت به اقدام.",
+      "صفحه معرفی محصول با بخش‌های اصلی، مزایا، دموها و دعوت به اقدام.",
     href: "/examples/landing",
     status: "ready",
   },

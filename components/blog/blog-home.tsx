@@ -184,7 +184,7 @@ export function BlogHome() {
           <div className="blog-aside-block" data-tone="accent">
             <h2 className="blog-section-label">خبرنامه</h2>
             <div className="blog-newsletter">
-              <p>هفته‌ای یک یادداشت کوتاه از حاشیه. در این نمونه فقط نمایشی است.</p>
+              <p>هفته‌ای یک یادداشت کوتاه از حاشیه. در این دمو فقط نمایشی است.</p>
               <Button
                 size="sm"
                 className="blog-btn blog-btn-primary w-full"

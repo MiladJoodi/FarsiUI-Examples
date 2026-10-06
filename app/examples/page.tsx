@@ -64,10 +64,10 @@ export default function ExamplesHubPage() {
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="max-w-2xl space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            نمونه‌های FarsiUI
+            دموهای FarsiUI
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-            اینجا می‌توانید نمونه‌هایی از رابط‌های فارسی و راست‌چین ساخته‌شده با{" "}
+            اینجا می‌توانید دموهایی از رابط‌های فارسی و راست‌چین ساخته‌شده با{" "}
             <a
               href="https://farsiui.ir"
               target="_blank"

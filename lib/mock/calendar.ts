@@ -20,7 +20,7 @@ export type PrayerCity = {
   times: PrayerSlot[]
 }
 
-/** مناسبت‌های نمونهٔ هر ماه شمسی (فشرده مثل time.ir). */
+/** مناسبت‌های دموی هر ماه شمسی (فشرده مثل time.ir). */
 const OCCASIONS_BY_MONTH: Record<number, MonthOccasion[]> = {
   1: [
     { day: 1, title: "آغاز نوروز / جشن نوروز", holiday: true },

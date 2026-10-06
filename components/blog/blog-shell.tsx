@@ -219,7 +219,7 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
           <div>
             <p className="blog-footer-brand">{blogName}</p>
             <p className="blog-footer-note">
-              {blogTagline}. این صفحه یک نمونهٔ UI است و محتوای واقعی منتشر
+              {blogTagline}. این صفحه یک دموی UI است و محتوای واقعی منتشر
               نمی‌کند.
             </p>
           </div>

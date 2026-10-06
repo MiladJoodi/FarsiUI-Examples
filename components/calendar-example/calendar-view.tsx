@@ -565,7 +565,7 @@ export function CalendarExampleView() {
           <div className="rz-today-list">
             {todayOccasions.length === 0 ? (
               <p className="rz-today-empty">
-                برای امروز مناسبت رسمی در فهرست نمونه ثبت نشده است. روز خوبی
+                برای امروز مناسبت رسمی در فهرست دمو ثبت نشده است. روز خوبی
                 داشته باشید.
               </p>
             ) : (

@@ -49,7 +49,7 @@ export function PricingView() {
     setSelected(plan.id)
     showPricingToast(
       `${plan.cta} · ${plan.name}`,
-      "در این نمونه پرداخت واقعی انجام نمی‌شود."
+      "در این دمو پرداخت واقعی انجام نمی‌شود."
     )
   }
 
@@ -176,7 +176,7 @@ export function PricingView() {
           <h2>پلن را انتخاب کنید و جلو بروید</h2>
           <p>
             پیشنهاد ما پلن تیم است — یا از رایگان شروع کنید. همهٔ دکمه‌ها در این
-            نمونه نمایشی‌اند.
+            دمو نمایشی‌اند.
           </p>
         </div>
         <div className="pricing-close-actions">
