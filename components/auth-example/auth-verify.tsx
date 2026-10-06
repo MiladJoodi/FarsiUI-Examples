@@ -5,15 +5,10 @@ import * as React from "react"
 import { toast } from "sonner"
 
 import { demoCredentials, fakeDelay } from "@/lib/mock/auth"
-import { toPersianDigits } from "@/lib/digits"
+import { normalizeDigits, toPersianDigits } from "@/lib/digits"
+import { AuthStage } from "@/components/auth-example/auth-stage"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
 import {
   InputOTP,
   InputOTPGroup,
@@ -21,6 +16,10 @@ import {
 } from "@/components/ui/input-otp"
 
 const AUTH_BASE = "/examples/authentication"
+
+function otpFromInput(value: string) {
+  return normalizeDigits(value).replace(/\D/g, "").slice(0, 6)
+}
 
 export function AuthVerify({
   email,
@@ -47,14 +46,15 @@ export function AuthVerify({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-    if (otp.length < 6) {
+    const code = otpFromInput(otp)
+    if (code.length < 6) {
       setError("کد ۶ رقمی را کامل وارد کنید.")
       return
     }
     setLoading(true)
     await fakeDelay(800)
     setLoading(false)
-    if (otp !== demoCredentials.otp) {
+    if (code !== demoCredentials.otp) {
       setError("کد نادرست است. رقم‌ها را دوباره وارد کنید.")
       return
     }
@@ -81,33 +81,31 @@ export function AuthVerify({
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6 px-4 py-10 sm:px-6 sm:py-14">
-      <div className="space-y-1">
-        <p className="text-sm text-muted-foreground">
-          <Link
-            href={AUTH_BASE}
-            className="underline-offset-4 hover:text-foreground hover:underline"
-          >
-            بازگشت به ورود
-          </Link>
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight">تأیید هویت</h1>
-        <p className="text-sm text-muted-foreground">
-          کد ۶ رقمی ارسال‌شده را وارد کنید. ورودی OTP از چپ به راست خوانده
-          می‌شود تا ترتیب ارقام حفظ شود.
+    <AuthStage>
+      <Link href={AUTH_BASE} className="auth-back">
+        بازگشت به ورود
+      </Link>
+
+      <div className="mb-4">
+        <h2 className="auth-rail-title">تأیید هویت</h2>
+        <p className="auth-rail-sub">
+          کد ۶ رقمی را وارد کنید. ترتیب ارقام از چپ به راست است.
         </p>
       </div>
 
       {error ? (
-        <Alert variant="destructive">
+        <Alert
+          variant="destructive"
+          className="auth-alert auth-alert-error mb-4"
+        >
           <AlertTitle>کد نامعتبر</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
       {success ? (
-        <div className="space-y-5">
-          <Alert>
+        <div className="space-y-4">
+          <Alert className="auth-alert">
             <AlertTitle>تأیید موفق</AlertTitle>
             <AlertDescription>
               {from === "signup"
@@ -116,7 +114,7 @@ export function AuthVerify({
             </AlertDescription>
           </Alert>
           <Button
-            className="w-full"
+            className="auth-btn auth-btn-primary w-full"
             nativeButton={false}
             render={<Link href={AUTH_BASE} />}
           >
@@ -124,41 +122,44 @@ export function AuthVerify({
           </Button>
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-5" noValidate>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="verify-otp">کد تأیید</FieldLabel>
-              <InputOTP
-                id="verify-otp"
-                maxLength={6}
-                value={otp}
-                onChange={setOtp}
-                containerClassName="justify-center sm:justify-start"
-                aria-invalid={error ? true : undefined}
-              >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-              <FieldDescription>
-                ارسال‌شده به{" "}
-                <span dir="ltr" className="font-medium text-foreground">
-                  {target}
-                </span>
-              </FieldDescription>
-            </Field>
-          </FieldGroup>
+        <form onSubmit={onSubmit} className="space-y-4" noValidate>
+          <div className="auth-field">
+            <label htmlFor="verify-otp" className="auth-label">
+              کد تأیید
+            </label>
+            <InputOTP
+              id="verify-otp"
+              maxLength={6}
+              value={otp}
+              onChange={(v) => setOtp(otpFromInput(v))}
+              containerClassName="justify-start"
+              aria-invalid={error ? true : undefined}
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+            <p className="auth-otp-hint">
+              ارسال به <span dir="ltr">{target}</span>
+              {" · "}
+              کد نمونه: <span>{toPersianDigits(demoCredentials.otp)}</span>
+            </p>
+          </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            className="auth-btn auth-btn-primary w-full"
+            disabled={loading}
+          >
             {loading ? "در حال تأیید…" : "تأیید کد"}
           </Button>
 
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-[0.8rem] auth-muted">
             {seconds > 0 ? (
               <span>
                 ارسال مجدد تا {toPersianDigits(seconds)} ثانیه دیگر
@@ -166,7 +167,7 @@ export function AuthVerify({
             ) : (
               <button
                 type="button"
-                className="font-medium text-foreground underline-offset-4 hover:underline"
+                className="auth-link font-medium text-white"
                 onClick={resend}
                 disabled={loading}
               >
@@ -176,6 +177,6 @@ export function AuthVerify({
           </div>
         </form>
       )}
-    </div>
+    </AuthStage>
   )
 }

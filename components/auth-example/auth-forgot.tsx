@@ -10,17 +10,12 @@ import {
   getPasswordStrength,
   isEmailOrMobile,
 } from "@/lib/mock/auth"
-import { toPersianDigits } from "@/lib/digits"
+import { normalizeDigits, toPersianDigits } from "@/lib/digits"
+import { AuthStage } from "@/components/auth-example/auth-stage"
 import { PasswordInput } from "@/components/auth-example/password-input"
 import { PasswordRequirements } from "@/components/auth-example/password-requirements"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
   InputOTP,
@@ -32,15 +27,23 @@ const AUTH_BASE = "/examples/authentication"
 
 type Step = "request" | "verify" | "reset" | "success"
 
+const STEPS: Step[] = ["request", "verify", "reset", "success"]
+
+function otpFromInput(value: string) {
+  return normalizeDigits(value).replace(/\D/g, "").slice(0, 6)
+}
+
 export function AuthForgotPassword() {
   const [step, setStep] = React.useState<Step>("request")
-  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.email)
+  const [identifier, setIdentifier] = React.useState(demoCredentials.email)
   const [otp, setOtp] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [confirm, setConfirm] = React.useState("")
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [seconds, setSeconds] = React.useState(0)
+
+  const stepIndex = STEPS.indexOf(step)
 
   React.useEffect(() => {
     if (seconds <= 0) return
@@ -54,7 +57,7 @@ export function AuthForgotPassword() {
     e.preventDefault()
     setError(null)
     if (!isEmailOrMobile(identifier)) {
-      setError("ایمیل یا شماره موبایل معتبر وارد کنید.")
+      setError("ایمیل یا موبایل معتبر وارد کنید.")
       return
     }
     setLoading(true)
@@ -71,14 +74,15 @@ export function AuthForgotPassword() {
   async function submitVerify(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-    if (otp.length < 6) {
+    const code = otpFromInput(otp)
+    if (code.length < 6) {
       setError("کد ۶ رقمی را کامل وارد کنید.")
       return
     }
     setLoading(true)
     await fakeDelay(700)
     setLoading(false)
-    if (otp !== demoCredentials.otp) {
+    if (code !== demoCredentials.otp) {
       setError("کد نادرست است. دوباره بررسی کنید.")
       return
     }
@@ -118,96 +122,114 @@ export function AuthForgotPassword() {
     })
   }
 
+  const leadByStep =
+    step === "request"
+      ? "ایمیل یا موبایل حساب را بدهید تا کد تأیید بفرستیم."
+      : step === "verify"
+        ? "کد ۶ رقمی را وارد کنید تا هویت شما تأیید شود."
+        : step === "reset"
+          ? "رمز عبور جدید را انتخاب کنید."
+          : "رمز عوض شد؛ می‌توانید دوباره وارد شوید."
+
   return (
-    <div className="mx-auto w-full max-w-md space-y-6 px-4 py-10 sm:px-6 sm:py-14">
-      <div className="space-y-1">
-        <p className="text-sm text-muted-foreground">
-          <Link
-            href={AUTH_BASE}
-            className="underline-offset-4 hover:text-foreground hover:underline"
-          >
-            بازگشت به ورود
-          </Link>
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight">بازیابی رمز</h1>
-        <p className="text-sm text-muted-foreground">
-          {step === "request" &&
-            "ایمیل یا موبایل حساب را وارد کنید تا کد تأیید بفرستیم."}
-          {step === "verify" &&
-            "کد ۶ رقمی ارسال‌شده را وارد کنید تا هویت شما تأیید شود."}
-          {step === "reset" && "رمز عبور جدید را انتخاب کنید."}
-          {step === "success" && "رمز شما تغییر کرد؛ می‌توانید وارد شوید."}
-        </p>
+    <AuthStage>
+      <Link href={AUTH_BASE} className="auth-back">
+        بازگشت به ورود
+      </Link>
+
+      <div className="auth-steps" aria-hidden>
+        {STEPS.map((id, i) => (
+          <span
+            key={id}
+            className="auth-step"
+            data-on={i === stepIndex ? "true" : "false"}
+            data-done={i < stepIndex ? "true" : "false"}
+          />
+        ))}
+      </div>
+
+      <div className="mb-4">
+        <h2 className="auth-rail-title">بازیابی رمز</h2>
+        <p className="auth-rail-sub">{leadByStep}</p>
       </div>
 
       {error ? (
-        <Alert variant="destructive">
+        <Alert
+          variant="destructive"
+          className="auth-alert auth-alert-error mb-4"
+        >
           <AlertTitle>خطا</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
 
-      {step === "request" && (
-        <form onSubmit={submitRequest} className="space-y-5" noValidate>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="forgot-id">ایمیل یا موبایل</FieldLabel>
-              <Input
-                id="forgot-id"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                dir={identifier.includes("@") ? "ltr" : undefined}
-                className={identifier.includes("@") ? "text-start" : undefined}
-                autoComplete="username"
-              />
-            </Field>
-          </FieldGroup>
-          <Button type="submit" className="w-full" disabled={loading}>
+      {step === "request" ? (
+        <form onSubmit={submitRequest} className="space-y-4" noValidate>
+          <div className="auth-field">
+            <label htmlFor="forgot-id" className="auth-label">
+              ایمیل یا موبایل
+            </label>
+            <Input
+              id="forgot-id"
+              className="auth-input"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              dir={identifier.includes("@") ? "ltr" : undefined}
+              autoComplete="username"
+            />
+          </div>
+          <Button
+            type="submit"
+            className="auth-btn auth-btn-primary w-full"
+            disabled={loading}
+          >
             {loading ? "در حال ارسال…" : "ارسال کد تأیید"}
           </Button>
         </form>
-      )}
+      ) : null}
 
-      {step === "verify" && (
-        <form onSubmit={submitVerify} className="space-y-5" noValidate>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="forgot-otp">کد تأیید</FieldLabel>
-              <InputOTP
-                id="forgot-otp"
-                maxLength={6}
-                value={otp}
-                onChange={setOtp}
-                containerClassName="justify-center sm:justify-start"
-                aria-invalid={error ? true : undefined}
-              >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-              <FieldDescription>
-                کد به{" "}
-                <span
-                  dir={identifier.includes("@") ? "ltr" : undefined}
-                  className="font-medium text-foreground"
-                >
-                  {identifier}
-                </span>{" "}
-                ارسال شد.
-              </FieldDescription>
-            </Field>
-          </FieldGroup>
+      {step === "verify" ? (
+        <form onSubmit={submitVerify} className="space-y-4" noValidate>
+          <div className="auth-field">
+            <label htmlFor="forgot-otp" className="auth-label">
+              کد تأیید
+            </label>
+            <InputOTP
+              id="forgot-otp"
+              maxLength={6}
+              value={otp}
+              onChange={(v) => setOtp(otpFromInput(v))}
+              containerClassName="justify-start"
+              aria-invalid={error ? true : undefined}
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+            <p className="auth-otp-hint">
+              ارسال به{" "}
+              <span dir={identifier.includes("@") ? "ltr" : undefined}>
+                {identifier}
+              </span>
+              {" · "}
+              کد نمونه: <span>{toPersianDigits(demoCredentials.otp)}</span>
+            </p>
+          </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            className="auth-btn auth-btn-primary w-full"
+            disabled={loading}
+          >
             {loading ? "در حال بررسی…" : "تأیید کد"}
           </Button>
 
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-[0.8rem] auth-muted">
             {seconds > 0 ? (
               <span>
                 ارسال مجدد تا {toPersianDigits(seconds)} ثانیه دیگر
@@ -215,7 +237,7 @@ export function AuthForgotPassword() {
             ) : (
               <button
                 type="button"
-                className="font-medium text-foreground underline-offset-4 hover:underline disabled:opacity-50"
+                className="auth-link font-medium text-white"
                 onClick={resendCode}
                 disabled={loading}
               >
@@ -224,56 +246,62 @@ export function AuthForgotPassword() {
             )}
           </div>
         </form>
-      )}
+      ) : null}
 
-      {step === "reset" && (
-        <form onSubmit={submitReset} className="space-y-5" noValidate>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="reset-password">رمز جدید</FieldLabel>
-              <PasswordInput
-                id="reset-password"
-                value={password}
-                onChange={setPassword}
-                autoComplete="new-password"
-              />
-              <div className="pt-1">
-                <PasswordRequirements password={password} />
-              </div>
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="reset-confirm">تکرار رمز جدید</FieldLabel>
-              <PasswordInput
-                id="reset-confirm"
-                value={confirm}
-                onChange={setConfirm}
-                autoComplete="new-password"
-              />
-            </Field>
-          </FieldGroup>
-          <Button type="submit" className="w-full" disabled={loading}>
+      {step === "reset" ? (
+        <form onSubmit={submitReset} className="space-y-4" noValidate>
+          <div className="auth-field">
+            <label htmlFor="reset-password" className="auth-label">
+              رمز جدید
+            </label>
+            <PasswordInput
+              id="reset-password"
+              value={password}
+              onChange={setPassword}
+              autoComplete="new-password"
+            />
+            <div className="pt-1">
+              <PasswordRequirements password={password} />
+            </div>
+          </div>
+          <div className="auth-field">
+            <label htmlFor="reset-confirm" className="auth-label">
+              تکرار رمز جدید
+            </label>
+            <PasswordInput
+              id="reset-confirm"
+              value={confirm}
+              onChange={setConfirm}
+              autoComplete="new-password"
+            />
+          </div>
+          <Button
+            type="submit"
+            className="auth-btn auth-btn-primary w-full"
+            disabled={loading}
+          >
             {loading ? "در حال ذخیره…" : "ذخیره رمز جدید"}
           </Button>
         </form>
-      )}
+      ) : null}
 
-      {step === "success" && (
-        <div className="space-y-5">
-          <Alert>
+      {step === "success" ? (
+        <div className="space-y-4">
+          <Alert className="auth-alert">
             <AlertTitle>رمز به‌روز شد</AlertTitle>
             <AlertDescription>
               از این بعد با رمز جدید وارد شوید. این جریان فقط نمایشی است.
             </AlertDescription>
           </Alert>
           <Button
-            className="w-full"
+            className="auth-btn auth-btn-primary w-full"
             nativeButton={false}
             render={<Link href={AUTH_BASE} />}
           >
             رفتن به صفحه ورود
           </Button>
         </div>
-      )}
-    </div>
+      ) : null}
+    </AuthStage>
   )
 }

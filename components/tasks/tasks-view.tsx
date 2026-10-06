@@ -2,17 +2,45 @@
 
 import * as React from "react"
 import {
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  closestCorners,
+  useDroppable,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core"
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ArrowUpDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   Columns3Icon,
+  GripVerticalIcon,
   ListIcon,
   PlusIcon,
 } from "lucide-react"
 
 import { toPersianDigits } from "@/lib/digits"
-import { formatCount, formatJalaliDate, formatPercent } from "@/lib/format"
+import { formatCount, formatJalaliDate } from "@/lib/format"
 import {
   activeProject,
   getMember,
   getTaskCounts,
+  statusStageLabel,
   taskPriorities,
   tasks as initialTasks,
   taskStatuses,
@@ -21,10 +49,17 @@ import {
   type TaskPriority,
   type TaskStatus,
 } from "@/lib/mock/tasks"
+import {
+  columnId,
+  findTaskContainer,
+  moveTaskInBoard,
+  parseColumnId,
+  reorderWithinColumn,
+  tasksInStatus,
+} from "@/components/tasks/kanban-dnd"
 import { EntityActionsMenu } from "@/components/shared/entity-actions-menu"
 import { SearchField } from "@/components/shared/search-field"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -43,7 +78,12 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+} from "@/components/ui/pagination"
 import {
   Select,
   SelectContent,
@@ -51,162 +91,326 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
-function PriorityBadge({ priority }: { priority: TaskPriority }) {
-  const variant =
-    priority === "فوری" || priority === "بالا"
-      ? "destructive"
-      : priority === "متوسط"
-        ? "secondary"
-        : "outline"
-  return <Badge variant={variant}>{priority}</Badge>
+type DeskView = "board" | "list"
+type ListSortKey = "title" | "assignee" | "status" | "due" | "priority"
+
+const LIST_PAGE_SIZE = 8
+
+const priorityRank: Record<TaskPriority, number> = {
+  فوری: 4,
+  بالا: 3,
+  متوسط: 2,
+  پایین: 1,
 }
 
-function StatusBadge({ status }: { status: TaskStatus }) {
-  const variant =
-    status === "تکمیل‌شده"
-      ? "default"
-      : status === "در حال انجام"
-        ? "secondary"
-        : "outline"
-  return <Badge variant={variant}>{status}</Badge>
+const statusRank: Record<TaskStatus, number> = {
+  جدید: 0,
+  "در حال انجام": 1,
+  "در انتظار بررسی": 2,
+  "تکمیل‌شده": 3,
+}
+
+function sortTasks(
+  list: Task[],
+  key: ListSortKey,
+  dir: "asc" | "desc"
+) {
+  const mul = dir === "asc" ? 1 : -1
+  return [...list].sort((a, b) => {
+    let cmp = 0
+    switch (key) {
+      case "title":
+        cmp = a.title.localeCompare(b.title, "fa")
+        break
+      case "assignee":
+        cmp = getMember(a.assigneeId).name.localeCompare(
+          getMember(b.assigneeId).name,
+          "fa"
+        )
+        break
+      case "status":
+        cmp = statusRank[a.status] - statusRank[b.status]
+        break
+      case "due":
+        cmp = a.dueDate.localeCompare(b.dueDate, "fa")
+        break
+      case "priority":
+        cmp = priorityRank[a.priority] - priorityRank[b.priority]
+        break
+    }
+    return cmp * mul
+  })
+}
+
+function buildPageItems(totalPages: number, currentPage: number) {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1) as Array<
+      number | "ellipsis"
+    >
+  }
+  const items: Array<number | "ellipsis"> = [1]
+  const start = Math.max(2, currentPage - 1)
+  const end = Math.min(totalPages - 1, currentPage + 1)
+  if (start > 2) items.push("ellipsis")
+  for (let i = start; i <= end; i++) items.push(i)
+  if (end < totalPages - 1) items.push("ellipsis")
+  items.push(totalPages)
+  return items
+}
+
+function PriorityChip({ priority }: { priority: TaskPriority }) {
+  return (
+    <span className="tk-chip" data-priority={priority}>
+      {priority}
+    </span>
+  )
+}
+
+function StatusChip({ status }: { status: TaskStatus }) {
+  return (
+    <span className="tk-chip" data-status={status}>
+      {statusStageLabel[status]}
+    </span>
+  )
+}
+
+function MemberAvatar({
+  member,
+  size = "sm",
+}: {
+  member: (typeof teamMembers)[number]
+  size?: "sm" | "default"
+}) {
+  return (
+    <Avatar size={size} className="tk-avatar">
+      <AvatarImage src={member.avatar} alt={member.name} />
+      <AvatarFallback className="text-[0.65rem]">{member.initials}</AvatarFallback>
+    </Avatar>
+  )
+}
+
+function matchesFilters(
+  task: Task,
+  query: string,
+  priorityFilter: string,
+  assigneeFilter: string
+) {
+  const q = query.trim()
+  const matchesQuery =
+    !q ||
+    task.title.includes(q) ||
+    task.id.includes(q) ||
+    task.label.includes(q)
+  const matchesPriority =
+    priorityFilter === "all" || task.priority === priorityFilter
+  const matchesAssignee =
+    assigneeFilter === "all" || task.assigneeId === assigneeFilter
+  return matchesQuery && matchesPriority && matchesAssignee
 }
 
 export function TasksView() {
   const [items, setItems] = React.useState<Task[]>(initialTasks)
   const [query, setQuery] = React.useState("")
-  const [priorityFilter, setPriorityFilter] = React.useState<string>("all")
-  const [assigneeFilter, setAssigneeFilter] = React.useState<string>("all")
+  const [priorityFilter, setPriorityFilter] = React.useState("all")
+  const [assigneeFilter, setAssigneeFilter] = React.useState("all")
   const [selected, setSelected] = React.useState<Task | null>(null)
   const [createOpen, setCreateOpen] = React.useState(false)
+  const [deskView, setDeskView] = React.useState<DeskView>("board")
+  const [activeId, setActiveId] = React.useState<string | null>(null)
+  const [overlayWidth, setOverlayWidth] = React.useState<number | null>(null)
+  const dragOriginStatus = React.useRef<TaskStatus | null>(null)
 
-  const filtered = items.filter((task) => {
-    const q = query.trim()
-    const matchesQuery =
-      !q ||
-      task.title.includes(q) ||
-      task.id.includes(q) ||
-      task.label.includes(q)
-    const matchesPriority =
-      priorityFilter === "all" || task.priority === priorityFilter
-    const matchesAssignee =
-      assigneeFilter === "all" || task.assigneeId === assigneeFilter
-    return matchesQuery && matchesPriority && matchesAssignee
-  })
+  const filtered = React.useMemo(
+    () =>
+      items.filter((task) =>
+        matchesFilters(task, query, priorityFilter, assigneeFilter)
+      ),
+    [items, query, priorityFilter, assigneeFilter]
+  )
+
+  const activeTask = activeId
+    ? (items.find((task) => task.id === activeId) ?? null)
+    : null
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 6 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 180, tolerance: 8 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  function setTaskStatus(taskId: string, status: TaskStatus) {
+    setItems((prev) => {
+      const current = prev.find((t) => t.id === taskId)
+      if (!current || current.status === status) return prev
+      return moveTaskInBoard(prev, taskId, columnId(status), status)
+    })
+    toast.success(`جابه‌جا شد → ${statusStageLabel[status]}`)
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    const id = String(event.active.id)
+    setActiveId(id)
+    dragOriginStatus.current = findTaskContainer(id, items)
+    const rect = event.active.rect.current.initial
+    if (rect?.width) setOverlayWidth(rect.width)
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    const { active, over } = event
+    if (!over) return
+
+    const activeTaskId = String(active.id)
+    const overId = over.id
+
+    setItems((prev) => {
+      const activeContainer = findTaskContainer(activeTaskId, prev)
+      const overContainer =
+        parseColumnId(overId) ?? findTaskContainer(String(overId), prev)
+      if (!activeContainer || !overContainer) return prev
+      if (activeContainer === overContainer) return prev
+      return moveTaskInBoard(prev, activeTaskId, overId, overContainer)
+    })
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    const origin = dragOriginStatus.current
+    dragOriginStatus.current = null
+    setActiveId(null)
+    setOverlayWidth(null)
+    if (!over) return
+
+    const activeTaskId = String(active.id)
+    const overId = over.id
+    const activeContainer = findTaskContainer(activeTaskId, items)
+    const overContainer =
+      parseColumnId(overId) ?? findTaskContainer(String(overId), items)
+    if (!activeContainer || !overContainer) return
+
+    // Cross-column: toast immediately (origin captured at drag start)
+    if (origin && origin !== overContainer) {
+      toast.success(`جابه‌جا شد → ${statusStageLabel[overContainer]}`)
+      setItems((prev) =>
+        moveTaskInBoard(prev, activeTaskId, overId, overContainer)
+      )
+      return
+    }
+
+    // Same-column reorder
+    const overTaskId = parseColumnId(overId) ? null : String(overId)
+    if (overTaskId && overTaskId !== activeTaskId) {
+      toast.success("جابه‌جا شد")
+      setItems((prev) =>
+        reorderWithinColumn(prev, activeContainer, activeTaskId, overTaskId)
+      )
+    }
+  }
+
+  function handleDragCancel() {
+    dragOriginStatus.current = null
+    setActiveId(null)
+    setOverlayWidth(null)
+  }
 
   const counts = getTaskCounts(filtered)
 
-  function moveTask(taskId: string, status: TaskStatus) {
-    setItems((prev) =>
-      prev.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              status,
-              progress:
-                status === "تکمیل‌شده"
-                  ? 100
-                  : status === "جدید"
-                    ? Math.min(task.progress, 15)
-                    : task.progress,
-            }
-          : task
-      )
-    )
-    toast.success(`وضعیت به «${status}» تغییر کرد`)
-  }
-
   return (
-    <div className="flex flex-col gap-6">
-      {/* Workspace header */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-            {activeProject.name}
-          </h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
-            {activeProject.description} — مهلت{" "}
-            {formatJalaliDate(activeProject.dueDate)}
-          </p>
-        </div>
-        <Button
-          className="w-full shrink-0 sm:w-auto"
-          onClick={() => setCreateOpen(true)}
-        >
-          <PlusIcon data-icon="inline-start" />
-          وظیفه جدید
-        </Button>
-      </div>
-
-      {/* Project context + overview */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
-        <section
-          aria-label="خلاصه وظایف"
-          className="grid h-fit grid-cols-2 gap-3 sm:grid-cols-4"
-        >
-          <StatTile label="کل وظایف" value={counts.total} />
-          <StatTile label="در حال انجام" value={counts.doing} />
-          <StatTile label="تکمیل‌شده" value={counts.done} />
-          <StatTile label="عقب‌افتاده" value={counts.overdue} tone="warn" />
-        </section>
-
-        <div
-          data-slot="card"
-          className="rounded-xl border bg-card p-4 text-card-foreground shadow-xs"
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-sm font-medium">پیشرفت پروژه</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                تیم فعال روی همین فضای کاری
-              </p>
-            </div>
-            <span className="text-sm font-semibold tracking-normal whitespace-nowrap">
-              {formatPercent(activeProject.progress)}
+    <div className="tk-desk">
+      <header className="tk-topbar">
+        <div className="tk-topbar-main">
+          <div className="tk-topbar-kicker">
+            <span className="tk-topbar-mark" aria-hidden />
+            <span>پروژه فعال</span>
+            <span className="tk-topbar-dot" aria-hidden />
+            <span>مهلت {formatJalaliDate(activeProject.dueDate)}</span>
+          </div>
+          <h1 className="tk-topbar-title">{activeProject.name}</h1>
+          <p className="tk-topbar-sub">{activeProject.description}</p>
+          <div className="tk-stat-strip" aria-label="خلاصه وضعیت">
+            <span className="tk-stat" data-tone="total">
+              <strong>{formatCount(counts.total)}</strong>
+              کل
+            </span>
+            <span className="tk-stat" data-tone="doing">
+              <strong>{formatCount(counts.doing)}</strong>
+              در حال انجام
+            </span>
+            <span className="tk-stat" data-tone="done">
+              <strong>{formatCount(counts.done)}</strong>
+              تکمیل
+            </span>
+            <span className="tk-stat" data-tone="warn">
+              <strong>{formatCount(counts.overdue)}</strong>
+              عقب‌افتاده
             </span>
           </div>
-          <Progress value={activeProject.progress} className="mt-3 gap-2">
-            <div className="flex w-full justify-between text-xs text-muted-foreground">
-              <ProgressLabel>تکمیل کلی</ProgressLabel>
-              <ProgressValue />
+        </div>
+
+        <aside className="tk-topbar-side" aria-label="پیشرفت و تیم">
+          <div
+            className="tk-progress-ring"
+            style={
+              {
+                "--tk-progress": activeProject.progress,
+              } as React.CSSProperties
+            }
+            role="img"
+            aria-label={`پیشرفت پروژه ${toPersianDigits(activeProject.progress)} درصد`}
+          >
+            <div className="tk-progress-ring-inner">
+              <strong className="tk-ring-num" dir="ltr" lang="fa">
+                <span className="tk-ring-digits">
+                  {toPersianDigits(activeProject.progress)}
+                </span>
+                <span className="tk-ring-pct" aria-hidden>
+                  ٪
+                </span>
+              </strong>
+              <span>پیشرفت</span>
             </div>
-          </Progress>
-          <Separator className="my-3" />
-          <div className="flex flex-wrap items-center gap-2">
+          </div>
+          <div className="tk-avatar-stack" aria-label="تیم پروژه">
             {teamMembers.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center gap-1.5 rounded-full border pe-2.5 ps-1 py-0.5"
-                title={`${member.name} — ${member.role}`}
-              >
-                <Avatar size="sm">
-                  <AvatarFallback className="text-[0.65rem]">
-                    {member.initials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="hidden text-xs sm:inline">{member.name}</span>
-              </div>
+              <MemberAvatar key={member.id} member={member} />
             ))}
           </div>
-        </div>
-      </div>
+        </aside>
+      </header>
 
-      {/* Toolbar: CTA pattern already has create above; here search + filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="tk-tools">
+        <div className="tk-view-toggle" role="group" aria-label="نمای میز">
+          <button
+            type="button"
+            aria-label="برد"
+            title="برد"
+            aria-pressed={deskView === "board"}
+            onClick={() => setDeskView("board")}
+          >
+            <Columns3Icon className="size-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            aria-label="فهرست"
+            title="فهرست"
+            aria-pressed={deskView === "list"}
+            onClick={() => setDeskView("list")}
+          >
+            <ListIcon className="size-4" aria-hidden />
+          </button>
+        </div>
+
         <SearchField
-          wrapperClassName="flex-1 sm:max-w-md"
-          placeholder="جستجوی عنوان، برچسب یا شناسه…"
+          wrapperClassName="flex-1 sm:max-w-xs"
+          placeholder="جستجوی وظیفه…"
           aria-label="جستجوی وظایف"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -220,7 +424,7 @@ export function TasksView() {
             ...Object.fromEntries(taskPriorities.map((p) => [p, p])),
           }}
         >
-          <SelectTrigger className="w-full sm:w-[140px]" aria-label="فیلتر اولویت">
+          <SelectTrigger className="w-full sm:w-35" aria-label="فیلتر اولویت">
             <SelectValue placeholder="اولویت" />
           </SelectTrigger>
           <SelectContent>
@@ -241,7 +445,7 @@ export function TasksView() {
             ...Object.fromEntries(teamMembers.map((m) => [m.id, m.name])),
           }}
         >
-          <SelectTrigger className="w-full sm:w-[160px]" aria-label="فیلتر مسئول">
+          <SelectTrigger className="w-full sm:w-37.5" aria-label="فیلتر مسئول">
             <SelectValue placeholder="مسئول" />
           </SelectTrigger>
           <SelectContent>
@@ -254,46 +458,67 @@ export function TasksView() {
           </SelectContent>
         </Select>
 
-        <p className="text-sm tracking-normal text-muted-foreground sm:ms-auto">
-          {formatCount(filtered.length)} وظیفه
-        </p>
+        <p className="tk-count">{formatCount(filtered.length)} وظیفه</p>
+
+        <button
+          type="button"
+          className="tk-btn-primary tk-btn-compact"
+          onClick={() => setCreateOpen(true)}
+        >
+          <PlusIcon className="size-3.5" aria-hidden />
+          وظیفه جدید
+        </button>
       </div>
 
-      <Tabs defaultValue="board" className="gap-4">
-        <TabsList>
-          <TabsTrigger value="board" className="gap-1.5">
-            <Columns3Icon className="size-3.5" />
-            برد
-          </TabsTrigger>
-          <TabsTrigger value="list" className="gap-1.5">
-            <ListIcon className="size-3.5" />
-            فهرست
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="board" className="flex-none">
-          <TaskBoard
-            tasks={filtered}
-            onOpen={setSelected}
-            onMove={moveTask}
-          />
-        </TabsContent>
-
-        <TabsContent value="list" className="flex-none">
-          <TaskList
-            tasks={filtered}
-            onOpen={setSelected}
-            onMove={moveTask}
-          />
-        </TabsContent>
-      </Tabs>
+      {deskView === "board" ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+        >
+          <div className="tk-board" dir="rtl" aria-label="برد وظایف">
+            {taskStatuses.map((status) => (
+              <KanbanColumn
+                key={status}
+                status={status}
+                tasks={tasksInStatus(filtered, status)}
+                onOpen={setSelected}
+                onMove={setTaskStatus}
+              />
+            ))}
+          </div>
+          <DragOverlay dropAnimation={null}>
+            {activeTask ? (
+              <div
+                className="tk-overlay-wrap"
+                style={
+                  overlayWidth
+                    ? { width: overlayWidth }
+                    : { width: "17.25rem" }
+                }
+              >
+                <TaskCardFace task={activeTask} overlay />
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      ) : (
+        <TaskLedger
+          tasks={filtered}
+          onOpen={setSelected}
+          onMove={setTaskStatus}
+        />
+      )}
 
       <TaskDetailDialog
         task={selected}
         onOpenChange={(open) => {
           if (!open) setSelected(null)
         }}
-        onMove={moveTask}
+        onMove={setTaskStatus}
       />
 
       <CreateTaskDialog
@@ -308,85 +533,57 @@ export function TasksView() {
   )
 }
 
-function StatTile({
-  label,
-  value,
-  tone,
-}: {
-  label: string
-  value: number
-  tone?: "warn"
-}) {
-  return (
-    <div
-      data-slot="card"
-      className="rounded-xl border bg-card px-3 py-3 text-card-foreground shadow-xs sm:px-4"
-    >
-      <p className="text-xs text-muted-foreground sm:text-sm">{label}</p>
-      <p
-        className={`mt-0.5 text-lg font-semibold tracking-normal ${
-          tone === "warn"
-            ? "text-amber-700 dark:text-amber-400"
-            : ""
-        }`}
-      >
-        {formatCount(value)}
-      </p>
-    </div>
-  )
-}
-
-function TaskBoard({
+function KanbanColumn({
+  status,
   tasks,
   onOpen,
   onMove,
 }: {
+  status: TaskStatus
   tasks: Task[]
   onOpen: (task: Task) => void
   onMove: (id: string, status: TaskStatus) => void
 }) {
+  const id = columnId(status)
+  const { setNodeRef, isOver } = useDroppable({ id })
+
   return (
-    <ScrollArea className="w-full whitespace-nowrap">
-      <div className="flex min-w-max gap-3 pb-3 xl:grid xl:min-w-0 xl:grid-cols-4 xl:whitespace-normal">
-        {taskStatuses.map((status) => {
-          const columnTasks = tasks.filter((t) => t.status === status)
-          return (
-            <div
-              key={status}
-              className="flex w-[272px] shrink-0 flex-col rounded-xl border bg-muted/20 xl:w-auto"
-            >
-              <div className="flex items-center justify-between gap-2 border-b px-3 py-2.5">
-                <StatusBadge status={status} />
-                <span className="text-xs tracking-normal text-muted-foreground">
-                  {formatCount(columnTasks.length)}
-                </span>
-              </div>
-              <div className="flex flex-col gap-2 p-2.5">
-                {columnTasks.length === 0 ? (
-                  <p className="rounded-lg border border-dashed px-3 py-8 text-center text-xs text-muted-foreground">
-                    وظیفه‌ای در این ستون نیست
-                  </p>
-                ) : (
-                  columnTasks.map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      onOpen={() => onOpen(task)}
-                      onMove={onMove}
-                    />
-                  ))
-                )}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    <section
+      className={cn("tk-column", isOver && "is-over")}
+      data-status={status}
+      aria-label={`ستون ${statusStageLabel[status]}`}
+    >
+      <header className="tk-column-head">
+        <div className="tk-column-title">
+          <span className="tk-column-dot" aria-hidden />
+          <strong>{statusStageLabel[status]}</strong>
+        </div>
+        <span>{formatCount(tasks.length)}</span>
+      </header>
+      <SortableContext
+        items={tasks.map((task) => task.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div ref={setNodeRef} className="tk-column-body">
+          {tasks.length === 0 ? (
+            <p className="tk-column-empty">کارت را اینجا رها کنید</p>
+          ) : (
+            tasks.map((task) => (
+              <SortableTaskCard
+                key={task.id}
+                task={task}
+                onOpen={() => onOpen(task)}
+                onMove={onMove}
+              />
+            ))
+          )}
+        </div>
+      </SortableContext>
+    </section>
   )
 }
 
-function TaskCard({
+function SortableTaskCard({
   task,
   onOpen,
   onMove,
@@ -395,61 +592,170 @@ function TaskCard({
   onOpen: () => void
   onMove: (id: string, status: TaskStatus) => void
 }) {
-  const member = getMember(task.assigneeId)
+  const [mounted, setMounted] = React.useState(false)
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id })
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
 
   return (
-    <div className="rounded-lg border bg-background p-3 text-sm shadow-none">
-      <div className="flex items-start justify-between gap-2">
-        <button
-          type="button"
-          onClick={onOpen}
-          className="min-w-0 flex-1 rounded-sm text-start outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-        >
-          <p className="font-medium leading-snug whitespace-normal">{task.title}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{task.id}</p>
-        </button>
-        <TaskActions task={task} onOpen={onOpen} onMove={onMove} />
-      </div>
-      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-        <Badge variant="outline">{task.label}</Badge>
-        <PriorityBadge priority={task.priority} />
-      </div>
-      <Separator className="my-2.5" />
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-1.5">
-          <Avatar size="sm">
-            <AvatarFallback className="text-[0.65rem]">
-              {member.initials}
-            </AvatarFallback>
-          </Avatar>
-          <span className="truncate text-xs text-muted-foreground">
-            {member.name}
-          </span>
-        </div>
-        <span className="shrink-0 text-xs tracking-normal whitespace-nowrap text-muted-foreground">
-          {formatJalaliDate(task.dueDate)}
-        </span>
-      </div>
-      {task.progress > 0 && task.progress < 100 ? (
-        <div
-          className="mt-2.5 h-1 overflow-hidden rounded-full bg-muted"
-          role="progressbar"
-          aria-valuenow={task.progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label={`پیشرفت ${toPersianDigits(task.progress)} درصد`}
-        >
-          <div
-            className="h-full rounded-full bg-primary"
-            style={{ width: `${task.progress}%` }}
-          />
-        </div>
-      ) : null}
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn("tk-card-shell", isDragging && "is-dragging")}
+    >
+      <TaskCardFace
+        task={task}
+        onOpen={onOpen}
+        onMove={onMove}
+        dragHandleProps={
+          mounted ? { ...attributes, ...listeners } : undefined
+        }
+      />
     </div>
   )
 }
 
-function TaskList({
+function TaskCardFace({
+  task,
+  onOpen,
+  onMove,
+  overlay = false,
+  dragHandleProps,
+}: {
+  task: Task
+  onOpen?: () => void
+  onMove?: (id: string, status: TaskStatus) => void
+  overlay?: boolean
+  dragHandleProps?: Record<string, unknown>
+}) {
+  const member = getMember(task.assigneeId)
+
+  return (
+    <article className={cn("tk-card", overlay && "is-overlay")}>
+      <div className="tk-card-top">
+        <button
+          type="button"
+          className="tk-drag-handle"
+          aria-label={`جابه‌جایی کارت ${task.id}`}
+          title="بکشید تا جابه‌جا شود"
+          {...(dragHandleProps as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        >
+          <GripVerticalIcon className="size-4" aria-hidden />
+        </button>
+        {onOpen ? (
+          <button
+            type="button"
+            className="tk-card-title-btn"
+            onClick={onOpen}
+          >
+            <p className="tk-card-title">{task.title}</p>
+            <p className="tk-card-id">
+              {task.id}
+              <span aria-hidden> · </span>
+              {task.label}
+            </p>
+          </button>
+        ) : (
+          <div className="min-w-0 flex-1">
+            <p className="tk-card-title">{task.title}</p>
+            <p className="tk-card-id">
+              {task.id}
+              <span aria-hidden> · </span>
+              {task.label}
+            </p>
+          </div>
+        )}
+        {onOpen && onMove ? (
+          <div className="tk-card-menu">
+            <TaskActions task={task} onOpen={onOpen} onMove={onMove} />
+          </div>
+        ) : null}
+      </div>
+      <div className="tk-card-tags">
+        <PriorityChip priority={task.priority} />
+      </div>
+      <div
+        className="tk-card-progress"
+        data-priority={task.priority}
+        data-done={task.progress >= 100 ? "true" : undefined}
+        role="progressbar"
+        aria-valuenow={task.progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`پیشرفت ${toPersianDigits(task.progress)} درصد`}
+      >
+        <div className="tk-card-progress-track">
+          <span
+            className="tk-card-progress-fill"
+            style={{ width: `${task.progress}%` }}
+          />
+        </div>
+        <span className="tk-card-progress-val" dir="ltr">
+          {toPersianDigits(task.progress)}٪
+        </span>
+      </div>
+      <div className="tk-card-foot">
+        <div className="tk-assignee">
+          <MemberAvatar member={member} />
+          <span>{member.name}</span>
+        </div>
+        <span className="tk-card-due">{formatJalaliDate(task.dueDate)}</span>
+      </div>
+    </article>
+  )
+}
+
+function SortHeader({
+  label,
+  sortKey,
+  activeKey,
+  dir,
+  onSort,
+  end,
+}: {
+  label: string
+  sortKey: ListSortKey
+  activeKey: ListSortKey
+  dir: "asc" | "desc"
+  onSort: (key: ListSortKey) => void
+  end?: boolean
+}) {
+  const active = activeKey === sortKey
+  const Icon = !active
+    ? ArrowUpDownIcon
+    : dir === "asc"
+      ? ArrowUpIcon
+      : ArrowDownIcon
+
+  return (
+    <button
+      type="button"
+      className={cn("tk-sort-btn", end && "ms-auto")}
+      data-active={active ? "true" : undefined}
+      onClick={() => onSort(sortKey)}
+      aria-label={`مرتب‌سازی بر اساس ${label}`}
+    >
+      <span>{label}</span>
+      <Icon aria-hidden />
+    </button>
+  )
+}
+
+function TaskLedger({
   tasks,
   onOpen,
   onMove,
@@ -458,88 +764,187 @@ function TaskList({
   onOpen: (task: Task) => void
   onMove: (id: string, status: TaskStatus) => void
 }) {
+  const [page, setPage] = React.useState(1)
+  const [sortKey, setSortKey] = React.useState<ListSortKey>("due")
+  const [sortDir, setSortDir] = React.useState<"asc" | "desc">("asc")
+  const filterKey = tasks.map((t) => t.id).join("|")
+
+  React.useEffect(() => {
+    setPage(1)
+  }, [filterKey, sortKey, sortDir])
+
+  function handleSort(key: ListSortKey) {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"))
+      return
+    }
+    setSortKey(key)
+    setSortDir(key === "priority" || key === "due" ? "desc" : "asc")
+  }
+
+  const sorted = React.useMemo(
+    () => sortTasks(tasks, sortKey, sortDir),
+    [tasks, sortKey, sortDir]
+  )
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / LIST_PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const pageStart = (currentPage - 1) * LIST_PAGE_SIZE
+  const pageTasks = sorted.slice(pageStart, pageStart + LIST_PAGE_SIZE)
+  const pageItems = buildPageItems(totalPages, currentPage)
+  const rangeFrom = sorted.length === 0 ? 0 : pageStart + 1
+  const rangeTo = Math.min(pageStart + LIST_PAGE_SIZE, sorted.length)
+
   if (tasks.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed px-4 py-14 text-center text-sm text-muted-foreground">
-        با این فیلتر وظیفه‌ای پیدا نشد.
+      <div className="tk-ledger">
+        <p className="tk-ledger-empty">با این فیلتر وظیفه‌ای پیدا نشد.</p>
       </div>
     )
   }
 
   return (
-    <div
-      data-slot="card"
-      className="overflow-hidden rounded-xl border bg-card text-card-foreground shadow-xs"
-    >
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="min-w-[14rem]">عنوان</TableHead>
-              <TableHead>مسئول</TableHead>
-              <TableHead>وضعیت</TableHead>
-              <TableHead>اولویت</TableHead>
-              <TableHead>مهلت</TableHead>
-              <TableHead className="min-w-[7rem]">پیشرفت</TableHead>
-              <TableHead className="w-12 text-center">عملیات</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tasks.map((task) => {
-              const member = getMember(task.assigneeId)
-              return (
-                <TableRow key={task.id}>
-                  <TableCell>
-                    <button
-                      type="button"
-                      onClick={() => onOpen(task)}
-                      className="text-start outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                    >
-                      <span className="font-medium">{task.title}</span>
-                      <span className="mt-0.5 block text-xs text-muted-foreground">
-                        {task.id} · {task.label}
-                      </span>
-                    </button>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Avatar size="sm">
-                        <AvatarFallback className="text-[0.65rem]">
-                          {member.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm">{member.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={task.status} />
-                  </TableCell>
-                  <TableCell>
-                    <PriorityBadge priority={task.priority} />
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap tracking-normal">
-                    {formatJalaliDate(task.dueDate)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Progress value={task.progress} className="min-w-16 flex-1 gap-0" />
-                      <span className="shrink-0 text-end text-xs tracking-normal text-muted-foreground">
-                        {formatPercent(task.progress)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <TaskActions
-                      task={task}
-                      onOpen={() => onOpen(task)}
-                      onMove={onMove}
-                    />
-                  </TableCell>
-                </TableRow>
+    <div className="tk-ledger-wrap">
+      <section className="tk-ledger" aria-label="فهرست وظایف">
+        <div className="tk-ledger-head">
+          <SortHeader
+            label="عنوان"
+            sortKey="title"
+            activeKey={sortKey}
+            dir={sortDir}
+            onSort={handleSort}
+          />
+          <SortHeader
+            label="مسئول"
+            sortKey="assignee"
+            activeKey={sortKey}
+            dir={sortDir}
+            onSort={handleSort}
+          />
+          <SortHeader
+            label="وضعیت"
+            sortKey="status"
+            activeKey={sortKey}
+            dir={sortDir}
+            onSort={handleSort}
+          />
+          <SortHeader
+            label="مهلت"
+            sortKey="due"
+            activeKey={sortKey}
+            dir={sortDir}
+            onSort={handleSort}
+          />
+          <SortHeader
+            label="اولویت"
+            sortKey="priority"
+            activeKey={sortKey}
+            dir={sortDir}
+            onSort={handleSort}
+            end
+          />
+        </div>
+        {pageTasks.map((task) => {
+          const member = getMember(task.assigneeId)
+          return (
+            <div key={task.id} className="tk-ledger-row">
+              <button
+                type="button"
+                className="tk-ledger-col tk-ledger-col-title tk-ledger-title-btn"
+                onClick={() => onOpen(task)}
+              >
+                <p className="tk-ledger-title">{task.title}</p>
+                <p className="tk-ledger-sub">
+                  {task.id} · {task.label}
+                </p>
+              </button>
+              <div className="tk-ledger-col tk-ledger-col-assignee tk-assignee">
+                <MemberAvatar member={member} />
+                <span>{member.name}</span>
+              </div>
+              <div className="tk-ledger-col tk-ledger-col-status">
+                <StatusChip status={task.status} />
+              </div>
+              <div className="tk-ledger-col tk-ledger-col-due">
+                <strong>{formatJalaliDate(task.dueDate)}</strong>
+              </div>
+              <div className="tk-ledger-col tk-ledger-col-meta">
+                <PriorityChip priority={task.priority} />
+                <TaskActions
+                  task={task}
+                  onOpen={() => onOpen(task)}
+                  onMove={onMove}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </section>
+
+      <div className="tk-ledger-pager">
+        <p className="tk-ledger-pager-meta">
+          {toPersianDigits(rangeFrom)}–{toPersianDigits(rangeTo)} از{" "}
+          {toPersianDigits(sorted.length)}
+          <span className="tk-ledger-pager-sep" aria-hidden>
+            ·
+          </span>
+          صفحه {toPersianDigits(currentPage)} از {toPersianDigits(totalPages)}
+        </p>
+        <Pagination className="tk-ledger-pagination mx-0 w-auto justify-start sm:justify-end">
+          <PaginationContent>
+            <PaginationItem>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="tk-pager-btn gap-1 ps-1.5"
+                disabled={currentPage <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                aria-label="صفحه قبلی"
+              >
+                <ChevronLeftIcon className="size-3.5 rtl:rotate-180" />
+                <span className="hidden sm:inline">قبلی</span>
+              </Button>
+            </PaginationItem>
+            {pageItems.map((item, index) =>
+              item === "ellipsis" ? (
+                <PaginationItem key={`e-${index}`}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              ) : (
+                <PaginationItem key={item}>
+                  <Button
+                    type="button"
+                    variant={item === currentPage ? "outline" : "ghost"}
+                    size="icon-sm"
+                    className={cn(
+                      "tk-pager-btn",
+                      item === currentPage && "is-active"
+                    )}
+                    aria-current={item === currentPage ? "page" : undefined}
+                    onClick={() => setPage(item)}
+                  >
+                    {toPersianDigits(item)}
+                  </Button>
+                </PaginationItem>
               )
-            })}
-          </TableBody>
-        </Table>
+            )}
+            <PaginationItem>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="tk-pager-btn gap-1 pe-1.5"
+                disabled={currentPage >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                aria-label="صفحه بعدی"
+              >
+                <span className="hidden sm:inline">بعدی</span>
+                <ChevronRightIcon className="size-3.5 rtl:rotate-180" />
+              </Button>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   )
@@ -555,7 +960,10 @@ function TaskActions({
   onMove: (id: string, status: TaskStatus) => void
 }) {
   return (
-    <EntityActionsMenu label={`عملیات وظیفه ${task.id}`}>
+    <EntityActionsMenu
+      label={`عملیات وظیفه ${task.id}`}
+      className="tk-actions-trigger border-0 bg-transparent shadow-none hover:border-0 hover:bg-black/5 dark:hover:bg-white/10"
+    >
       <DropdownMenuItem onClick={onOpen}>مشاهده جزئیات</DropdownMenuItem>
       <DropdownMenuSeparator />
       {taskStatuses
@@ -565,7 +973,7 @@ function TaskActions({
             key={status}
             onClick={() => onMove(task.id, status)}
           >
-            انتقال به {status}
+            انتقال به {statusStageLabel[status]}
           </DropdownMenuItem>
         ))}
     </EntityActionsMenu>
@@ -585,7 +993,7 @@ function TaskDetailDialog({
 
   return (
     <Dialog open={Boolean(task)} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" dir="rtl">
+      <DialogContent className="tk-dialog sm:max-w-md" dir="rtl">
         {task && member ? (
           <>
             <DialogHeader>
@@ -596,20 +1004,20 @@ function TaskDetailDialog({
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 text-sm">
-              <p className="leading-relaxed text-muted-foreground">
+              <p className="leading-relaxed text-[color:var(--tk-mute,#5b6b7c)]">
                 {task.description}
               </p>
               <div className="flex flex-wrap gap-2">
-                <StatusBadge status={task.status} />
-                <PriorityBadge priority={task.priority} />
+                <StatusChip status={task.status} />
+                <PriorityChip priority={task.priority} />
               </div>
               <div className="flex items-center gap-2">
-                <Avatar size="sm">
-                  <AvatarFallback>{member.initials}</AvatarFallback>
-                </Avatar>
+                <MemberAvatar member={member} size="default" />
                 <div>
                   <p className="font-medium">{member.name}</p>
-                  <p className="text-xs text-muted-foreground">{member.role}</p>
+                  <p className="text-xs text-[color:var(--tk-mute,#5b6b7c)]">
+                    {member.role}
+                  </p>
                 </div>
               </div>
               <Progress value={task.progress} className="gap-2">
@@ -620,27 +1028,36 @@ function TaskDetailDialog({
               </Progress>
             </div>
             <DialogFooter className="flex-col gap-2 sm:flex-col">
-              <Select
-                value={task.status}
-                onValueChange={(value) => {
-                  if (value) onMove(task.id, value as TaskStatus)
-                }}
-                items={Object.fromEntries(taskStatuses.map((s) => [s, s]))}
+              <div className="tk-dialog-field w-full">
+                <span className="tk-dialog-label">وضعیت</span>
+                <Select
+                  value={task.status}
+                  onValueChange={(value) => {
+                    if (value) onMove(task.id, value as TaskStatus)
+                  }}
+                  items={Object.fromEntries(
+                    taskStatuses.map((s) => [s, statusStageLabel[s]])
+                  )}
+                >
+                  <SelectTrigger aria-label="تغییر وضعیت وظیفه" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {taskStatuses.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {statusStageLabel[status]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <button
+                type="button"
+                className="tk-btn-ghost w-full"
+                onClick={() => onOpenChange(false)}
               >
-                <SelectTrigger aria-label="تغییر وضعیت وظیفه" className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {taskStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 بستن
-              </Button>
+              </button>
             </DialogFooter>
           </>
         ) : null}
@@ -672,7 +1089,7 @@ function CreateTaskDialog({
     onCreate({
       id,
       title: trimmed,
-      description: "وظیفهٔ جدید ثبت‌شده در فضای کاری (نمونه بدون سرور).",
+      description: "وظیفهٔ جدید ثبت‌شده در کارنما (نمونه بدون سرور).",
       status: "جدید",
       priority,
       assigneeId,
@@ -688,60 +1105,75 @@ function CreateTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" dir="rtl">
+      <DialogContent className="tk-dialog sm:max-w-md" dir="rtl">
         <DialogHeader>
-          <DialogTitle>ایجاد وظیفه</DialogTitle>
+          <DialogTitle>وظیفه جدید</DialogTitle>
           <DialogDescription>
             وظیفه در ستون «جدید» اضافه می‌شود — فقط در همین نشست مرورگر.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
-          <InputGroup>
-            <InputGroupInput
-              placeholder="عنوان وظیفه"
-              aria-label="عنوان وظیفه"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </InputGroup>
-          <Select
-            value={assigneeId}
-            onValueChange={(v) => v && setAssigneeId(v)}
-            items={Object.fromEntries(teamMembers.map((m) => [m.id, m.name]))}
-          >
-            <SelectTrigger aria-label="مسئول وظیفه" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {teamMembers.map((m) => (
-                <SelectItem key={m.id} value={m.id}>
-                  {m.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={priority}
-            onValueChange={(v) => v && setPriority(v as TaskPriority)}
-            items={Object.fromEntries(taskPriorities.map((p) => [p, p]))}
-          >
-            <SelectTrigger aria-label="اولویت وظیفه" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {taskPriorities.map((p) => (
-                <SelectItem key={p} value={p}>
-                  {p}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="tk-dialog-field">
+            <span className="tk-dialog-label">عنوان</span>
+            <InputGroup>
+              <InputGroupInput
+                placeholder="مثلاً طراحی قاب ویترین"
+                aria-label="عنوان وظیفه"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </InputGroup>
+          </div>
+          <div className="tk-dialog-field">
+            <span className="tk-dialog-label">مسئول</span>
+            <Select
+              value={assigneeId}
+              onValueChange={(v) => v && setAssigneeId(v)}
+              items={Object.fromEntries(teamMembers.map((m) => [m.id, m.name]))}
+            >
+              <SelectTrigger aria-label="مسئول وظیفه" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((m) => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="tk-dialog-field">
+            <span className="tk-dialog-label">اولویت</span>
+            <Select
+              value={priority}
+              onValueChange={(v) => v && setPriority(v as TaskPriority)}
+              items={Object.fromEntries(taskPriorities.map((p) => [p, p]))}
+            >
+              <SelectTrigger aria-label="اولویت وظیفه" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {taskPriorities.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="gap-2 sm:justify-stretch">
+          <button
+            type="button"
+            className="tk-btn-ghost flex-1"
+            onClick={() => onOpenChange(false)}
+          >
             انصراف
-          </Button>
-          <Button onClick={submit}>افزودن</Button>
+          </button>
+          <button type="button" className="tk-btn-primary flex-1" onClick={submit}>
+            افزودن
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

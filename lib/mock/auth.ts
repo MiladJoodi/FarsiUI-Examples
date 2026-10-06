@@ -10,6 +10,7 @@ export const authBrandTagline = "فضای کاری تیم‌های محصول ف
 /** Demo credentials that succeed on login (UI-only) */
 export const demoCredentials = {
   email: "info@farsiui.ir",
+  mobile: "09121234567",
   password: "farsiui",
   otp: "123456",
 } as const
@@ -38,9 +39,10 @@ export type PasswordStrength = {
 }
 
 export function getPasswordStrength(password: string): PasswordStrength {
-  const lengthOk = password.length >= 8
-  const letterOk = /[A-Za-zآ-ی]/.test(password)
-  const digitOk = /\d/.test(password)
+  const normalized = normalizeDigits(password)
+  const lengthOk = normalized.length >= 8
+  const letterOk = /[A-Za-z\u0600-\u06FF]/.test(normalized)
+  const digitOk = /\d/.test(normalized)
   const score = [lengthOk, letterOk, digitOk].filter(Boolean).length
   return { lengthOk, letterOk, digitOk, score }
 }

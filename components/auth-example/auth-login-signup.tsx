@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { CheckIcon, XIcon } from "lucide-react"
@@ -9,15 +8,17 @@ import { toast } from "sonner"
 
 import {
   authBrandName,
-  authBrandTagline,
   demoCredentials,
   fakeDelay,
   getPasswordStrength,
-  isEmailOrMobile,
   isValidEmail,
+  isValidMobile,
 } from "@/lib/mock/auth"
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits, toPersianDigits } from "@/lib/digits"
+import { AuthCaptcha } from "@/components/auth-example/auth-captcha"
+import { AuthStage } from "@/components/auth-example/auth-stage"
 import { PasswordInput } from "@/components/auth-example/password-input"
+import { PasswordRequirements } from "@/components/auth-example/password-requirements"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -62,123 +63,70 @@ export function AuthLoginSignup({
 }: {
   initialTab?: "login" | "signup"
 }) {
-  const [tab, setTab] = React.useState(initialTab)
-  const [panelTab, setPanelTab] = React.useState(initialTab)
-  const [phase, setPhase] = React.useState<"in" | "out">("in")
-  const switchTimer = React.useRef<number | null>(null)
-
-  React.useEffect(() => {
-    return () => {
-      if (switchTimer.current) window.clearTimeout(switchTimer.current)
-    }
-  }, [])
-
-  function switchTab(next: "login" | "signup") {
-    if (next === tab || phase === "out") return
-    setTab(next)
-    setPhase("out")
-    if (switchTimer.current) window.clearTimeout(switchTimer.current)
-    switchTimer.current = window.setTimeout(() => {
-      setPanelTab(next)
-      setPhase("in")
-    }, 200)
-  }
+  const [mode, setMode] = React.useState<"login" | "signup">(initialTab)
 
   return (
-    <div className="auth-stage">
-      <div className="auth-visual" aria-hidden>
-        <Image
-          src="/parsian.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="auth-visual-img"
-        />
-        <div className="auth-visual-veil" />
-      </div>
+    <AuthStage>
+      <div className="space-y-5">
+        <header className="mb-1 space-y-1 md:hidden">
+          <p className="text-[0.65rem] font-medium tracking-[0.14em] auth-muted">
+            فضای کاری فارسی
+          </p>
+          <h2 className="auth-rail-title">{authBrandName}</h2>
+        </header>
 
-      <section className="auth-glass" aria-label="ورود و ثبت‌نام">
-        <div className="auth-panel-inner space-y-5">
-          <header className="space-y-2">
-            <p className="text-[0.65rem] font-medium tracking-[0.18em] auth-muted">
-              {authBrandTagline}
-            </p>
-            <h1 className="auth-brand">
-              {authBrandName}
-              <span className="auth-brand-mark" aria-hidden />
-            </h1>
-            <p className="auth-muted max-w-[22rem] text-[0.875rem] leading-relaxed">
-              ورود و ثبت‌نام در یک جا — امن، فارسی، و فقط نمایشی برای این نمونه.
-            </p>
-          </header>
-
-          <div
-            className="auth-switch"
-            role="tablist"
-            aria-label="ورود یا ثبت‌نام"
-          >
-            <button
-              type="button"
-              role="tab"
-              className="auth-switch-btn"
-              aria-selected={tab === "login"}
-              aria-pressed={tab === "login"}
-              onClick={() => switchTab("login")}
-            >
-              ورود
-            </button>
-            <button
-              type="button"
-              role="tab"
-              className="auth-switch-btn"
-              aria-selected={tab === "signup"}
-              aria-pressed={tab === "signup"}
-              onClick={() => switchTab("signup")}
-            >
-              ثبت‌نام
-            </button>
-          </div>
-
-          <div
-            role="tabpanel"
-            className={cn(
-              "auth-tab-panel",
-              phase === "out" && "auth-tab-panel-leaving"
-            )}
-            key={panelTab}
-          >
-            {panelTab === "login" ? (
-              <LoginForm />
-            ) : (
-              <SignupForm onGoLogin={() => switchTab("login")} />
-            )}
-          </div>
+        <div className="auth-tab-panel" key={mode}>
+          {mode === "login" ? (
+            <LoginForm onGoSignup={() => setMode("signup")} />
+          ) : (
+            <SignupForm onGoLogin={() => setMode("login")} />
+          )}
         </div>
-      </section>
-    </div>
+      </div>
+    </AuthStage>
   )
 }
 
-function LoginForm() {
-  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.email)
+function LoginForm({ onGoSignup }: { onGoSignup: () => void }) {
+  const [method, setMethod] = React.useState<"mobile" | "email">("mobile")
+  const [identifier, setIdentifier] = React.useState(demoCredentials.mobile)
   const [password, setPassword] = React.useState("")
   const [remember, setRemember] = React.useState(true)
+  const [captchaOk, setCaptchaOk] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState(false)
+
+  function setMethodAndPrefill(next: "mobile" | "email") {
+    setMethod(next)
+    setError(null)
+    setSuccess(false)
+    setIdentifier(
+      next === "mobile" ? demoCredentials.mobile : demoCredentials.email
+    )
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
     setSuccess(false)
 
-    if (!isEmailOrMobile(identifier)) {
-      setError("ایمیل یا شماره موبایل معتبر وارد کنید.")
+    if (method === "email") {
+      if (!isValidEmail(identifier)) {
+        setError("ایمیل معتبر وارد کنید.")
+        return
+      }
+    } else if (!isValidMobile(identifier)) {
+      setError("شماره موبایل معتبر وارد کنید.")
       return
     }
+
     if (!password) {
       setError("رمز عبور را وارد کنید.")
+      return
+    }
+    if (!captchaOk) {
+      setError("ابتدا کپچا را کامل کنید.")
       return
     }
 
@@ -189,13 +137,16 @@ function LoginForm() {
     const normalizedId = identifier.trim().toLowerCase()
     const phoneDigits = normalizeDigits(identifier).replace(/\D/g, "")
     const idOk =
-      normalizedId === demoCredentials.email ||
-      phoneDigits.endsWith("9121234567")
+      method === "email"
+        ? normalizedId === demoCredentials.email
+        : phoneDigits.endsWith("9121234567")
     const passOk = password === demoCredentials.password
 
     if (!idOk || !passOk) {
       setError(
-        "ایمیل/موبایل یا رمز نادرست است. برای تست موفق از رمز نمونه استفاده کنید."
+        method === "email"
+          ? "ایمیل یا رمز نادرست است. از رمز نمونه استفاده کنید."
+          : "موبایل یا رمز نادرست است. از رمز نمونه استفاده کنید."
       )
       return
     }
@@ -211,13 +162,28 @@ function LoginForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
-      <div className="space-y-0.5">
-        <h2 className="text-base font-semibold tracking-tight text-white">
-          ورود به حساب
-        </h2>
-        <p className="text-[0.8125rem] auth-muted">
-          با ایمیل یا موبایل وارد شوید.
-        </p>
+      <div>
+        <h2 className="auth-rail-title">ورود به حساب</h2>
+        <p className="auth-rail-sub">با موبایل یا ایمیل وارد همیار شوید.</p>
+      </div>
+
+      <div className="auth-method" role="group" aria-label="روش ورود">
+        <button
+          type="button"
+          className="auth-method-btn"
+          aria-pressed={method === "mobile"}
+          onClick={() => setMethodAndPrefill("mobile")}
+        >
+          موبایل
+        </button>
+        <button
+          type="button"
+          className="auth-method-btn"
+          aria-pressed={method === "email"}
+          onClick={() => setMethodAndPrefill("email")}
+        >
+          ایمیل
+        </button>
       </div>
 
       {error ? (
@@ -238,19 +204,39 @@ function LoginForm() {
 
       <div className="space-y-3.5">
         <div className="auth-field">
-          <label htmlFor="login-id" className="auth-label">
-            ایمیل یا موبایل
+          <label
+            htmlFor={method === "email" ? "login-email" : "login-mobile"}
+            className="auth-label"
+          >
+            {method === "email" ? "ایمیل" : "شماره موبایل"}
           </label>
-          <Input
-            id="login-id"
-            className="auth-input"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            dir={identifier.includes("@") ? "ltr" : undefined}
-            autoComplete="username"
-            inputMode="email"
-            aria-invalid={error ? true : undefined}
-          />
+          {method === "email" ? (
+            <Input
+              id="login-email"
+              className="auth-input text-start"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              dir="ltr"
+              autoComplete="email"
+              inputMode="email"
+              persianDigits={false}
+              aria-invalid={error ? true : undefined}
+            />
+          ) : (
+            <Input
+              id="login-mobile"
+              className="auth-input text-start"
+              value={toPersianDigits(identifier)}
+              onChange={(e) =>
+                setIdentifier(normalizeDigits(e.target.value).replace(/\D/g, "").slice(0, 11))
+              }
+              dir="ltr"
+              autoComplete="tel"
+              inputMode="tel"
+              persianDigits={false}
+              aria-invalid={error ? true : undefined}
+            />
+          )}
         </div>
 
         <div className="auth-field">
@@ -285,17 +271,32 @@ function LoginForm() {
             checked={remember}
             onCheckedChange={(c) => setRemember(c === true)}
           />
-          <span className="text-[0.8125rem] auth-check-label">مرا به خاطر بسپار</span>
+          <span className="text-[0.8125rem] auth-check-label">
+            مرا به خاطر بسپار
+          </span>
         </label>
+
+        <AuthCaptcha verified={captchaOk} onVerifiedChange={setCaptchaOk} />
       </div>
 
       <Button
         type="submit"
         className="auth-btn auth-btn-primary w-full"
-        disabled={loading}
+        disabled={loading || !captchaOk}
       >
         {loading ? "در حال ورود…" : "ورود به همیار"}
       </Button>
+
+      <p className="text-center text-[0.8125rem] auth-muted">
+        اکانت ندارید؟{" "}
+        <button
+          type="button"
+          className={cn("auth-link font-medium text-white")}
+          onClick={onGoSignup}
+        >
+          ثبت‌نام
+        </button>
+      </p>
     </form>
   )
 }
@@ -352,13 +353,9 @@ function SignupForm({ onGoLogin }: { onGoLogin: () => void }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
-      <div className="space-y-0.5">
-        <h2 className="text-base font-semibold tracking-tight text-white">
-          ساخت حساب
-        </h2>
-        <p className="text-[0.8125rem] auth-muted">
-          بعد از ثبت‌نام، کد تأیید می‌آید.
-        </p>
+      <div>
+        <h2 className="auth-rail-title">ساخت حساب</h2>
+        <p className="auth-rail-sub">بعد از ثبت‌نام، کد تأیید می‌آید.</p>
       </div>
 
       {error ? (
@@ -409,14 +406,28 @@ function SignupForm({ onGoLogin }: { onGoLogin: () => void }) {
             onChange={setPassword}
             autoComplete="new-password"
           />
-          <div className="auth-meter" aria-hidden>
-            {[1, 2, 3].map((n) => (
-              <span key={n} data-on={strength.score >= n ? "true" : "false"} />
-            ))}
+          <div
+            className="auth-meter"
+            role="meter"
+            aria-label="قدرت رمز عبور"
+            aria-valuemin={0}
+            aria-valuemax={3}
+            aria-valuenow={strength.score}
+          >
+            <span
+              data-on={strength.lengthOk ? "true" : "false"}
+              data-seg="len"
+            />
+            <span
+              data-on={strength.letterOk ? "true" : "false"}
+              data-seg="letter"
+            />
+            <span
+              data-on={strength.digitOk ? "true" : "false"}
+              data-seg="digit"
+            />
           </div>
-          <p className="text-[0.68rem] auth-muted">
-            حداقل ۸ نویسه، یک حرف و یک رقم
-          </p>
+          <PasswordRequirements password={password} />
         </div>
 
         <div className="auth-field">
@@ -439,7 +450,7 @@ function SignupForm({ onGoLogin }: { onGoLogin: () => void }) {
             onCheckedChange={(c) => setTerms(c === true)}
           />
           <span className="text-[0.8125rem] leading-relaxed auth-muted">
-            شرایط استفاده و حریم خصوصی همیار را می‌پذیرم. (نمایشی)
+            شرایط استفاده و حریم خصوصی همیار را می‌پذیرم.
           </span>
         </label>
       </div>

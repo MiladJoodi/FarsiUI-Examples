@@ -28,9 +28,9 @@ export const EXAMPLES: ExampleMeta[] = [
   },
   {
     id: "tasks",
-    title: "مدیریت کارها",
+    title: "کارنما",
     description:
-      "مدیریت وظایف، پروژه، برد، لیست، اولویت و پیشرفت تیم.",
+      "میز دستورکار آتلیه: چینش وضعیت، دفتر دستورها، اولویت و هماهنگی تیم.",
     href: "/examples/tasks",
     status: "ready",
   },
