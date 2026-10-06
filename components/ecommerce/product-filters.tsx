@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { DirectionProvider } from "@base-ui/react/direction-provider"
 import { SlidersHorizontalIcon } from "lucide-react"
 
 import { formatCount, formatToman } from "@/lib/format"
@@ -70,12 +71,37 @@ function activePricePresetId(range: [number, number]) {
   )
 }
 
-function clampPriceRange(raw: number[]): [number, number] {
-  const a = Math.round((raw[0] ?? PRICE_MIN) / PRICE_STEP) * PRICE_STEP
-  const b = Math.round((raw[1] ?? PRICE_MAX) / PRICE_STEP) * PRICE_STEP
-  const lo = Math.min(PRICE_MAX, Math.max(PRICE_MIN, a))
-  const hi = Math.min(PRICE_MAX, Math.max(PRICE_MIN, b))
-  return lo <= hi ? [lo, hi] : [hi, lo]
+function asPricePair(raw: number[]): [number, number] | null {
+  if (raw.length < 2) return null
+  const a = Number(raw[0])
+  const b = Number(raw[1])
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return null
+  // Keep Base UI thumb order during drag — never swap mid-gesture.
+  return [a, b]
+}
+
+/** Snap to step when the user finishes dragging. */
+function snapPriceRange(raw: number[]): [number, number] {
+  const snap = (n: number) => {
+    const rounded = Math.round(n / PRICE_STEP) * PRICE_STEP
+    return Math.min(PRICE_MAX, Math.max(PRICE_MIN, rounded))
+  }
+  let a = snap(Number(raw[0] ?? PRICE_MIN))
+  let b = snap(Number(raw[1] ?? PRICE_MAX))
+  if (a > b) {
+    const t = a
+    a = b
+    b = t
+  }
+  if (b - a < PRICE_STEP) {
+    if (b + PRICE_STEP <= PRICE_MAX) b = a + PRICE_STEP
+    else a = Math.max(PRICE_MIN, b - PRICE_STEP)
+  }
+  return [a, b]
+}
+
+function samePriceRange(a: [number, number], b: [number, number]) {
+  return a[0] === b[0] && a[1] === b[1]
 }
 
 export function FiltersSidebar({
@@ -163,10 +189,13 @@ function FiltersPanel({
   const [draftPrice, setDraftPrice] = React.useState<[number, number]>(
     value.priceRange
   )
+  const draggingRef = React.useRef(false)
 
   React.useEffect(() => {
-    setDraftPrice(value.priceRange)
-  }, [value.priceRange])
+    if (draggingRef.current) return
+    const next: [number, number] = [value.priceRange[0], value.priceRange[1]]
+    setDraftPrice((prev) => (samePriceRange(prev, next) ? prev : next))
+  }, [value.priceRange[0], value.priceRange[1]])
 
   function toggleBrand(brand: string) {
     const exists = value.brands.includes(brand)
@@ -179,10 +208,15 @@ function FiltersPanel({
   }
 
   function commitPriceRange(next: [number, number]) {
-    const clamped = clampPriceRange(next)
-    setDraftPrice(clamped)
-    onChange({ ...value, priceRange: clamped })
+    const snapped = snapPriceRange(next)
+    draggingRef.current = false
+    setDraftPrice(snapped)
+    if (!samePriceRange(value.priceRange, snapped)) {
+      onChange({ ...value, priceRange: snapped })
+    }
   }
+
+  const displayPrice = snapPriceRange(draftPrice)
 
   return (
     <div className="space-y-5">
@@ -243,35 +277,46 @@ function FiltersPanel({
           <div className="rounded-lg border bg-muted/25 px-2.5 py-2">
             <p className="text-[0.65rem] text-muted-foreground">از</p>
             <p className="ecom-num mt-0.5 text-xs font-semibold leading-snug">
-              {formatToman(draftPrice[0])}
+              {formatToman(displayPrice[0])}
             </p>
           </div>
           <div className="rounded-lg border bg-muted/25 px-2.5 py-2">
             <p className="text-[0.65rem] text-muted-foreground">تا</p>
             <p className="ecom-num mt-0.5 text-xs font-semibold leading-snug">
-              {formatToman(draftPrice[1])}
+              {formatToman(displayPrice[1])}
             </p>
           </div>
         </div>
 
-        <Slider
-          className="ecom-price-slider px-1"
-          min={PRICE_MIN}
-          max={PRICE_MAX}
-          step={PRICE_STEP}
-          minStepsBetweenValues={1}
-          value={draftPrice}
-          onValueChange={(next) => {
-            if (!Array.isArray(next) || next.length < 2) return
-            setDraftPrice(clampPriceRange(next as number[]))
-          }}
-          onValueCommitted={(next) => {
-            const arr = Array.isArray(next) ? [...next] : [next]
-            if (arr.length < 2) return
-            commitPriceRange(clampPriceRange(arr))
-          }}
-          aria-label="بازه قیمت"
-        />
+        <DirectionProvider direction="rtl">
+          <Slider
+            className="ecom-price-slider px-1"
+            min={PRICE_MIN}
+            max={PRICE_MAX}
+            step={PRICE_STEP}
+            minStepsBetweenValues={1}
+            thumbCollisionBehavior="none"
+            value={draftPrice}
+            onValueChange={(next) => {
+              const pair = Array.isArray(next)
+                ? asPricePair(next as number[])
+                : null
+              if (!pair) return
+              draggingRef.current = true
+              setDraftPrice((prev) =>
+                samePriceRange(prev, pair) ? prev : pair
+              )
+            }}
+            onValueCommitted={(next) => {
+              const pair = Array.isArray(next)
+                ? asPricePair(next as number[])
+                : null
+              if (!pair) return
+              commitPriceRange(pair)
+            }}
+            aria-label="بازه قیمت"
+          />
+        </DirectionProvider>
 
         <div className="ecom-num flex items-center justify-between text-[0.65rem] text-muted-foreground">
           <span>{formatToman(PRICE_MIN)}</span>

@@ -112,6 +112,7 @@ export function CatalogView() {
 
   function handleFiltersChange(next: CatalogFiltersState) {
     setFilters(next)
+    if (next.category === category) return
     const params = new URLSearchParams(searchParams.toString())
     if (next.category === "all") params.delete("category")
     else params.set("category", next.category)
@@ -140,7 +141,7 @@ export function CatalogView() {
           <HeroBannerSlider />
           <ProductRail
             title="منتخب سردبیری"
-            subtitle="بالاترین امتیازها در اتلیه"
+            subtitle="بالاترین امتیازها در فروشگاه"
             products={curated}
             autoPlay
           />

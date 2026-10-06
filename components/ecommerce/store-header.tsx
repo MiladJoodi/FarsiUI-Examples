@@ -113,7 +113,7 @@ export function StoreHeader() {
         <form onSubmit={handleSearchSubmit}>
           <SearchField
             wrapperClassName="w-full"
-            placeholder="جستجو در اتلیه…"
+            placeholder="جستجو..."
             aria-label="جستجوی محصول"
             value={localQuery}
             onChange={(e) => setDraftQuery(e.target.value ?? "")}

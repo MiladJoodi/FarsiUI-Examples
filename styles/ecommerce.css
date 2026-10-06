@@ -1375,6 +1375,7 @@ html.dark.style-nova .ecom-page .ecom-search-wrap [data-slot="input"],
 .ecom-price-slider [data-slot="slider-thumb"] {
   width: 1.15rem !important;
   height: 1.15rem !important;
+  cursor: pointer;
   border: 2px solid var(--ecom-accent) !important;
   background: var(--ecom-panel) !important;
   box-shadow: 0 4px 12px color-mix(in oklch, var(--ecom-accent) 28%, transparent) !important;
