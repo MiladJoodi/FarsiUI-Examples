@@ -89,7 +89,7 @@ export function AuthLoginSignup({
 
 function LoginForm({ onGoSignup }: { onGoSignup: () => void }) {
   const [method, setMethod] = React.useState<"mobile" | "email">("mobile")
-  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.mobile)
+  const [identifier, setIdentifier] = React.useState<string>("09121234567")
   const [password, setPassword] = React.useState("")
   const [remember, setRemember] = React.useState(true)
   const [captchaOk, setCaptchaOk] = React.useState(false)
@@ -145,8 +145,8 @@ function LoginForm({ onGoSignup }: { onGoSignup: () => void }) {
     if (!idOk || !passOk) {
       setError(
         method === "email"
-          ? "ایمیل یا رمز نادرست است. از رمز نمونه استفاده کنید."
-          : "موبایل یا رمز نادرست است. از رمز نمونه استفاده کنید."
+          ? "ایمیل یا رمز نادرست است. از رمز دمو استفاده کنید."
+          : "موبایل یا رمز نادرست است. از رمز دمو استفاده کنید."
       )
       return
     }
@@ -259,7 +259,7 @@ function LoginForm({ onGoSignup }: { onGoSignup: () => void }) {
             aria-invalid={error ? true : undefined}
           />
           <p className="text-[0.68rem] auth-muted">
-            رمز نمونه:{" "}
+            رمز دمو:{" "}
             <span dir="ltr" className="font-mono text-[0.7rem]">
               {demoCredentials.password}
             </span>

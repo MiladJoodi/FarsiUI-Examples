@@ -35,7 +35,7 @@ function otpFromInput(value: string) {
 
 export function AuthForgotPassword() {
   const [step, setStep] = React.useState<Step>("request")
-  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.email)
+  const [identifier, setIdentifier] = React.useState<string>("info@farsiui.ir")
   const [otp, setOtp] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [confirm, setConfirm] = React.useState("")
@@ -67,7 +67,7 @@ export function AuthForgotPassword() {
     setSeconds(60)
     setOtp("")
     toast.message("کد ارسال شد", {
-      description: `کد نمونه: ${toPersianDigits(demoCredentials.otp)}`,
+      description: `کد دمو: ${toPersianDigits(demoCredentials.otp)}`,
     })
   }
 
@@ -118,7 +118,7 @@ export function AuthForgotPassword() {
     setOtp("")
     setError(null)
     toast.message("کد دوباره ارسال شد", {
-      description: `کد نمونه: ${toPersianDigits(demoCredentials.otp)}`,
+      description: `کد دمو: ${toPersianDigits(demoCredentials.otp)}`,
     })
   }
 
@@ -217,7 +217,7 @@ export function AuthForgotPassword() {
                 {identifier}
               </span>
               {" · "}
-              کد نمونه: <span>{toPersianDigits(demoCredentials.otp)}</span>
+              کد دمو: <span>{toPersianDigits(demoCredentials.otp)}</span>
             </p>
           </div>
 
