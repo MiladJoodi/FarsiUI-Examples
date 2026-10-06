@@ -1,101 +1,142 @@
-/* Contact — simple form, thin border only */
+/* Contact — simple form, thin hairline borders for message & request */
 
 .contact-page {
-  --cx-line: color-mix(in oklch, var(--foreground) 12%, transparent);
-  --cx-mute: color-mix(in oklch, var(--foreground) 55%, transparent);
+  --cx-ink: var(--foreground);
+  --cx-mute: var(--muted-foreground);
+  --cx-line: color-mix(in oklch, var(--foreground) 14%, transparent);
+  --cx-line-hot: color-mix(in oklch, var(--foreground) 28%, transparent);
+  --cx-paper: var(--background);
+  --cx-field: var(--background);
+  --cx-radius: 0.35rem;
+  display: flex;
   min-height: 100dvh;
-  color: var(--foreground);
-  background: var(--background);
+  flex-direction: column;
+  color: var(--cx-ink);
+  background: var(--cx-paper);
 }
 
 .contact-page .contact-header {
   border-bottom: 1px solid var(--cx-line) !important;
-  background: color-mix(in oklch, var(--background) 92%, transparent) !important;
-  backdrop-filter: blur(10px);
+  background: color-mix(in oklch, var(--cx-paper) 94%, transparent) !important;
+  backdrop-filter: blur(8px);
 }
 
 .contact-main {
-  max-width: 28rem;
+  max-width: 26rem;
   margin-inline: auto;
-  padding-block: 2rem 3rem;
+  padding-block: 2.25rem 3.5rem;
+}
+
+.contact-intro {
+  margin-bottom: 1.75rem;
 }
 
 .contact-title {
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   font-weight: 700;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
 }
 
 .contact-lead {
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+  margin-top: 0.45rem;
+  font-size: 0.84rem;
   line-height: 1.65;
   color: var(--cx-mute);
 }
 
+/* No card chrome — fields carry the thin border */
 .contact-form {
-  margin-top: 1.5rem;
   display: grid;
-  gap: 1rem;
-  border: 1px solid var(--cx-line);
-  border-radius: 0.5rem;
-  padding: 1.25rem;
-  background: var(--background);
+  gap: 1.05rem;
 }
 
 .contact-form label {
   display: grid;
-  gap: 0.35rem;
-  font-size: 0.78rem;
+  gap: 0.4rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--cx-mute);
 }
 
 .contact-form input,
-.contact-form textarea {
+.contact-form textarea,
+.contact-form select {
   width: 100%;
   border: 1px solid var(--cx-line);
-  border-radius: 0.35rem;
-  background: var(--background);
-  padding: 0.55rem 0.65rem;
+  border-radius: var(--cx-radius);
+  background: var(--cx-field);
+  padding: 0.6rem 0.7rem;
   font-size: 0.875rem;
-  color: var(--foreground);
+  font-weight: 500;
+  color: var(--cx-ink);
   outline: none;
+  box-shadow: none;
   transition: border-color 140ms ease;
 }
 
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: color-mix(in oklch, var(--cx-mute) 85%, transparent);
+  font-weight: 400;
+}
+
 .contact-form input:focus,
-.contact-form textarea:focus {
-  border-color: color-mix(in oklch, var(--foreground) 28%, transparent);
+.contact-form textarea:focus,
+.contact-form select:focus {
+  border-color: var(--cx-line-hot);
 }
 
 .contact-form textarea {
-  min-height: 6.5rem;
+  min-height: 7.5rem;
   resize: vertical;
-  line-height: 1.55;
+  line-height: 1.6;
+}
+
+.contact-form select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--cx-mute) 50%),
+    linear-gradient(135deg, var(--cx-mute) 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.05rem) calc(50% - 0.15rem),
+    calc(100% - 0.75rem) calc(50% - 0.15rem);
+  background-size: 0.3rem 0.3rem, 0.3rem 0.3rem;
+  background-repeat: no-repeat;
+  padding-inline-end: 1.75rem;
+}
+
+.contact-form select:dir(rtl),
+[dir="rtl"] .contact-form select {
+  background-position:
+    calc(0% + 0.75rem) calc(50% - 0.15rem),
+    calc(0% + 1.05rem) calc(50% - 0.15rem);
+  padding-inline-end: 0.7rem;
+  padding-inline-start: 1.75rem;
 }
 
 .contact-submit {
-  height: 2.5rem !important;
-  border-radius: 0.35rem !important;
+  margin-top: 0.25rem;
+  height: 2.55rem !important;
+  border-radius: var(--cx-radius) !important;
+  border: 1px solid transparent !important;
   font-size: 0.8125rem !important;
-  font-weight: 600 !important;
+  font-weight: 650 !important;
   box-shadow: none !important;
 }
 
 .contact-toast {
   display: flex;
-  width: min(22rem, calc(100vw - 2rem));
-  gap: 0.65rem;
+  width: min(20rem, calc(100vw - 2rem));
   border: 1px solid var(--cx-line);
-  border-radius: 0.5rem;
-  background: var(--background);
-  padding: 0.75rem 0.85rem;
+  border-radius: var(--cx-radius);
+  background: var(--cx-paper);
+  padding: 0.7rem 0.85rem;
   direction: rtl;
+  box-shadow: none;
 }
 
 .contact-toast-title {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 700;
 }
 
@@ -105,14 +146,45 @@
   color: var(--cx-mute);
 }
 
-/* Keep form flat across design systems — no heavy offset frames */
-.style-khesht .contact-form,
-.style-khesht .contact-form input,
-.style-khesht .contact-form textarea {
-  box-shadow: none !important;
+/* Design systems — keep thin borders, remint radius / quiet accents */
+.style-nova .contact-page {
+  --cx-radius: 0.35rem;
 }
 
-.style-glass .contact-form {
-  backdrop-filter: none;
-  background: var(--background);
+.style-vega .contact-page {
+  --cx-radius: 0.75rem;
+  --cx-line: color-mix(in oklch, var(--foreground) 11%, transparent);
+}
+
+.style-glass .contact-page {
+  --cx-radius: 0.65rem;
+  --cx-field: color-mix(in oklch, var(--card) 88%, transparent);
+  --cx-line: color-mix(in oklch, var(--primary) 22%, var(--border));
+}
+
+.style-glass .contact-form input,
+.style-glass .contact-form textarea,
+.style-glass .contact-form select {
+  backdrop-filter: blur(8px);
+}
+
+.style-rose .contact-page {
+  --cx-radius: 0.9rem;
+}
+
+.style-nili .contact-page {
+  --cx-radius: 0.22rem;
+  --cx-line: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+
+.style-khesht .contact-page {
+  --cx-radius: 0.15rem;
+}
+
+.style-khesht .contact-form input,
+.style-khesht .contact-form textarea,
+.style-khesht .contact-form select,
+.style-khesht .contact-submit,
+.style-khesht .contact-toast {
+  box-shadow: none !important;
 }

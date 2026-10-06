@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "farsiui/tailwind.css";
 @import "../styles/design-systems.css";
+@import "../styles/farsiui-credit.css";
 
 @custom-variant dark (&:is(.dark *));
 

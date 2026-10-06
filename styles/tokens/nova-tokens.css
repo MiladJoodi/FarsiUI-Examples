@@ -1,50 +1,51 @@
 /**
- * Nova / پیشفرض — clean, compact, standard FarsiUI style.
- * Deliberately different from آرام (vega): cooler neutrals, tighter geometry, flat chrome.
+ * Nova / پیشفرض — warm copper identity (aligned with روزنگار).
+ * Deliberately different from آرام (vega): terracotta accent, warm neutrals.
  */
 
 /* -------------------------------------------------------------------------- */
-/* Light — crisp paper                                                        */
+/* Light — warm paper */
 /* -------------------------------------------------------------------------- */
 
 .style-nova {
-  --nova-primary: #1e293b;
-  --nova-primary-foreground: #f8fafc;
-  --nova-ring: #64748b;
-  --nova-brand: #0f172a;
-  --nova-brand-foreground: #f8fafc;
-  --nova-chart-1: #1e293b;
-  --nova-chart-2: #0f766e;
-  --nova-chart-3: #b45309;
-  --nova-chart-4: #4f46e5;
-  --nova-chart-5: #64748b;
+  /* پیشفرض روشن — مسی گرم */
+  --nova-primary: #a64a2e;
+  --nova-primary-foreground: #fffaf7;
+  --nova-ring: #c4845e;
+  --nova-brand: #1f1f1f;
+  --nova-brand-foreground: #fffaf7;
+  --nova-chart-1: #a64a2e;
+  --nova-chart-2: #8f6a3a;
+  --nova-chart-3: #c62828;
+  --nova-chart-4: #6b5b4c;
+  --nova-chart-5: #6a6a6a;
 
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f3f3f3;
+  --foreground: #1f1f1f;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #1f1f1f;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #1f1f1f;
   --primary: var(--nova-primary);
   --primary-foreground: var(--nova-primary-foreground);
-  --secondary: #e2e8f0;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #e2e8f0;
-  --accent-foreground: #0f172a;
-  --destructive: #dc2626;
-  --border: #cbd5e1;
-  --input: #cbd5e1;
+  --secondary: #f7f5f3;
+  --secondary-foreground: #1f1f1f;
+  --muted: #f7f5f3;
+  --muted-foreground: #6a6a6a;
+  --accent: #f0ebe6;
+  --accent-foreground: #1f1f1f;
+  --destructive: #c62828;
+  --border: #e8e8e8;
+  --input: #e8e8e8;
   --ring: var(--nova-ring);
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
+  --sidebar-foreground: #1f1f1f;
   --sidebar-primary: var(--nova-primary);
   --sidebar-primary-foreground: var(--nova-primary-foreground);
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e2e8f0;
+  --sidebar-accent: #f7f5f3;
+  --sidebar-accent-foreground: #1f1f1f;
+  --sidebar-border: #e8e8e8;
   --sidebar-ring: var(--nova-ring);
 
   --chart-1: var(--nova-chart-1);
@@ -67,26 +68,26 @@
   --radius-sm: 0.25rem;
 
   --surface: #ffffff;
-  --surface-muted: #f1f5f9;
-  --surface-border: #e2e8f0;
+  --surface-muted: #f7f5f3;
+  --surface-border: #e8e8e8;
   --surface-filter: none;
   --surface-opacity: 1;
-  --surface-foreground: #0f172a;
+  --surface-foreground: #1f1f1f;
 
   --field: #ffffff;
-  --field-border: #cbd5e1;
+  --field-border: #e8e8e8;
   --field-shadow: none;
 
   --control: #ffffff;
-  --control-border: #cbd5e1;
+  --control-border: #e8e8e8;
   --control-shadow: none;
 
   --overlay: #ffffff;
-  --overlay-shadow: 0 10px 24px -12px rgb(15 23 42 / 0.2);
+  --overlay-shadow: 0 10px 24px -12px rgb(31 31 31 / 0.12);
 
-  --shadow-surface: 0 1px 2px rgb(15 23 42 / 0.04);
+  --shadow-surface: 0 1px 2px rgb(31 31 31 / 0.04);
   --shadow-field: none;
-  --shadow-overlay: 0 10px 24px -12px rgb(15 23 42 / 0.2);
+  --shadow-overlay: 0 10px 24px -12px rgb(31 31 31 / 0.12);
   --shadow-control: none;
   --shadow-press: none;
 
@@ -95,7 +96,7 @@
   --press: scale(0.98);
   --line: 1px;
 
-  --khesht-ink: #0f172a;
+  --khesht-ink: #1f1f1f;
   --khesht-offset: transparent;
 
   color-scheme: light;
@@ -107,43 +108,44 @@
 
 html.dark.style-nova,
 .dark .style-nova {
-  --nova-primary: #e2e8f0;
-  --nova-primary-foreground: #0f172a;
-  --nova-ring: #94a3b8;
-  --nova-brand: #f8fafc;
-  --nova-brand-foreground: #0f172a;
-  --nova-chart-1: #e2e8f0;
-  --nova-chart-2: #2dd4bf;
-  --nova-chart-3: #fbbf24;
-  --nova-chart-4: #a5b4fc;
-  --nova-chart-5: #94a3b8;
+  /* پیشفرض دارک — عمق گرم‌تر، پس‌زمینه غنی‌تر */
+  --nova-primary: #e0a888;
+  --nova-primary-foreground: #1a120e;
+  --nova-ring: #c4845e;
+  --nova-brand: #f6efe8;
+  --nova-brand-foreground: #1a120e;
+  --nova-chart-1: #e0a888;
+  --nova-chart-2: #d4a574;
+  --nova-chart-3: #ff8a8a;
+  --nova-chart-4: #c4a882;
+  --nova-chart-5: #b5a79c;
 
-  --background: #0b1220;
-  --foreground: #f8fafc;
-  --card: #111827;
-  --card-foreground: #f8fafc;
-  --popover: #111827;
-  --popover-foreground: #f8fafc;
+  --background: #0b0908;
+  --foreground: #f6efe8;
+  --card: #1c1612;
+  --card-foreground: #f6efe8;
+  --popover: #1c1612;
+  --popover-foreground: #f6efe8;
   --primary: var(--nova-primary);
   --primary-foreground: var(--nova-primary-foreground);
-  --secondary: #1e293b;
-  --secondary-foreground: #f8fafc;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
-  --destructive: #f87171;
-  --border: #334155;
-  --input: #334155;
+  --secondary: #241c17;
+  --secondary-foreground: #f6efe8;
+  --muted: #241c17;
+  --muted-foreground: #b8a99a;
+  --accent: #2a211c;
+  --accent-foreground: #f6efe8;
+  --destructive: #ff8a7a;
+  --border: #3a3028;
+  --input: #3a3028;
   --ring: var(--nova-ring);
 
-  --sidebar: #0f172a;
-  --sidebar-foreground: #f8fafc;
+  --sidebar: #100e0c;
+  --sidebar-foreground: #f6efe8;
   --sidebar-primary: var(--nova-primary);
   --sidebar-primary-foreground: var(--nova-primary-foreground);
-  --sidebar-accent: #1e293b;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: #334155;
+  --sidebar-accent: #241c17;
+  --sidebar-accent-foreground: #f6efe8;
+  --sidebar-border: #3a3028;
   --sidebar-ring: var(--nova-ring);
 
   --chart-1: var(--nova-chart-1);
@@ -152,28 +154,28 @@ html.dark.style-nova,
   --chart-4: var(--nova-chart-4);
   --chart-5: var(--nova-chart-5);
 
-  --surface: #111827;
-  --surface-muted: #1e293b;
-  --surface-border: #334155;
-  --surface-foreground: #f8fafc;
+  --surface: #1c1612;
+  --surface-muted: #241c17;
+  --surface-border: #3a3028;
+  --surface-foreground: #f6efe8;
 
-  --field: #0f172a;
-  --field-border: #334155;
+  --field: #14100d;
+  --field-border: #3a3028;
   --field-shadow: none;
 
-  --control: #111827;
-  --control-border: #334155;
+  --control: #1c1612;
+  --control-border: #3a3028;
   --control-shadow: none;
 
-  --overlay: #111827;
-  --overlay-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.45);
+  --overlay: #1c1612;
+  --overlay-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.55);
 
-  --shadow-surface: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-surface: 0 1px 2px rgb(0 0 0 / 0.4);
   --shadow-field: none;
-  --shadow-overlay: 0 16px 32px -12px rgb(0 0 0 / 0.45);
+  --shadow-overlay: 0 16px 32px -12px rgb(0 0 0 / 0.55);
   --shadow-control: none;
 
-  --khesht-ink: #f8fafc;
+  --khesht-ink: #f6efe8;
   --khesht-offset: transparent;
 
   color-scheme: dark;

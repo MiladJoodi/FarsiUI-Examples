@@ -24,21 +24,33 @@ export function ProductWireframeMedia({
   accent?: string
   category?: Product["category"]
 }) {
+  const kind = category ?? "electronics"
+  const catVar = category
+    ? (`var(--ecom-cat-${category})` as string)
+    : undefined
+
   return (
     <div
       className={cn("ecom-media", className)}
+      data-kind={kind}
       aria-hidden
       style={
         {
-          "--ecom-product": accent ?? "oklch(0.72 0.06 220)",
+          "--ecom-product": accent ?? catVar ?? "var(--ecom-accent)",
         } as CSSProperties
       }
     >
-      <div className="ecom-media-wash" />
-      <div
-        className="ecom-media-shape"
-        data-kind={category ?? "electronics"}
-      />
+      <div className="ecom-media-stage" />
+      <div className="ecom-media-glow" />
+      <div className="ecom-media-grain" />
+      <div className="ecom-media-orbit" />
+      <div className="ecom-media-object">
+        <span className="ecom-media-shell" />
+        <span className="ecom-media-face" />
+        <span className="ecom-media-spec" />
+        <span className="ecom-media-mark" />
+      </div>
+      <div className="ecom-media-pedestal" />
       {label ? <span className="ecom-media-label">{label}</span> : null}
     </div>
   )
@@ -55,7 +67,6 @@ export function ProductThumb({
     <ProductWireframeMedia
       className={className}
       label={categoryLabels[product.category]}
-      accent={product.accent}
       category={product.category}
     />
   )

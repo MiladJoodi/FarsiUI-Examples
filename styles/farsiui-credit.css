@@ -1,0 +1,61 @@
+/* Shared «ساخته‌شده با FarsiUI» credit */
+
+.fui-credit-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 1rem 1.5rem;
+}
+
+.fui-credit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  border: 1px solid color-mix(in oklch, var(--foreground) 12%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--card) 88%, transparent);
+  color: var(--foreground);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: 0 8px 20px color-mix(in oklch, var(--foreground) 5%, transparent);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.fui-credit:hover {
+  border-color: color-mix(in oklch, var(--primary) 40%, transparent);
+  background: color-mix(in oklch, var(--primary) 8%, var(--card));
+}
+
+.fui-credit:active {
+  transform: scale(0.98);
+}
+
+.fui-credit-prefix {
+  color: var(--muted-foreground);
+}
+
+.fui-credit strong {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--primary);
+}
+
+.fui-credit.is-compact {
+  border-radius: 0.45rem;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.68rem;
+  box-shadow: none;
+}
+
+.style-khesht .fui-credit {
+  border-radius: 0.15rem;
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--primary) 35%, black);
+}
+
+.style-nili .fui-credit {
+  border-radius: 0.2rem;
+}

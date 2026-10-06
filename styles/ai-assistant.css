@@ -1,17 +1,29 @@
-/* AI Assistant — neon glass, low-chrome */
+/* AI Assistant — token-driven chrome; each DS remints its own look */
 
 .ai-page {
-  --ai-ink: #eaf6ff;
-  --ai-mute: color-mix(in oklch, #eaf6ff 55%, transparent);
-  --ai-line: color-mix(in oklch, #67e8f9 14%, transparent);
-  --ai-line-hot: color-mix(in oklch, #22d3ee 40%, transparent);
-  --ai-glass: color-mix(in oklch, #0a1428 72%, transparent);
-  --ai-glass-soft: color-mix(in oklch, #101c34 55%, transparent);
-  --ai-neon: #22d3ee;
-  --ai-neon-2: #c084fc;
-  --ai-neon-3: #34d399;
-  --ai-radius: 1.1rem;
+  --ai-ink: var(--foreground);
+  --ai-mute: var(--muted-foreground);
+  --ai-line: var(--border);
+  --ai-line-hot: color-mix(in oklch, var(--primary) 42%, var(--border));
+  --ai-glass: color-mix(in oklch, var(--card) 90%, transparent);
+  --ai-glass-soft: color-mix(in oklch, var(--muted) 72%, transparent);
+  --ai-neon: var(--primary);
+  --ai-neon-2: color-mix(in oklch, var(--primary) 58%, var(--foreground));
+  --ai-neon-3: color-mix(in oklch, var(--primary) 45%, #2f9e7a);
+  --ai-paper: var(--background);
+  --ai-panel: var(--card);
+  --ai-soft: var(--muted);
+  --ai-composer: var(--card);
+  --ai-composer-focus: color-mix(in oklch, var(--card) 88%, var(--primary));
+  --ai-code: color-mix(in oklch, var(--muted) 55%, black);
+  --ai-send-fg: var(--primary-foreground);
+  --ai-radius: var(--radius-surface, var(--radius));
   --ai-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ai-glow: color-mix(in oklch, var(--primary) 16%, transparent);
+  --ai-glow-2: color-mix(in oklch, var(--primary) 11%, transparent);
+  --ai-glow-3: color-mix(in oklch, var(--primary) 8%, transparent);
+  --ai-blur: 0px;
+  --ai-orb-blur: 64px;
   position: relative;
   display: flex;
   height: 100dvh;
@@ -21,11 +33,10 @@
   overflow: hidden;
   color: var(--ai-ink);
   background:
-    radial-gradient(ellipse 80% 60% at 12% 8%, color-mix(in oklch, var(--ai-neon) 28%, transparent), transparent 58%),
-    radial-gradient(ellipse 60% 50% at 92% 18%, color-mix(in oklch, var(--ai-neon-2) 22%, transparent), transparent 52%),
-    radial-gradient(ellipse 55% 45% at 68% 92%, color-mix(in oklch, var(--ai-neon-3) 14%, transparent), transparent 55%),
-    linear-gradient(165deg, #040814 0%, #0a1228 42%, #060d1c 100%);
-  color-scheme: dark;
+    radial-gradient(ellipse 80% 55% at 10% 0%, var(--ai-glow), transparent 58%),
+    radial-gradient(ellipse 55% 45% at 96% 12%, var(--ai-glow-2), transparent 52%),
+    radial-gradient(ellipse 50% 40% at 70% 100%, var(--ai-glow-3), transparent 55%),
+    var(--ai-paper);
 }
 
 .ai-page::after {
@@ -34,24 +45,25 @@
   position: absolute;
   inset-inline-end: -8%;
   top: 18%;
-  width: 20rem;
-  height: 20rem;
+  width: 18rem;
+  height: 18rem;
   border-radius: 999px;
-  background: color-mix(in oklch, var(--ai-neon) 24%, transparent);
-  filter: blur(72px);
+  background: color-mix(in oklch, var(--ai-neon) 18%, transparent);
+  filter: blur(var(--ai-orb-blur));
   animation: ai-pulse 8s ease-in-out infinite;
   z-index: 0;
+  opacity: 0.7;
 }
 
 @keyframes ai-pulse {
   0%,
   100% {
-    opacity: 0.45;
+    opacity: 0.4;
     transform: scale(1);
   }
   50% {
-    opacity: 0.85;
-    transform: scale(1.08);
+    opacity: 0.75;
+    transform: scale(1.06);
   }
 }
 
@@ -71,9 +83,10 @@
   width: 16.5rem;
   flex-shrink: 0;
   flex-direction: column;
-  background: color-mix(in oklch, #07101f 55%, transparent);
-  backdrop-filter: blur(22px) saturate(1.2);
-  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  border-inline-end: 1px solid var(--ai-line);
+  background: color-mix(in oklch, var(--ai-panel) 92%, transparent);
+  backdrop-filter: blur(var(--ai-blur));
+  -webkit-backdrop-filter: blur(var(--ai-blur));
 }
 
 @media (min-width: 768px) {
@@ -98,9 +111,10 @@
   flex-shrink: 0;
   align-items: center;
   gap: 0.35rem;
-  background: color-mix(in oklch, #0b1630 50%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--ai-line);
+  background: color-mix(in oklch, var(--ai-panel) 88%, transparent);
+  backdrop-filter: blur(var(--ai-blur));
+  -webkit-backdrop-filter: blur(var(--ai-blur));
   padding-inline: 0.65rem;
 }
 
@@ -123,15 +137,15 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 0.7rem;
+  border-radius: calc(var(--ai-radius) * 0.65);
   background:
     linear-gradient(
       145deg,
-      color-mix(in oklch, var(--ai-neon) 42%, transparent),
-      color-mix(in oklch, var(--ai-neon-2) 28%, transparent)
+      color-mix(in oklch, var(--ai-neon) 55%, transparent),
+      color-mix(in oklch, var(--ai-neon-2) 35%, transparent)
     );
-  box-shadow: 0 0 18px color-mix(in oklch, var(--ai-neon) 40%, transparent);
-  color: white;
+  box-shadow: 0 0 16px color-mix(in oklch, var(--ai-neon) 28%, transparent);
+  color: var(--ai-send-fg);
 }
 
 .ai-brand-mark svg {
@@ -145,7 +159,7 @@
   align-items: center;
   gap: 0.5rem;
   border: 0;
-  border-radius: 0.85rem;
+  border-radius: calc(var(--ai-radius) * 0.75);
   background: transparent;
   padding: 0.55rem 0.7rem;
   font-size: 0.8rem;
@@ -157,17 +171,17 @@
 }
 
 .ai-conv-btn:hover {
-  background: color-mix(in oklch, white 7%, transparent);
+  background: color-mix(in oklch, var(--ai-ink) 6%, transparent);
 }
 
 .ai-conv-btn[data-active="true"] {
-  background: color-mix(in oklch, var(--ai-neon) 16%, transparent);
+  background: color-mix(in oklch, var(--ai-neon) 14%, transparent);
   box-shadow: inset 3px 0 0 var(--ai-neon);
 }
 
 .ai-new-btn {
   height: 2.3rem !important;
-  border-radius: 0.85rem !important;
+  border-radius: calc(var(--ai-radius) * 0.75) !important;
   border: 0 !important;
   background: color-mix(in oklch, var(--ai-neon) 14%, transparent) !important;
   color: var(--ai-ink) !important;
@@ -183,15 +197,15 @@
 }
 
 .ai-ghost:hover {
-  background: color-mix(in oklch, white 10%, transparent) !important;
+  background: color-mix(in oklch, var(--ai-ink) 8%, transparent) !important;
 }
 
 .ai-model-trigger {
   height: 2rem !important;
   max-width: 11rem;
-  border-radius: 999px !important;
-  border: 0 !important;
-  background: color-mix(in oklch, white 8%, transparent) !important;
+  border-radius: calc(var(--ai-radius) * 0.9) !important;
+  border: 1px solid var(--ai-line) !important;
+  background: color-mix(in oklch, var(--ai-soft) 80%, transparent) !important;
   color: var(--ai-ink) !important;
   box-shadow: none !important;
 }
@@ -227,15 +241,16 @@
   place-items: center;
   width: 4.25rem;
   height: 4.25rem;
-  border-radius: 1.25rem;
+  border-radius: calc(var(--ai-radius) * 1.1);
   background:
     linear-gradient(
       145deg,
-      color-mix(in oklch, var(--ai-neon) 40%, transparent),
+      color-mix(in oklch, var(--ai-neon) 42%, transparent),
       color-mix(in oklch, var(--ai-neon-2) 28%, transparent)
     );
-  box-shadow: 0 0 40px color-mix(in oklch, var(--ai-neon) 40%, transparent);
+  box-shadow: 0 0 36px color-mix(in oklch, var(--ai-neon) 32%, transparent);
   animation: ai-pulse 5s ease-in-out infinite;
+  color: var(--ai-send-fg);
 }
 
 .ai-empty h1 {
@@ -267,19 +282,21 @@
 }
 
 .ai-prompt {
-  border: 0;
+  border: 1px solid var(--ai-line);
   border-radius: var(--ai-radius);
-  background: color-mix(in oklch, white 6%, transparent);
+  background: color-mix(in oklch, var(--ai-panel) 92%, transparent);
   padding: 0.85rem 0.95rem;
   text-align: start;
   cursor: pointer;
   transition:
     background-color 160ms ease,
+    border-color 160ms ease,
     transform 160ms var(--ai-ease);
 }
 
 .ai-prompt:hover {
-  background: color-mix(in oklch, var(--ai-neon) 12%, transparent);
+  border-color: color-mix(in oklch, var(--ai-neon) 35%, var(--ai-line));
+  background: color-mix(in oklch, var(--ai-neon) 10%, var(--ai-panel));
   transform: translateY(-1px);
 }
 
@@ -312,9 +329,9 @@
 }
 
 .ai-user-bubble {
-  border-radius: 1.1rem;
+  border-radius: var(--ai-radius);
   border: 0;
-  background: color-mix(in oklch, var(--ai-neon-2) 22%, transparent);
+  background: color-mix(in oklch, var(--ai-neon) 16%, var(--ai-soft));
   box-shadow: none;
   padding: 0.7rem 0.95rem;
   font-size: 0.875rem;
@@ -322,11 +339,11 @@
 }
 
 .ai-assistant-card {
-  border: 0;
+  border: 1px solid var(--ai-line);
   border-radius: var(--ai-radius);
-  background: color-mix(in oklch, white 5%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: color-mix(in oklch, var(--ai-panel) 94%, transparent);
+  backdrop-filter: blur(var(--ai-blur));
+  -webkit-backdrop-filter: blur(var(--ai-blur));
   padding: 0.8rem 0.95rem;
   box-shadow: none;
 }
@@ -340,8 +357,9 @@
   justify-content: center;
   border-radius: 999px;
   border: 0;
-  background: color-mix(in oklch, var(--ai-neon) 28%, transparent);
-  box-shadow: 0 0 12px color-mix(in oklch, var(--ai-neon) 35%, transparent);
+  background: color-mix(in oklch, var(--ai-neon) 24%, transparent);
+  box-shadow: 0 0 12px color-mix(in oklch, var(--ai-neon) 28%, transparent);
+  color: var(--ai-neon);
 }
 
 .ai-source-chip {
@@ -350,7 +368,7 @@
   gap: 0.25rem;
   border: 0;
   border-radius: 999px;
-  background: color-mix(in oklch, white 8%, transparent);
+  background: color-mix(in oklch, var(--ai-ink) 6%, transparent);
   padding: 0.18rem 0.55rem;
   font-size: 0.65rem;
   color: var(--ai-mute);
@@ -358,34 +376,38 @@
 
 .ai-code {
   overflow: hidden;
-  border: 0;
-  border-radius: 0.85rem;
-  background: #06101f;
+  border: 1px solid var(--ai-line);
+  border-radius: calc(var(--ai-radius) * 0.75);
+  background: var(--ai-code);
 }
 
 .ai-composer-wrap {
   flex-shrink: 0;
-  background: color-mix(in oklch, #071220 82%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: 0.65rem 0.85rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--ai-line);
+  background: color-mix(in oklch, var(--ai-panel) 94%, transparent);
+  backdrop-filter: blur(var(--ai-blur));
+  -webkit-backdrop-filter: blur(var(--ai-blur));
+  padding: 0.75rem 0.85rem calc(0.85rem + env(safe-area-inset-bottom, 0px));
 }
 
 .ai-composer {
   display: flex;
-  min-height: 2.85rem;
+  min-height: 3rem;
   align-items: center;
-  gap: 0.35rem;
-  border: 0;
-  border-radius: 999px;
-  background: color-mix(in oklch, white 8%, transparent);
-  padding: 0.3rem 0.35rem 0.3rem 0.55rem;
-  box-shadow: 0 0 28px color-mix(in oklch, var(--ai-neon) 12%, transparent);
+  gap: 0.4rem;
+  border: 1px solid var(--ai-line-hot);
+  border-radius: calc(var(--ai-radius) * 1.05);
+  background: var(--ai-composer);
+  padding: 0.4rem 0.4rem 0.4rem 0.75rem;
+  box-shadow: 0 8px 24px color-mix(in oklch, var(--ai-ink) 6%, transparent);
 }
 
 .ai-composer:focus-within {
-  background: color-mix(in oklch, white 11%, transparent);
-  box-shadow: 0 0 36px color-mix(in oklch, var(--ai-neon) 22%, transparent);
+  border-color: color-mix(in oklch, var(--ai-neon) 45%, var(--ai-line));
+  background: var(--ai-composer-focus);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--ai-neon) 18%, transparent),
+    0 10px 28px color-mix(in oklch, var(--ai-neon) 10%, transparent);
 }
 
 .ai-composer textarea {
@@ -394,10 +416,14 @@
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: var(--ai-ink);
 }
 
 .ai-composer textarea::placeholder {
   color: var(--ai-mute) !important;
+  -webkit-text-fill-color: var(--ai-mute);
+  opacity: 1 !important;
 }
 
 .ai-send {
@@ -407,8 +433,8 @@
   border-radius: 999px !important;
   border: 0 !important;
   background: var(--ai-neon) !important;
-  color: #041018 !important;
-  box-shadow: 0 0 18px color-mix(in oklch, var(--ai-neon) 45%, transparent) !important;
+  color: var(--ai-send-fg) !important;
+  box-shadow: 0 0 16px color-mix(in oklch, var(--ai-neon) 35%, transparent) !important;
 }
 
 .ai-send:disabled {
@@ -417,7 +443,7 @@
 }
 
 .ai-send:not(:disabled):hover {
-  filter: brightness(1.08);
+  filter: brightness(1.06);
 }
 
 .ai-footnote {
@@ -427,17 +453,95 @@
   color: var(--ai-mute);
 }
 
-.ai-thinking span {
-  background: var(--ai-neon) !important;
-  box-shadow: 0 0 8px color-mix(in oklch, var(--ai-neon) 60%, transparent);
+.ai-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.15rem 0.1rem;
+  color: var(--ai-mute);
+  font-size: 0.82rem;
+}
+
+.ai-thinking-avatar {
+  animation: ai-thinking-glow 1.5s ease-in-out infinite;
+}
+
+.ai-thinking-label {
+  color: var(--ai-mute);
+  font-weight: 500;
+}
+
+.ai-thinking-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.ai-thinking-dots i {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: var(--ai-neon);
+  opacity: 0.35;
+  animation: ai-thinking-bounce 1.05s ease-in-out infinite;
+}
+
+.ai-thinking-dots i:nth-child(2) {
+  animation-delay: 140ms;
+}
+
+.ai-thinking-dots i:nth-child(3) {
+  animation-delay: 280ms;
+}
+
+@keyframes ai-thinking-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--ai-neon) 0%, transparent);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--ai-neon) 16%, transparent);
+    transform: scale(1.04);
+  }
+}
+
+@keyframes ai-thinking-bounce {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
 
 .ai-sidebar-foot {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
   padding: 0.55rem;
 }
 
-/* Readable chrome on dark stage */
+.ai-credit {
+  border-color: color-mix(in oklch, white 14%, transparent) !important;
+  background: color-mix(in oklch, white 8%, transparent) !important;
+  color: var(--ai-ink) !important;
+  box-shadow: none !important;
+}
+
+.ai-credit .fui-credit-prefix {
+  color: var(--ai-mute) !important;
+}
+
+.ai-credit strong {
+  color: var(--ai-neon) !important;
+}
+
 .ai-page .text-muted-foreground {
   color: var(--ai-mute) !important;
 }
@@ -454,8 +558,8 @@
 .ai-page input[type="search"],
 .ai-page input:not([type]),
 .ai-page [data-slot="input"] {
-  border: 0 !important;
-  background: color-mix(in oklch, white 7%, transparent) !important;
+  border: 1px solid var(--ai-line) !important;
+  background: color-mix(in oklch, var(--ai-soft) 75%, transparent) !important;
   color: var(--ai-ink) !important;
   box-shadow: none !important;
 }
@@ -470,22 +574,374 @@
   min-height: 0;
 }
 
-/* Keep design-system trigger readable on neon stage */
 .ai-page [data-slot="button"]:not(.ai-send):not(.ai-ghost) {
   color: inherit;
 }
 
 .ai-header-picker button,
 .ai-sidebar-foot button {
-  border-color: color-mix(in oklch, white 18%, transparent) !important;
-  background: color-mix(in oklch, white 10%, transparent) !important;
+  border-color: var(--ai-line) !important;
+  background: color-mix(in oklch, var(--ai-panel) 90%, transparent) !important;
   color: var(--ai-ink) !important;
   box-shadow: none !important;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Design systems                                                             */
+/* -------------------------------------------------------------------------- */
+
+/* پیشفرض / Nova — neural mist: atmospheric AI stage (not flat, not copper) */
+.style-nova .ai-page {
+  --ai-ink: #0c1222;
+  --ai-mute: color-mix(in oklch, #0c1222 52%, transparent);
+  --ai-line: color-mix(in oklch, #64748b 22%, transparent);
+  --ai-line-hot: color-mix(in oklch, #0ea5e9 28%, transparent);
+  --ai-neon: #0284c7;
+  --ai-neon-2: #6366f1;
+  --ai-neon-3: #14b8a6;
+  --ai-paper: #e8eef8;
+  --ai-panel: color-mix(in oklch, #ffffff 82%, transparent);
+  --ai-soft: color-mix(in oklch, #dbe7f5 78%, transparent);
+  --ai-composer: color-mix(in oklch, #ffffff 92%, transparent);
+  --ai-composer-focus: #ffffff;
+  --ai-code: #0b1220;
+  --ai-send-fg: #f0f9ff;
+  --ai-radius: 0.75rem;
+  --ai-glow: color-mix(in oklch, #38bdf8 32%, transparent);
+  --ai-glow-2: color-mix(in oklch, #818cf8 22%, transparent);
+  --ai-glow-3: color-mix(in oklch, #2dd4bf 16%, transparent);
+  --ai-blur: 16px;
+  --ai-orb-blur: 70px;
+  background:
+    radial-gradient(ellipse 70% 55% at 8% -5%, var(--ai-glow), transparent 58%),
+    radial-gradient(ellipse 55% 50% at 100% 8%, var(--ai-glow-2), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 55% 110%, var(--ai-glow-3), transparent 58%),
+    linear-gradient(165deg, #eef3fb 0%, #e4ebf6 48%, #dfe8f5 100%);
+}
+
+.style-nova .ai-page::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(color-mix(in oklch, #64748b 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, #64748b 7%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%);
+}
+
+.style-nova .ai-page::after {
+  display: block;
+  inset-inline-start: -6%;
+  inset-inline-end: auto;
+  top: 55%;
+  width: 16rem;
+  height: 16rem;
+  background: color-mix(in oklch, #818cf8 28%, transparent);
+  opacity: 0.55;
+}
+
+.dark .style-nova .ai-page,
+html.dark.style-nova .ai-page {
+  --ai-ink: #e8f0ff;
+  --ai-mute: color-mix(in oklch, #e8f0ff 50%, transparent);
+  --ai-line: color-mix(in oklch, #7dd3fc 14%, transparent);
+  --ai-line-hot: color-mix(in oklch, #38bdf8 32%, transparent);
+  --ai-neon: #38bdf8;
+  --ai-neon-2: #a5b4fc;
+  --ai-neon-3: #2dd4bf;
+  --ai-paper: #070b14;
+  --ai-panel: color-mix(in oklch, #111827 78%, transparent);
+  --ai-soft: color-mix(in oklch, #1e293b 70%, transparent);
+  --ai-composer: color-mix(in oklch, #0f172a 92%, transparent);
+  --ai-composer-focus: #132033;
+  --ai-code: #05080f;
+  --ai-send-fg: #041018;
+  --ai-glow: color-mix(in oklch, #0ea5e9 30%, transparent);
+  --ai-glow-2: color-mix(in oklch, #818cf8 24%, transparent);
+  --ai-glow-3: color-mix(in oklch, #14b8a6 14%, transparent);
+  background:
+    radial-gradient(ellipse 75% 55% at 12% 0%, var(--ai-glow), transparent 58%),
+    radial-gradient(ellipse 55% 50% at 95% 15%, var(--ai-glow-2), transparent 52%),
+    radial-gradient(ellipse 55% 45% at 60% 100%, var(--ai-glow-3), transparent 55%),
+    linear-gradient(165deg, #05080f 0%, #0a1020 45%, #070b14 100%);
+}
+
+.dark .style-nova .ai-page::before,
+html.dark.style-nova .ai-page::before {
+  opacity: 0.22;
+  background-image:
+    linear-gradient(color-mix(in oklch, #7dd3fc 10%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, #7dd3fc 10%, transparent) 1px, transparent 1px);
+}
+
+.style-nova .ai-page .ai-sidebar,
+.style-nova .ai-page .ai-main-header,
+.style-nova .ai-page .ai-composer-wrap,
+.style-nova .ai-page .ai-assistant-card {
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+}
+
+.style-nova .ai-page .ai-send,
+.style-nova .ai-page .ai-brand-mark,
+.style-nova .ai-page .ai-empty-orb {
+  border-radius: 0.7rem !important;
+}
+
+.style-nova .ai-page .ai-brand-mark,
+.style-nova .ai-page .ai-empty-orb {
+  box-shadow: 0 0 28px color-mix(in oklch, var(--ai-neon) 35%, transparent) !important;
+}
+
+.style-nova .ai-page .ai-composer {
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 0 color-mix(in oklch, white 50%, transparent) inset,
+    0 12px 32px color-mix(in oklch, #0c1222 8%, transparent);
+}
+
+.dark .style-nova .ai-page .ai-composer,
+html.dark.style-nova .ai-page .ai-composer {
+  box-shadow:
+    0 1px 0 color-mix(in oklch, white 6%, transparent) inset,
+    0 12px 36px color-mix(in oklch, black 35%, transparent);
+}
+
+.style-nova .ai-page .ai-user-bubble {
+  background: color-mix(in oklch, var(--ai-neon) 12%, var(--ai-soft));
+}
+
+.dark .style-nova .ai-page .ai-user-bubble,
+html.dark.style-nova .ai-page .ai-user-bubble {
+  background: color-mix(in oklch, var(--ai-neon) 18%, transparent);
+}
+
+.style-nova .ai-page .ai-assistant-avatar {
+  box-shadow: 0 0 14px color-mix(in oklch, var(--ai-neon) 30%, transparent);
+}
+
+.style-nova .ai-page .ai-send {
+  box-shadow: 0 0 18px color-mix(in oklch, var(--ai-neon) 40%, transparent) !important;
+}
+
+.style-nova .ai-page .ai-source-chip,
+.style-nova .ai-page .ai-model-trigger {
+  border-radius: 0.55rem;
+}
+
+/* Comfort / Vega — soft rounded calm */
+.style-vega .ai-page {
+  --ai-radius: calc(var(--radius) + 0.2rem);
+  --ai-blur: 8px;
+  --ai-neon-2: color-mix(in oklch, var(--primary) 45%, #7dd3fc);
+  --ai-neon-3: color-mix(in oklch, var(--primary) 35%, #34d399);
+}
+
+.style-vega .ai-page .ai-user-bubble,
+.style-vega .ai-page .ai-assistant-card,
+.style-vega .ai-page .ai-prompt,
+.style-vega .ai-page .ai-composer {
+  border-radius: calc(var(--ai-radius) + 0.15rem);
+}
+
+/* Glass / فیروزه — neon glass stage (signature) */
+.style-glass .ai-page {
+  --ai-ink: #eaf6ff;
+  --ai-mute: color-mix(in oklch, #eaf6ff 55%, transparent);
+  --ai-line: color-mix(in oklch, #67e8f9 14%, transparent);
+  --ai-line-hot: color-mix(in oklch, #22d3ee 40%, transparent);
+  --ai-neon: #22d3ee;
+  --ai-neon-2: #c084fc;
+  --ai-neon-3: #34d399;
+  --ai-paper: #060d1c;
+  --ai-panel: color-mix(in oklch, #0a1428 78%, transparent);
+  --ai-soft: color-mix(in oklch, #101c34 70%, transparent);
+  --ai-composer: #121c30;
+  --ai-composer-focus: #152036;
+  --ai-code: #06101f;
+  --ai-send-fg: #041018;
+  --ai-radius: 1.1rem;
+  --ai-blur: 18px;
+  --ai-orb-blur: 72px;
+  --ai-glow: color-mix(in oklch, #22d3ee 28%, transparent);
+  --ai-glow-2: color-mix(in oklch, #c084fc 22%, transparent);
+  --ai-glow-3: color-mix(in oklch, #34d399 14%, transparent);
+  color-scheme: dark;
+  background:
+    radial-gradient(ellipse 80% 60% at 12% 8%, var(--ai-glow), transparent 58%),
+    radial-gradient(ellipse 60% 50% at 92% 18%, var(--ai-glow-2), transparent 52%),
+    radial-gradient(ellipse 55% 45% at 68% 92%, var(--ai-glow-3), transparent 55%),
+    linear-gradient(165deg, #040814 0%, #0a1228 42%, #060d1c 100%);
+}
+
+.style-glass .ai-page .ai-sidebar,
+.style-glass .ai-page .ai-main-header,
+.style-glass .ai-page .ai-assistant-card,
+.style-glass .ai-page .ai-composer-wrap {
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+}
+
+.style-glass .ai-page .ai-prompt,
+.style-glass .ai-page .ai-assistant-card {
+  border-color: transparent;
+  background: color-mix(in oklch, white 5%, transparent);
+}
+
+.style-glass .ai-page .ai-user-bubble {
+  background: color-mix(in oklch, var(--ai-neon-2) 22%, transparent);
+}
+
+.style-glass .ai-page .ai-composer {
+  border-radius: 1.15rem;
+  box-shadow:
+    0 1px 0 color-mix(in oklch, white 6%, transparent) inset,
+    0 10px 28px color-mix(in oklch, black 35%, transparent);
+}
+
+.style-glass .ai-page .ai-send,
+.style-glass .ai-page .ai-assistant-avatar,
+.style-glass .ai-page .ai-thinking-badge,
+.style-glass .ai-page .ai-thinking-step,
+.style-glass .ai-page .ai-model-trigger {
+  border-radius: 999px;
+}
+
+/* Light glass — frosted aqua mist (not neon stage) */
+html.style-glass:not(.dark) .ai-page,
+html:not(.dark) .style-glass .ai-page {
+  --ai-ink: #0c1b1f;
+  --ai-mute: #4a6a70;
+  --ai-line: color-mix(in oklch, #0d9488 18%, transparent);
+  --ai-line-hot: color-mix(in oklch, #0d9488 40%, transparent);
+  --ai-neon: #0d9488;
+  --ai-neon-2: #0284c7;
+  --ai-neon-3: #14b8a6;
+  --ai-paper: #e8f4f5;
+  --ai-panel: color-mix(in oklch, white 86%, transparent);
+  --ai-soft: #dceef0;
+  --ai-composer: #ffffff;
+  --ai-composer-focus: #f0fdfa;
+  --ai-code: #0f2428;
+  --ai-send-fg: #f0fdfa;
+  --ai-glow: color-mix(in oklch, #0d9488 16%, transparent);
+  --ai-glow-2: color-mix(in oklch, #0284c7 12%, transparent);
+  --ai-glow-3: color-mix(in oklch, #14b8a6 10%, transparent);
+  color-scheme: light;
+  background:
+    radial-gradient(ellipse 80% 55% at 10% 0%, var(--ai-glow), transparent 58%),
+    radial-gradient(ellipse 55% 45% at 96% 12%, var(--ai-glow-2), transparent 52%),
+    var(--ai-paper);
+}
+
+html.style-glass:not(.dark) .ai-page .ai-prompt,
+html.style-glass:not(.dark) .ai-page .ai-assistant-card,
+html:not(.dark) .style-glass .ai-page .ai-prompt,
+html:not(.dark) .style-glass .ai-page .ai-assistant-card {
+  border: 1px solid var(--ai-line);
+  background: color-mix(in oklch, white 78%, transparent);
+}
+
+/* Rose — soft clay curves */
+.style-rose .ai-page {
+  --ai-radius: calc(var(--radius) + 0.25rem);
+  --ai-blur: 10px;
+  --ai-neon-2: color-mix(in oklch, var(--primary) 50%, #fda4af);
+  --ai-neon-3: color-mix(in oklch, var(--primary) 40%, #fb7185);
+}
+
+.style-rose .ai-page .ai-user-bubble,
+.style-rose .ai-page .ai-assistant-card,
+.style-rose .ai-page .ai-prompt,
+.style-rose .ai-page .ai-composer,
+.style-rose .ai-page .ai-empty-orb {
+  border-radius: calc(var(--ai-radius) + 0.2rem);
+}
+
+.style-rose .ai-page .ai-send,
+.style-rose .ai-page .ai-assistant-avatar {
+  border-radius: 999px !important;
+}
+
+/* Nili — sharp signal / circuit */
+.style-nili .ai-page {
+  --ai-radius: 0.3rem;
+  --ai-blur: 0px;
+  --ai-orb-blur: 40px;
+  --ai-neon-2: color-mix(in oklch, var(--primary) 55%, #0f9f8c);
+  --ai-neon-3: #0f9f8c;
+}
+
+.style-nili .ai-page .ai-send,
+.style-nili .ai-page .ai-brand-mark,
+.style-nili .ai-page .ai-empty-orb,
+.style-nili .ai-page .ai-assistant-avatar,
+.style-nili .ai-page .ai-thinking-badge,
+.style-nili .ai-page .ai-thinking-step,
+.style-nili .ai-page .ai-model-trigger,
+.style-nili .ai-page .ai-source-chip {
+  border-radius: 0.28rem !important;
+}
+
+.style-nili .ai-page .ai-composer {
+  border-radius: 0.35rem;
+}
+
+.style-nili .ai-page .ai-conv-btn[data-active="true"] {
+  box-shadow: inset 2px 0 0 var(--ai-neon);
+}
+
+/* Khesht — adobe / hard offset */
+.style-khesht .ai-page {
+  --ai-radius: 0.2rem;
+  --ai-blur: 0px;
+  --ai-orb-blur: 36px;
+  --ai-neon-2: color-mix(in oklch, var(--primary) 55%, #8f6a3a);
+  --ai-neon-3: #3f6f5e;
+}
+
+.style-khesht .ai-page .ai-send,
+.style-khesht .ai-page .ai-brand-mark,
+.style-khesht .ai-page .ai-empty-orb,
+.style-khesht .ai-page .ai-new-btn,
+.style-khesht .ai-page .ai-thinking-badge {
+  border-radius: 0.18rem !important;
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--ai-neon) 42%, black) !important;
+}
+
+.style-khesht .ai-page .ai-assistant-card,
+.style-khesht .ai-page .ai-user-bubble,
+.style-khesht .ai-page .ai-prompt,
+.style-khesht .ai-page .ai-composer {
+  border-radius: 0.2rem;
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--ai-ink) 12%, transparent);
+}
+
+.style-khesht .ai-page .ai-assistant-avatar,
+.style-khesht .ai-page .ai-thinking-step,
+.style-khesht .ai-page .ai-source-chip,
+.style-khesht .ai-page .ai-model-trigger {
+  border-radius: 0.16rem !important;
+}
+
+.style-khesht .ai-page .ai-conv-btn[data-active="true"] {
+  box-shadow: inset 3px 0 0 var(--ai-neon);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ai-page::after,
-  .ai-empty-orb {
+  .ai-empty-orb,
+  .ai-thinking-avatar,
+  .ai-thinking-dots i {
     animation: none !important;
+  }
+
+  .ai-thinking-dots i {
+    opacity: 0.7;
   }
 }

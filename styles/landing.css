@@ -397,3 +397,140 @@
   backdrop-filter: blur(14px);
   background: color-mix(in oklch, var(--background) 35%, transparent);
 }
+
+/* Section titles — prefer one rhythmic line */
+.landing-section-title {
+  text-wrap: balance;
+  line-height: 1.35;
+}
+
+/* Features — editorial rows, not cards */
+.landing-feature-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-block: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+
+.landing-feature-row {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 0.85rem 1.1rem;
+  align-items: start;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid color-mix(in oklch, var(--foreground) 8%, transparent);
+  transition: background 180ms ease;
+}
+
+.landing-feature-row:last-child {
+  border-bottom: 0;
+}
+
+.landing-feature-row:hover {
+  background: color-mix(in oklch, var(--foreground) 2.5%, transparent);
+}
+
+.landing-feature-num {
+  padding-top: 0.15rem;
+  font-size: 0.85rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  color: color-mix(in oklch, var(--primary) 70%, var(--muted-foreground));
+  font-variant-numeric: normal;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.landing-feature-copy {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .landing-feature-row {
+    grid-template-columns: 3rem minmax(0, 0.9fr) minmax(0, 1.35fr);
+    align-items: baseline;
+    gap: 1.25rem 1.75rem;
+    padding: 1.35rem 0.15rem;
+  }
+
+  .landing-feature-copy {
+    display: contents;
+  }
+
+  .landing-feature-title {
+    grid-column: 2;
+  }
+
+  .landing-feature-desc {
+    grid-column: 3;
+  }
+}
+
+.landing-feature-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.landing-feature-desc {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+}
+
+/* FarsiUI credit */
+.landing-credit {
+  align-items: baseline;
+  gap: 0.22rem;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--primary) 10%, transparent);
+  color: var(--foreground);
+  padding: 0.28rem 0.55rem;
+  font-size: 0.68rem;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 160ms ease;
+}
+
+.landing-credit:hover {
+  background: color-mix(in oklch, var(--primary) 16%, transparent);
+}
+
+.landing-credit-prefix {
+  color: var(--muted-foreground);
+}
+
+.landing-credit strong {
+  font-weight: 750;
+  color: var(--primary);
+}
+
+.landing-credit-footer {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.landing-credit-footer:hover {
+  background: transparent;
+  opacity: 0.85;
+}
+
+.style-khesht .landing-feature-row:hover {
+  background: color-mix(in oklch, var(--primary) 5%, transparent);
+}
+
+.style-nili .landing-feature-list {
+  border-block-width: 1px;
+}
+
+.style-glass .landing-feature-row:hover {
+  background: color-mix(in oklch, var(--background) 40%, transparent);
+  backdrop-filter: blur(8px);
+}

@@ -21,8 +21,8 @@ export function BlogCategoryView({ category }: { category: BlogCategory }) {
   const items = getPostsByCategory(category.id)
 
   return (
-    <div className="space-y-8">
-      <Breadcrumb>
+    <div className="blog-article">
+      <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink render={<Link href={BLOG_BASE} />}>
@@ -36,30 +36,26 @@ export function BlogCategoryView({ category }: { category: BlogCategory }) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <header className="max-w-2xl space-y-2.5">
-        <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground">
-          موضوع
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          {category.name}
-        </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {category.description}
-        </p>
-        <p className="text-xs text-muted-foreground">
+      <header className="blog-cat-header">
+        <p className="blog-section-label mb-0">موضوع</p>
+        <h1>{category.name}</h1>
+        <p>{category.description}</p>
+        <p className="mt-2 text-xs text-[var(--blog-mute)]">
           {formatCount(items.length)} مطلب
         </p>
       </header>
 
-      <div className="rounded-xl border border-foreground/8 bg-card/30 px-4 sm:px-5">
-        {items.length === 0 ? (
-          <p className="px-1 py-12 text-center text-sm text-muted-foreground">
-            هنوز مطلبی در این موضوع نیست.
-          </p>
-        ) : (
-          items.map((post) => <PostListItem key={post.id} post={post} />)
-        )}
-      </div>
+      {items.length === 0 ? (
+        <p className="blog-empty">هنوز مطلبی در این موضوع نیست.</p>
+      ) : (
+        <div className="blog-feed-panel">
+          <ol className="blog-feed">
+            {items.map((post, i) => (
+              <PostListItem key={post.id} post={post} index={i} />
+            ))}
+          </ol>
+        </div>
+      )}
     </div>
   )
 }

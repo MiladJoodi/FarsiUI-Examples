@@ -89,7 +89,7 @@ export function AuthLoginSignup({
 
 function LoginForm({ onGoSignup }: { onGoSignup: () => void }) {
   const [method, setMethod] = React.useState<"mobile" | "email">("mobile")
-  const [identifier, setIdentifier] = React.useState(demoCredentials.mobile)
+  const [identifier, setIdentifier] = React.useState<string>(demoCredentials.mobile)
   const [password, setPassword] = React.useState("")
   const [remember, setRemember] = React.useState(true)
   const [captchaOk, setCaptchaOk] = React.useState(false)

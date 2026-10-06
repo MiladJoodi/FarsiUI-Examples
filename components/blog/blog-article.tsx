@@ -22,7 +22,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
 
 const BLOG_BASE = "/examples/blog"
 
@@ -40,8 +39,8 @@ export function BlogArticle({
   const related = getRelatedPosts(post, 3)
 
   return (
-    <article className="space-y-7">
-      <Breadcrumb>
+    <article className="blog-article">
+      <Breadcrumb className="blog-article-crumbs">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink render={<Link href={BLOG_BASE} />}>
@@ -67,59 +66,50 @@ export function BlogArticle({
         </BreadcrumbList>
       </Breadcrumb>
 
-      <header className="mx-auto max-w-2xl space-y-3.5 text-center">
-        <PostMeta post={post} className="justify-center" />
-        <h1 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
+      <header className="blog-article-hero">
+        <Link
+          href={`${BLOG_BASE}/categories/${category.slug}`}
+          className="blog-article-kicker"
+        >
+          {category.name}
+        </Link>
+        <h1 className="blog-article-title" title={post.title}>
           {post.title}
         </h1>
-        <p className="text-pretty text-sm leading-relaxed text-muted-foreground sm:text-[0.95rem]">
-          {post.excerpt}
-        </p>
+        <PostMeta post={post} />
+        <p className="blog-article-excerpt">{post.excerpt}</p>
       </header>
 
-      <PostCover
-        post={post}
-        large
-        className="rounded-xl border border-foreground/8"
-      />
-
-      <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-xl border border-foreground/8 bg-muted/20 px-3.5 py-3">
-        <Avatar size="sm">
-          <AvatarFallback className="bg-muted text-[0.65rem] text-muted-foreground">
-            {author.initials}
-          </AvatarFallback>
-        </Avatar>
-        <div className="min-w-0 text-start">
-          <p className="text-sm font-medium">{author.name}</p>
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {author.role} · {author.bio}
-          </p>
+      <div className="blog-article-sheet">
+        <div className="blog-article-cover">
+          <PostCover post={post} large className="size-full" />
         </div>
-      </div>
 
-      <div className="mx-auto max-w-2xl">
+        <div className="blog-author-chip">
+          <Avatar size="sm">
+            <AvatarFallback className="blog-author-avatar">
+              {author.initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 text-start">
+            <p className="blog-author-name">{author.name}</p>
+            <p className="blog-author-bio">
+              {author.role} · {author.bio}
+            </p>
+          </div>
+        </div>
+
         <ArticleBlocks blocks={post.blocks} />
-      </div>
 
-      {(prev || next) && (
-        <>
-          <Separator className="opacity-60" />
-          <nav
-            aria-label="مطلب قبلی و بعدی"
-            className="mx-auto grid max-w-2xl gap-3 sm:grid-cols-2"
-          >
+        {(prev || next) && (
+          <nav aria-label="مطلب قبلی و بعدی" className="blog-pager">
             {prev ? (
-              <Link
-                href={`${BLOG_BASE}/posts/${prev.slug}`}
-                className="group flex flex-col gap-1.5 rounded-xl border border-foreground/8 bg-card/40 p-4 transition-colors hover:bg-muted/40"
-              >
-                <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Link href={`${BLOG_BASE}/posts/${prev.slug}`}>
+                <span className="blog-pager-label">
                   <ArrowRightIcon className="size-3" />
                   مطلب قبلی
                 </span>
-                <p className="text-sm font-medium leading-snug transition-colors group-hover:text-foreground/80">
-                  {prev.title}
-                </p>
+                <span className="blog-pager-title">{prev.title}</span>
               </Link>
             ) : (
               <div />
@@ -127,34 +117,29 @@ export function BlogArticle({
             {next ? (
               <Link
                 href={`${BLOG_BASE}/posts/${next.slug}`}
-                className="group flex flex-col gap-1.5 rounded-xl border border-foreground/8 bg-card/40 p-4 text-end transition-colors hover:bg-muted/40 sm:ms-auto sm:text-start"
+                className="sm:text-end"
               >
-                <span className="inline-flex items-center justify-end gap-1 text-xs text-muted-foreground sm:justify-start">
+                <span className="blog-pager-label sm:justify-end">
                   مطلب بعدی
                   <ArrowLeftIcon className="size-3" />
                 </span>
-                <p className="text-sm font-medium leading-snug transition-colors group-hover:text-foreground/80">
-                  {next.title}
-                </p>
+                <span className="blog-pager-title">{next.title}</span>
               </Link>
             ) : null}
           </nav>
-        </>
-      )}
+        )}
+      </div>
 
-      <Separator className="opacity-60" />
-
-      <section aria-labelledby="related-heading" className="space-y-3">
-        <h2
-          id="related-heading"
-          className="text-base font-semibold tracking-tight"
-        >
+      <section aria-labelledby="related-heading" className="blog-article-related">
+        <h2 id="related-heading" className="blog-section-label">
           مطالب مرتبط
         </h2>
-        <div>
-          {related.map((item) => (
-            <PostListItem key={item.id} post={item} />
-          ))}
+        <div className="blog-feed-panel">
+          <ol className="blog-feed">
+            {related.map((item, i) => (
+              <PostListItem key={item.id} post={item} index={i} />
+            ))}
+          </ol>
         </div>
       </section>
     </article>

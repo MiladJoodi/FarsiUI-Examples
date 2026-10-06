@@ -8,22 +8,19 @@ import { toPersianDigits } from "@/lib/digits"
 import { formatCount } from "@/lib/format"
 import {
   authors,
-  blogName,
-  blogTagline,
   categories,
-  getAuthor,
-  getCategory,
   getFeaturedPost,
   getRecentPosts,
   getRecommendedPosts,
   posts,
+  getAuthor,
+  getCategory,
 } from "@/lib/mock/blog"
 import {
   PostCover,
   PostListItem,
   PostMeta,
 } from "@/components/blog/blog-parts"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 
 const BLOG_BASE = "/examples/blog"
@@ -43,232 +40,162 @@ export function BlogHome() {
       })
     : getRecentPosts(featured.id)
 
-  return (
-    <div className="space-y-10">
-      <header className="max-w-2xl space-y-2.5">
-        <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground">
-          {blogTagline}
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          {blogName}
-        </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          یادداشت‌های کوتاه درباره طراحی محصول، دسترس‌پذیری و ساخت رابط‌های
-          فارسی.
-        </p>
-      </header>
+  if (q) {
+    return (
+      <section className="blog-article" aria-label="نتایج جستجو">
+        <div className="blog-search-head">
+          <div>
+            <p className="blog-section-label">جستجو</p>
+            <h2 className="m-0 text-xl font-bold tracking-tight">
+              نتایج برای «{q}»
+            </h2>
+            <p className="mt-1 text-sm text-[var(--blog-mute)]">
+              {formatCount(filtered.length)} مطلب
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="blog-btn blog-btn-soft"
+            nativeButton={false}
+            render={<Link href={BLOG_BASE} />}
+          >
+            پاک کردن جستجو
+          </Button>
+        </div>
+        {filtered.length === 0 ? (
+          <p className="blog-empty">مطلبی با این عبارت پیدا نشد.</p>
+        ) : (
+          <div className="blog-feed-panel">
+            <ol className="blog-feed">
+              {filtered.map((post, i) => (
+                <PostListItem key={post.id} post={post} index={i} />
+              ))}
+            </ol>
+          </div>
+        )}
+      </section>
+    )
+  }
 
-      {q ? (
-        <section className="space-y-4" aria-label="نتایج جستجو">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div className="space-y-1">
-              <h2 className="text-base font-semibold tracking-tight">
-                نتایج جستجو
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {formatCount(filtered.length)} مطلب برای «{q}»
-              </p>
-            </div>
+  return (
+    <>
+      <section className="blog-lead" aria-labelledby="featured-heading">
+        <div className="blog-lead-copy">
+          <p id="featured-heading" className="blog-lead-kicker">
+            مطلب روی جلد
+          </p>
+          <h2 className="blog-lead-title">
+            <Link href={`${BLOG_BASE}/posts/${featured.slug}`}>
+              {featured.title}
+            </Link>
+          </h2>
+          <p className="blog-lead-excerpt">{featured.excerpt}</p>
+          <PostMeta post={featured} />
+          <div>
             <Button
-              variant="outline"
               size="sm"
-              className="blog-btn blog-btn-soft"
+              className="blog-btn blog-btn-primary gap-1.5"
               nativeButton={false}
-              render={<Link href={BLOG_BASE} />}
+              render={<Link href={`${BLOG_BASE}/posts/${featured.slug}`} />}
             >
-              پاک کردن جستجو
+              خواندن مطلب
+              <ArrowLeftIcon className="size-3.5" data-icon="inline-end" />
             </Button>
           </div>
-          <div className="rounded-xl border border-foreground/8 bg-card/40 px-4 sm:px-5">
-            {filtered.length === 0 ? (
-              <p className="px-1 py-12 text-center text-sm text-muted-foreground">
-                مطلبی با این عبارت پیدا نشد.
-              </p>
-            ) : (
-              filtered.map((post) => (
-                <PostListItem key={post.id} post={post} />
-              ))
-            )}
+        </div>
+        <Link
+          href={`${BLOG_BASE}/posts/${featured.slug}`}
+          className="blog-lead-cover outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <PostCover post={featured} large className="size-full min-h-[12.5rem]" />
+        </Link>
+      </section>
+
+      <div className="blog-home-grid">
+        <section aria-labelledby="recent-heading">
+          <div className="mb-2 flex items-baseline justify-between gap-3">
+            <h2 id="recent-heading" className="blog-section-label m-0">
+              تازه‌های حاشیه
+            </h2>
+            <span className="text-xs text-[var(--blog-mute)]">
+              {formatCount(filtered.length)} مطلب
+            </span>
+          </div>
+          <div className="blog-feed-panel">
+            <ol className="blog-feed">
+              {filtered.map((post, i) => (
+                <PostListItem key={post.id} post={post} index={i} />
+              ))}
+            </ol>
           </div>
         </section>
-      ) : (
-        <>
-          <section aria-labelledby="featured-heading" className="space-y-4">
-            <h2
-              id="featured-heading"
-              className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
-            >
-              مطلب ویژه
-            </h2>
-            <article className="overflow-hidden rounded-2xl border border-foreground/8 bg-card/50 shadow-xs">
-              <Link
-                href={`${BLOG_BASE}/posts/${featured.slug}`}
-                className="block outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-              >
-                <PostCover
-                  post={featured}
-                  large
-                  className="rounded-none border-0"
-                />
-              </Link>
-              <div className="space-y-3 p-5 sm:p-6">
-                <PostMeta post={featured} />
-                <h3 className="max-w-3xl text-balance text-xl font-semibold tracking-tight sm:text-2xl">
-                  <Link
-                    href={`${BLOG_BASE}/posts/${featured.slug}`}
-                    className="outline-none transition-colors hover:text-foreground/80 focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    {featured.title}
+
+        <aside className="blog-aside" aria-label="حاشیهٔ صفحه">
+          <div className="blog-aside-block" data-tone="accent">
+            <h2 className="blog-section-label">پیشنهاد سردبیر</h2>
+            <ol className="blog-aside-list">
+              {recommended.map((post, index) => (
+                <li key={post.id}>
+                  <Link href={`${BLOG_BASE}/posts/${post.slug}`}>
+                    <span className="tabular-nums" dir="ltr">
+                      {toPersianDigits(index + 1)}
+                    </span>
+                    {" — "}
+                    {post.title}
                   </Link>
-                </h3>
-                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                  {featured.excerpt}
-                </p>
-                <Button
-                  size="sm"
-                  className="blog-btn blog-btn-primary gap-1.5"
-                  nativeButton={false}
-                  render={
-                    <Link href={`${BLOG_BASE}/posts/${featured.slug}`} />
-                  }
-                >
-                  خواندن مطلب
-                  <ArrowLeftIcon className="size-3.5" data-icon="inline-end" />
-                </Button>
-              </div>
-            </article>
-          </section>
-
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_13.5rem] lg:gap-12">
-            <section aria-labelledby="recent-heading">
-              <div className="mb-1 flex items-baseline justify-between gap-3">
-                <h2
-                  id="recent-heading"
-                  className="text-base font-semibold tracking-tight"
-                >
-                  تازه‌ها
-                </h2>
-                <span className="text-xs text-muted-foreground">
-                  {formatCount(filtered.length)} مطلب
-                </span>
-              </div>
-              <div>
-                {filtered.map((post) => (
-                  <PostListItem key={post.id} post={post} />
-                ))}
-              </div>
-            </section>
-
-            <aside className="space-y-8 lg:sticky lg:top-20 lg:self-start">
-              <section
-                aria-labelledby="recommended-heading"
-                className="space-y-3"
-              >
-                <h2
-                  id="recommended-heading"
-                  className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
-                >
-                  پیشنهاد سردبیر
-                </h2>
-                <ol className="space-y-0.5">
-                  {recommended.map((post, index) => (
-                    <li key={post.id} className="flex h-8 items-center gap-2">
-                      <span className="w-4 shrink-0 text-xs text-muted-foreground/70">
-                        {toPersianDigits(index + 1)}
-                      </span>
-                      <Link
-                        href={`${BLOG_BASE}/posts/${post.slug}`}
-                        className="truncate text-sm font-medium whitespace-nowrap transition-colors hover:text-foreground/75"
-                      >
-                        {post.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-
-              <section aria-labelledby="topics-heading" className="space-y-3">
-                <h2
-                  id="topics-heading"
-                  className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
-                >
-                  موضوع‌ها
-                </h2>
-                <ul className="space-y-0.5">
-                  {categories.map((cat) => {
-                    const count = posts.filter(
-                      (p) => p.categoryId === cat.id
-                    ).length
-                    return (
-                      <li key={cat.id}>
-                        <Link
-                          href={`${BLOG_BASE}/categories/${cat.slug}`}
-                          className="flex h-8 items-center justify-between gap-3 truncate rounded-md px-2 text-sm whitespace-nowrap transition-colors hover:bg-foreground/4"
-                        >
-                          <span className="truncate">{cat.name}</span>
-                          <span className="shrink-0 text-xs text-muted-foreground">
-                            {toPersianDigits(count)}
-                          </span>
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </section>
-
-              <section aria-labelledby="authors-heading" className="space-y-3">
-                <h2
-                  id="authors-heading"
-                  className="text-xs font-medium tracking-[0.14em] text-muted-foreground"
-                >
-                  نویسندگان
-                </h2>
-                <ul className="space-y-0.5">
-                  {authors.map((author) => (
-                    <li
-                      key={author.id}
-                      className="flex h-8 items-center gap-2 truncate px-0.5"
-                    >
-                      <Avatar size="sm" className="size-6 shrink-0">
-                        <AvatarFallback className="bg-muted text-[0.6rem] text-muted-foreground">
-                          {author.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0 truncate">
-                        <p className="truncate text-sm font-medium leading-none">
-                          {author.name}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-
-              <section
-                aria-labelledby="newsletter-heading"
-                className="space-y-2.5 rounded-xl border border-foreground/8 bg-muted/25 p-4"
-              >
-                <h2
-                  id="newsletter-heading"
-                  className="text-sm font-semibold tracking-tight"
-                >
-                  خبرنامهٔ حاشیه
-                </h2>
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  هفته‌ای یک یادداشت کوتاه. در این نمونه فقط نمایشی است.
-                </p>
-                <Button
-                  size="sm"
-                  className="blog-btn blog-btn-primary w-full"
-                  type="button"
-                >
-                  عضویت نمایشی
-                </Button>
-              </section>
-            </aside>
+                  <span>{getCategory(post.categoryId).name}</span>
+                </li>
+              ))}
+            </ol>
           </div>
-        </>
-      )}
-    </div>
+
+          <div className="blog-aside-block">
+            <h2 className="blog-section-label">موضوع‌ها</h2>
+            <ul className="blog-aside-list">
+              {categories.map((cat) => {
+                const count = posts.filter((p) => p.categoryId === cat.id).length
+                return (
+                  <li key={cat.id}>
+                    <Link href={`${BLOG_BASE}/categories/${cat.slug}`}>
+                      {cat.name}
+                    </Link>
+                    <span>{toPersianDigits(count)} مطلب</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+
+          <div className="blog-aside-block">
+            <h2 className="blog-section-label">نویسندگان</h2>
+            <ul className="blog-aside-list">
+              {authors.map((author) => (
+                <li key={author.id}>
+                  <span className="text-sm font-semibold text-[var(--blog-ink)]">
+                    {author.name}
+                  </span>
+                  <span>{author.role}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="blog-aside-block" data-tone="accent">
+            <h2 className="blog-section-label">خبرنامه</h2>
+            <div className="blog-newsletter">
+              <p>هفته‌ای یک یادداشت کوتاه از حاشیه. در این نمونه فقط نمایشی است.</p>
+              <Button
+                size="sm"
+                className="blog-btn blog-btn-primary w-full"
+                type="button"
+              >
+                عضویت نمایشی
+              </Button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </>
   )
 }

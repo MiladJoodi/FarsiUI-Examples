@@ -60,7 +60,7 @@ export function StoreHeader() {
     <header className="ecom-header">
       <ExampleHeaderChrome
         className="static z-auto border-b-0 bg-transparent backdrop-blur-none"
-        innerClassName="max-w-7xl"
+        innerClassName="max-w-[92rem]"
         start={
           <Link
             href="/examples/ecommerce"

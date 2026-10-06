@@ -8,6 +8,7 @@ import {
 } from "@/lib/mock/settings"
 import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
+import { FarsiUICredit } from "@/components/shared/farsiui-credit"
 
 import "@/styles/settings.css"
 
@@ -33,6 +34,7 @@ export function SettingsShell({ children }: { children: ReactNode }) {
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-7">
         {children}
       </div>
+      <FarsiUICredit />
     </div>
   )
 }

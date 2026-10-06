@@ -23,6 +23,21 @@ import "@/styles/blog.css"
 
 const BLOG_BASE = "/examples/blog"
 
+function FarsiUICredit({ className }: { className?: string }) {
+  return (
+    <a
+      href="https://farsiui.ir"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn("blog-credit", className)}
+      title="ساخته‌شده با FarsiUI"
+    >
+      <span className="blog-credit-prefix">ساخته‌شده با</span>
+      <strong>FarsiUI</strong>
+    </a>
+  )
+}
+
 export function BlogShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -44,26 +59,27 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
     setMenuOpen(false)
   }
 
+  const isHome = pathname === BLOG_BASE && !urlQuery
+
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
+    <div className="blog-page">
       <ExampleHeaderChrome
-        innerClassName="max-w-5xl"
-        className="border-foreground/8"
+        innerClassName="max-w-[68rem]"
+        className="blog-chrome"
         start={
           <Link
             href={BLOG_BASE}
             className="min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <p className="truncate text-sm font-semibold tracking-tight">
-              {blogName}
-            </p>
-            <p className="hidden truncate text-[0.65rem] text-muted-foreground sm:block">
-              {blogTagline}
+            <p className="truncate text-sm font-bold tracking-tight">{blogName}</p>
+            <p className="hidden truncate text-[0.65rem] text-[var(--blog-mute)] sm:block">
+              نشریهٔ طراحی محصول
             </p>
           </Link>
         }
         end={
           <>
+            <FarsiUICredit className="hidden sm:inline-flex" />
             <form
               onSubmit={submitSearch}
               className="hidden min-w-0 max-w-[11rem] flex-1 xl:block xl:max-w-[13rem]"
@@ -146,42 +162,81 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
                 )
               })}
             </nav>
+            <FarsiUICredit />
           </div>
         </SheetContent>
       </Sheet>
 
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="blog-stage">
+        <header
+          className={cn("blog-masthead", !isHome && "blog-masthead-compact")}
+        >
+          <div className="blog-masthead-inner">
+            <div>
+              {isHome ? (
+                <h1 className="blog-mark">{blogName}</h1>
+              ) : (
+                <p className="blog-mark">
+                  <Link href={BLOG_BASE}>{blogName}</Link>
+                </p>
+              )}
+              {isHome ? <p className="blog-deck">{blogTagline}</p> : null}
+            </div>
+            {isHome ? (
+              <div className="blog-issue" aria-label="شماره نشریه">
+                <strong>شمارهٔ ۱۲ · پاییز ۱۴۰۵</strong>
+                <span>یادداشت‌های حاشیهٔ طراحی فارسی</span>
+              </div>
+            ) : null}
+          </div>
+        </header>
+
+        <nav className="blog-topics" aria-label="موضوعات">
+          <Link href={BLOG_BASE} data-active={pathname === BLOG_BASE && !urlQuery}>
+            همه
+          </Link>
+          <span className="blog-topics-sep" aria-hidden />
+          {categories.map((cat, i) => {
+            const href = `${BLOG_BASE}/categories/${cat.slug}`
+            return (
+              <React.Fragment key={cat.id}>
+                {i > 0 ? (
+                  <span className="blog-topics-sep" aria-hidden />
+                ) : null}
+                <Link href={href} data-active={pathname === href}>
+                  {cat.name}
+                </Link>
+              </React.Fragment>
+            )
+          })}
+        </nav>
+
         {children}
       </div>
 
-      <footer className="mt-auto border-t border-foreground/8 bg-muted/20 py-8">
-        <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 sm:flex-row sm:items-start sm:justify-between sm:px-6">
-          <div className="space-y-1.5">
-            <p className="text-sm font-semibold tracking-tight">{blogName}</p>
-            <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
-              {blogTagline}. این صفحه یک نمونهٔ UI است.
+      <footer className="blog-footer">
+        <div className="blog-footer-inner">
+          <div>
+            <p className="blog-footer-brand">{blogName}</p>
+            <p className="blog-footer-note">
+              {blogTagline}. این صفحه یک نمونهٔ UI است و محتوای واقعی منتشر
+              نمی‌کند.
             </p>
           </div>
-          <nav
-            aria-label="پاورقی"
-            className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground"
-          >
-            <Link
-              href={BLOG_BASE}
-              className="transition-colors hover:text-foreground"
-            >
-              صفحهٔ اصلی
-            </Link>
+          <nav aria-label="پاورقی" className="blog-footer-nav">
+            <Link href={BLOG_BASE}>صفحهٔ اصلی</Link>
             {categories.map((cat) => (
               <Link
                 key={cat.id}
                 href={`${BLOG_BASE}/categories/${cat.slug}`}
-                className="transition-colors hover:text-foreground"
               >
                 {cat.name}
               </Link>
             ))}
           </nav>
+        </div>
+        <div className="blog-footer-credit-row sm:hidden">
+          <FarsiUICredit />
         </div>
       </footer>
     </div>

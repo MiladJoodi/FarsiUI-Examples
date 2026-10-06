@@ -5,8 +5,7 @@ import * as React from "react"
 import { toast } from "sonner"
 
 import { formatToman } from "@/lib/format"
-import { formatPersianNumber } from "@/lib/digits"
-import { toPersianDigits } from "@/lib/digits"
+import { formatPersianNumber, toPersianDigits } from "@/lib/digits"
 import {
   comparisonGroups,
   effectiveMonthly,
@@ -27,15 +26,18 @@ import {
 import { cn } from "@/lib/utils"
 
 function showPricingToast(title: string, description: string) {
-  toast.custom(() => (
-    <div className="pricing-toast" role="status">
-      <span className="pricing-toast-mark" aria-hidden />
-      <div>
-        <p className="pricing-toast-title">{title}</p>
-        <p className="pricing-toast-desc">{description}</p>
+  toast.custom(
+    () => (
+      <div className="pricing-toast" role="status">
+        <span className="pricing-toast-mark" aria-hidden />
+        <div>
+          <p className="pricing-toast-title">{title}</p>
+          <p className="pricing-toast-desc">{description}</p>
+        </div>
       </div>
-    </div>
-  ), { duration: 4200 })
+    ),
+    { duration: 4200 }
+  )
 }
 
 export function PricingView() {
@@ -52,56 +54,26 @@ export function PricingView() {
   }
 
   return (
-    <div>
+    <div className="pricing-stage">
       <header className="pricing-hero">
-        <div>
-          <p className="pricing-kicker">قیمت‌گذاری · تومان</p>
+        <div className="pricing-hero-copy">
+          <p className="pricing-kicker">تعرفه · تومان</p>
           <h1 className="pricing-title">
-            تعرفهٔ شفاف برای <em>تیم‌هایی که می‌سازند</em>
+            پلن مناسب تیم‌تان را
+            <span className="pricing-title-mark"> با اطمینان </span>
+            انتخاب کنید
           </h1>
           <p className="pricing-lead">
-            سه پلهٔ رشد — از آزمایش شخصی تا سازمان. ماهانه یا سالانه را جابه‌جا
-            کنید و ببینید هر پلن دقیقاً چه چیزی می‌دهد.
+            سه پلهٔ رشد شفاف — از آزمایش شخصی تا سازمان. دوره را عوض کنید و
+            ببینید هر پلن دقیقاً چه چیزی می‌دهد.
           </p>
-
-          <div className="pricing-ladder" aria-hidden={false}>
-            <p className="pricing-ladder-label">نردبان تعرفه</p>
-            <div
-              className="pricing-ladder-track"
-              role="group"
-              aria-label="انتخاب سریع پلن"
-            >
-              {pricingPlans.map((plan) => (
-                <button
-                  key={plan.id}
-                  type="button"
-                  className="pricing-ladder-step"
-                  data-active={selected === plan.id ? "true" : "false"}
-                  aria-label={plan.name}
-                  aria-pressed={selected === plan.id}
-                  onClick={() => {
-                    setSelected(plan.id)
-                    document
-                      .getElementById("plans")
-                      ?.scrollIntoView({ behavior: "smooth", block: "start" })
-                  }}
-                />
-              ))}
-            </div>
-            <div className="pricing-ladder-cap">
-              {pricingPlans.map((plan) => (
-                <span key={plan.id}>{plan.name}</span>
-              ))}
-            </div>
-          </div>
         </div>
 
-        <div className="pricing-bill">
+        <aside className="pricing-bill" aria-label="دورهٔ صورتحساب">
           <div
             className="pricing-bill-switch"
             data-period={period}
             role="group"
-            aria-label="دورهٔ صورتحساب"
           >
             <span className="pricing-bill-thumb" aria-hidden />
             <button
@@ -124,16 +96,16 @@ export function PricingView() {
           </div>
           <p className="pricing-bill-note">
             {period === "yearly"
-              ? "صورتحساب یک‌جا برای دوازده ماه؛ حدود ۲۰٪ کمتر."
+              ? "صورتحساب سالانه — حدود ۲۰٪ کمتر از پرداخت ماهانه."
               : "هر زمان می‌توانید به سالانه تغییر دهید."}
           </p>
-        </div>
+        </aside>
       </header>
 
-      <section id="plans" className="scroll-mt-20">
-        <div className="pricing-rail" role="list">
+      <section id="plans" className="pricing-plans scroll-mt-24">
+        <div className="pricing-gallery" role="list">
           {pricingPlans.map((plan, index) => (
-            <PlanBand
+            <PlanCard
               key={plan.id}
               plan={plan}
               index={index}
@@ -145,33 +117,34 @@ export function PricingView() {
         </div>
       </section>
 
-      <section id="compare" className="pricing-section scroll-mt-20">
+      <section id="compare" className="pricing-section scroll-mt-24">
         <div className="pricing-section-head">
           <div>
+            <p className="pricing-kicker">مقایسه</p>
             <h2>ماتریس امکانات</h2>
-            <p>روی ستون پلن بزنید تا همان‌جا انتخاب شود.</p>
+            <p>روی نام پلن بزنید تا همان‌جا انتخاب شود.</p>
           </div>
         </div>
         <ComparisonMatrix selected={selected} onSelect={setSelected} />
       </section>
 
-      <section id="faq" className="pricing-section scroll-mt-20">
+      <section id="faq" className="pricing-section scroll-mt-24">
         <div className="pricing-faq">
-          <div>
+          <div className="pricing-faq-intro">
             <p className="pricing-kicker">پشتیبانی</p>
-            <h2 className="mt-2 text-[1.15rem] font-bold tracking-tight">
-              پرسش‌های پرتکرار
-            </h2>
-            <p className="mt-2 max-w-xs text-[0.8rem] leading-relaxed text-[color-mix(in_oklch,var(--foreground)_55%,transparent)]">
-              صورتحساب، تغییر پلن و محدودیت‌ها — کوتاه و روشن.
-            </p>
+            <h2>پرسش‌های پرتکرار</h2>
+            <p>صورتحساب، تغییر پلن و محدودیت‌ها — کوتاه و روشن.</p>
           </div>
 
           <div className="pricing-faq-list">
             {pricingFaqs.map((item, index) => {
               const open = openFaq === index
               return (
-                <div key={item.q} className="pricing-faq-item">
+                <div
+                  key={item.q}
+                  className="pricing-faq-item"
+                  data-open={open ? "true" : "false"}
+                >
                   <button
                     type="button"
                     className="pricing-faq-trigger"
@@ -199,7 +172,7 @@ export function PricingView() {
       </section>
 
       <section className="pricing-close">
-        <div>
+        <div className="pricing-close-copy">
           <h2>پلن را انتخاب کنید و جلو بروید</h2>
           <p>
             پیشنهاد ما پلن تیم است — یا از رایگان شروع کنید. همهٔ دکمه‌ها در این
@@ -247,7 +220,7 @@ export function PricingView() {
   )
 }
 
-function PlanBand({
+function PlanCard({
   plan,
   index,
   period,
@@ -268,61 +241,63 @@ function PlanBand({
   return (
     <article
       role="listitem"
-      className="pricing-band"
+      className="pricing-card"
       data-featured={plan.featured ? "true" : "false"}
       data-selected={selected ? "true" : "false"}
-      data-index={ordinal}
-      style={{ ["--band-i" as string]: index }}
+      style={{ ["--card-i" as string]: index }}
     >
-      <div className="pricing-band-meta">
-        <div className="pricing-band-name">
-          {plan.name}
+      <div className="pricing-card-top">
+        <span className="pricing-card-index" aria-hidden>
+          {ordinal}
+        </span>
+        <div className="pricing-card-name-row">
+          <h3 className="pricing-card-name">{plan.name}</h3>
           {plan.featured ? (
-            <span className="pricing-band-badge">پیشنهادی</span>
+            <span className="pricing-card-badge">پیشنهادی</span>
           ) : null}
         </div>
-        <p className="pricing-band-desc">{plan.description}</p>
+        <p className="pricing-card-desc">{plan.description}</p>
       </div>
 
-      <div className="min-w-0 space-y-3">
-        <div className="pricing-band-price">
-          {isFree ? (
-            <span className="pricing-band-amount">رایگان</span>
-          ) : (
-            <>
-              <span className="pricing-band-amount">
-                {formatPersianNumber(monthly)}
-              </span>
-              <span className="pricing-band-unit">تومان / ماه</span>
-            </>
-          )}
-          {!isFree && period === "yearly" && savings > 0 ? (
-            <span className="pricing-band-saving">
-              سالانه {formatToman(savings)} صرفه‌جویی نسبت به ماهانه
+      <div className="pricing-card-price">
+        {isFree ? (
+          <span className="pricing-card-amount">رایگان</span>
+        ) : (
+          <>
+            <span className="pricing-card-amount">
+              {formatPersianNumber(monthly)}
             </span>
-          ) : null}
-          {!isFree && period === "yearly" ? (
-            <span className="pricing-band-unit w-full">
-              صورتحساب سالانه: {formatToman(plan.yearlyPrice)}
-            </span>
-          ) : null}
-        </div>
-
-        <ul className="pricing-chips">
-          {plan.features.map((f) => (
-            <li key={f} className="pricing-chip">
-              {f}
-            </li>
-          ))}
-          {plan.limits.map((l) => (
-            <li key={l} className="pricing-chip pricing-chip-mute">
-              {l}
-            </li>
-          ))}
-        </ul>
+            <span className="pricing-card-unit">تومان / ماه</span>
+          </>
+        )}
+        {!isFree && period === "yearly" && savings > 0 ? (
+          <span className="pricing-card-saving">
+            سالانه {formatToman(savings)} صرفه‌جویی
+          </span>
+        ) : null}
+        {!isFree && period === "yearly" ? (
+          <span className="pricing-card-bill">
+            صورتحساب: {formatToman(plan.yearlyPrice)}
+          </span>
+        ) : null}
       </div>
 
-      <div className="pricing-band-actions">
+      <ul className="pricing-card-features">
+        {plan.features.map((f) => (
+          <li key={f}>
+            <CheckIcon className="pricing-card-check" aria-hidden />
+            <span>{f}</span>
+          </li>
+        ))}
+        {plan.limits.map((l) => (
+          <li key={l} className="is-limit">
+            <XIcon className="pricing-card-x" aria-hidden />
+            <span>{l}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="pricing-card-actions">
         <Button
           className={cn(
             "pricing-btn w-full",
@@ -342,14 +317,10 @@ function PlanBand({
 
 function renderValue(value: FeatureValue) {
   if (value === true) {
-    return (
-      <CheckIcon className="pricing-ok size-4" aria-label="دارد" />
-    )
+    return <CheckIcon className="pricing-ok size-4" aria-label="دارد" />
   }
   if (value === false) {
-    return (
-      <XIcon className="pricing-no size-3.5" aria-label="ندارد" />
-    )
+    return <XIcon className="pricing-no size-3.5" aria-label="ندارد" />
   }
   return <span>{value}</span>
 }
@@ -373,13 +344,17 @@ function ComparisonMatrix({
                   key={plan.id}
                   scope="col"
                   data-active={selected === plan.id ? "true" : "false"}
+                  data-featured={plan.featured ? "true" : "false"}
                 >
                   <button
                     type="button"
-                    className="font-semibold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                    className="pricing-matrix-plan"
                     onClick={() => onSelect(plan.id)}
                   >
                     {plan.name}
+                    {plan.featured ? (
+                      <span className="pricing-matrix-dot" aria-hidden />
+                    ) : null}
                   </button>
                 </th>
               ))}
@@ -393,8 +368,8 @@ function ComparisonMatrix({
                 </tr>
                 {group.features.map((feature) => (
                   <tr key={feature.id}>
-                    <th scope="row" className="font-medium">
-                      <span className="inline-flex items-center gap-1.5">
+                    <th scope="row">
+                      <span className="pricing-matrix-feat">
                         {feature.name}
                         {feature.hint ? (
                           <Tooltip>
@@ -402,7 +377,7 @@ function ComparisonMatrix({
                               render={
                                 <button
                                   type="button"
-                                  className="inline-flex text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                  className="pricing-matrix-hint"
                                   aria-label={`راهنما: ${feature.name}`}
                                 >
                                   <InfoIcon className="size-3.5" />

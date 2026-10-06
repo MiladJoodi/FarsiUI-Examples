@@ -11,6 +11,7 @@ import { formatPersianNumber, toPersianDigits } from "@/lib/digits"
 import {
   categoryLabels,
   getDiscountPercent,
+  swatchForColor,
   type Product,
 } from "@/lib/mock/ecommerce"
 import { useCart } from "@/components/ecommerce/cart-context"
@@ -59,7 +60,7 @@ export function ProductDetailView({ product }: { product: Product }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="ecom-detail space-y-6">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -87,20 +88,19 @@ export function ProductDetailView({ product }: { product: Product }) {
       </Breadcrumb>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <div className="space-y-3">
+        <div className="ecom-detail-gallery space-y-3">
           <ProductThumb
             product={product}
-            className="aspect-4/3 rounded-xl border border-border/70 sm:aspect-square"
+            className="ecom-detail-media aspect-4/3 sm:aspect-square"
           />
-          <div className="grid grid-cols-4 gap-2">
+          <div className="ecom-detail-thumbs grid grid-cols-4 gap-2">
             {[0, 1, 2, 3].map((i) => (
               <ProductWireframeMedia
                 key={i}
-                accent={product.accent}
                 category={product.category}
                 className={cn(
-                  "aspect-square overflow-hidden rounded-lg border border-border/70",
-                  i === 0 && "ring-2 ring-primary/40 ring-offset-2"
+                  "aspect-square overflow-hidden",
+                  i === 0 && "ecom-thumb-active"
                 )}
               />
             ))}
@@ -120,7 +120,7 @@ export function ProductDetailView({ product }: { product: Product }) {
             </p>
           </div>
 
-          <dl className="grid grid-cols-3 divide-x divide-x-reverse overflow-hidden rounded-xl border bg-muted/20 text-center text-xs">
+          <dl className="ecom-detail-stats grid grid-cols-3 divide-x divide-x-reverse overflow-hidden text-center text-xs">
             <div className="px-2 py-3">
               <dt className="sr-only">امتیاز</dt>
               <dd className="flex items-center justify-center gap-1 text-sm font-semibold tracking-normal text-foreground">
@@ -147,18 +147,20 @@ export function ProductDetailView({ product }: { product: Product }) {
             </div>
           </dl>
 
-          <div className="rounded-xl border bg-card p-4 shadow-xs">
+          <div className="ecom-detail-price rounded-xl border p-4">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="text-2xl font-semibold tracking-normal whitespace-nowrap">
+              <span className="ecom-num text-2xl font-semibold tracking-normal whitespace-nowrap">
                 {formatToman(product.price)}
               </span>
               {product.compareAtPrice ? (
-                <span className="text-sm tracking-normal text-muted-foreground line-through whitespace-nowrap">
+                <span className="ecom-num text-sm tracking-normal text-muted-foreground line-through whitespace-nowrap">
                   {formatToman(product.compareAtPrice)}
                 </span>
               ) : null}
               {discount > 0 ? (
-                <Badge className="tracking-normal">{formatPercent(discount)}</Badge>
+                <Badge className="tracking-normal">
+                  {formatPercent(discount)}
+                </Badge>
               ) : null}
             </div>
             {!outOfStock ? (
@@ -169,27 +171,49 @@ export function ProductDetailView({ product }: { product: Product }) {
           </div>
 
           {product.colors?.length ? (
-            <div className="space-y-2">
-              <p className="text-sm font-medium">رنگ: {color}</p>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((c) => (
-                  <Button
-                    key={c}
-                    type="button"
-                    size="sm"
-                    variant={color === c ? "default" : "outline"}
-                    onClick={() => setColor(c)}
-                  >
-                    {c}
-                  </Button>
-                ))}
+            <div className="ecom-color-field space-y-2.5">
+              <p className="text-sm font-medium">
+                رنگ: <span className="text-muted-foreground">{color}</span>
+              </p>
+              <div
+                className="ecom-color-swatches"
+                role="radiogroup"
+                aria-label="انتخاب رنگ"
+              >
+                {product.colors.map((c) => {
+                  const selected = color === c
+                  const swatch = swatchForColor(c)
+                  const light = ["سفید", "کرم", "سفید مات", "خاکستری روشن"].includes(
+                    c
+                  )
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      aria-label={c}
+                      title={c}
+                      className={cn(
+                        "ecom-color-swatch",
+                        selected && "is-selected",
+                        light && "is-light"
+                      )}
+                      style={{ "--ecom-swatch": swatch } as React.CSSProperties}
+                      onClick={() => setColor(c)}
+                    >
+                      <span className="ecom-color-dot" aria-hidden />
+                      <span className="ecom-color-name">{c}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           ) : null}
 
           <div className="flex flex-wrap items-center gap-3">
             <div
-              className="inline-flex items-center rounded-lg border"
+              className="ecom-qty inline-flex items-center"
               role="group"
               aria-label="تعداد"
             >
@@ -203,7 +227,7 @@ export function ProductDetailView({ product }: { product: Product }) {
               >
                 <MinusIcon className="size-4" />
               </Button>
-              <span className="min-w-8 text-center text-sm tracking-normal">
+              <span className="ecom-num min-w-8 text-center text-sm tracking-normal">
                 {toPersianDigits(qty)}
               </span>
               <Button
@@ -219,7 +243,7 @@ export function ProductDetailView({ product }: { product: Product }) {
             </div>
 
             <Button
-              className="min-w-40 flex-1 sm:flex-none"
+              className="ecom-add-btn min-w-40 flex-1 sm:flex-none"
               disabled={outOfStock}
               onClick={handleAdd}
             >
@@ -229,23 +253,26 @@ export function ProductDetailView({ product }: { product: Product }) {
 
           <Separator />
 
-          <Tabs defaultValue="desc">
-            <TabsList className="w-full justify-start">
-              <TabsTrigger value="desc">توضیحات</TabsTrigger>
-              <TabsTrigger value="specs">مشخصات</TabsTrigger>
+          <Tabs defaultValue="desc" className="ecom-detail-tabs">
+            <TabsList variant="line" className="ecom-tabs-list w-full justify-start">
+              <TabsTrigger value="desc" className="ecom-tabs-trigger">
+                توضیحات
+              </TabsTrigger>
+              <TabsTrigger value="specs" className="ecom-tabs-trigger">
+                مشخصات
+              </TabsTrigger>
             </TabsList>
-            <TabsContent value="desc" className="pt-3 text-sm leading-relaxed text-muted-foreground">
-              {product.description}
+            <TabsContent value="desc" className="ecom-tabs-panel">
+              {product.description.split("\n").map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
             </TabsContent>
-            <TabsContent value="specs" className="pt-3">
-              <dl className="space-y-2">
+            <TabsContent value="specs" className="ecom-tabs-panel">
+              <dl className="ecom-specs">
                 {product.specs.map((spec) => (
-                  <div
-                    key={spec.label}
-                    className="flex justify-between gap-4 border-b border-dashed py-2 text-sm last:border-0"
-                  >
-                    <dt className="text-muted-foreground">{spec.label}</dt>
-                    <dd className="text-end font-medium">{spec.value}</dd>
+                  <div key={spec.label} className="ecom-spec-row">
+                    <dt>{spec.label}</dt>
+                    <dd>{spec.value}</dd>
                   </div>
                 ))}
               </dl>

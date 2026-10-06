@@ -38,15 +38,15 @@ export const EXAMPLES: ExampleMeta[] = [
     id: "calendar",
     title: "تقویم",
     description:
-      "رویدادها، نماهای تقویم شمسی، زمان‌بندی و جزئیات قرارها.",
+      "ساعت، تقویم شمسی، مناسبت‌ها، اوقات شرعی و تبدیل تاریخ.",
     href: "/examples/calendar",
     status: "ready",
   },
   {
     id: "team-chat",
-    title: "گفتگوی تیمی",
+    title: "هم‌صدا",
     description:
-      "گفت‌وگوی تیمی، کانال‌ها، پیام‌ها و پیوست‌ها در رابط RTL.",
+      "گفتگوی تیمی شبیه تلگرام: پوشه، لیست و حباب پیام RTL.",
     href: "/examples/team-chat",
     status: "ready",
   },
@@ -104,13 +104,6 @@ export const EXAMPLES: ExampleMeta[] = [
     description:
       "جدول قیمت‌گذاری، پلن‌ها، مقایسه ویژگی‌ها و انتخاب اشتراک.",
     href: "/examples/pricing",
-    status: "ready",
-  },
-  {
-    id: "contact",
-    title: "تماس با ما",
-    description: "فرم تماس ساده با حاشیهٔ نازک برای پیام و درخواست.",
-    href: "/examples/contact",
     status: "ready",
   },
 ]

@@ -3,31 +3,36 @@
 import type { ReactNode } from "react"
 
 import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
+import { useDesignSystemPreview } from "@/components/design-system/design-system-preview"
 import { ModeToggle } from "@/components/layout/mode-toggle"
+import { FarsiUICredit } from "@/components/shared/farsiui-credit"
 
 import "@/styles/calendar.css"
 
 export function CalendarShell({ children }: { children: ReactNode }) {
+  const { designSystemId } = useDesignSystemPreview()
+
   return (
-    <div className="calendar-page">
+    <div className="calendar-page" data-ds={designSystemId}>
       <ExampleHeaderChrome
         className="calendar-header"
-        innerClassName="max-w-[92rem]"
+        innerClassName="max-w-6xl"
         start={
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold tracking-tight">
+            <p className="truncate text-[0.95rem] font-semibold tracking-tight">
               روزنگار
             </p>
-            <p className="hidden truncate text-[0.65rem] text-muted-foreground sm:block">
-              تقویم شمسی · جلسات و قرارها
+            <p className="hidden truncate text-[0.68rem] text-muted-foreground sm:block">
+              ساعت ایران · تقویم شمسی · مناسبت‌ها
             </p>
           </div>
         }
         end={<ModeToggle />}
       />
-      <div className="mx-auto w-full max-w-[92rem] flex-1 px-3 py-4 sm:px-5 sm:py-5 lg:px-6">
+      <div className="rz-page-body mx-auto w-full max-w-6xl flex-1 px-3 py-4 sm:px-6 sm:py-7">
         {children}
       </div>
+      <FarsiUICredit />
     </div>
   )
 }

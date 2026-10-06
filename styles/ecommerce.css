@@ -1,41 +1,204 @@
-/* Ecommerce — اتلیه نورا (editorial lookbook market) */
+/* Ecommerce — اتلیه نورا؛ رنگ‌ها از دیزاین‌سیستم فعال (پیشفرض = خاکی گرم) */
 
 .ecom-page {
-  --ecom-ink: #12151c;
-  --ecom-mute: color-mix(in oklch, #12151c 58%, transparent);
-  --ecom-line: color-mix(in oklch, #12151c 12%, transparent);
-  --ecom-line-strong: color-mix(in oklch, #12151c 22%, transparent);
-  --ecom-panel: #ffffff;
-  --ecom-soft: #f3f5f7;
-  --ecom-accent: #0c5c63;
-  --ecom-accent-hot: #d7263d;
-  --ecom-mark: #f2c94c;
-  --ecom-radius: 0.35rem;
+  --ecom-ink: var(--foreground);
+  --ecom-mute: var(--muted-foreground);
+  --ecom-line: var(--border);
+  --ecom-line-strong: color-mix(in oklch, var(--foreground) 22%, var(--border));
+  --ecom-panel: var(--card);
+  --ecom-soft: var(--muted);
+  --ecom-paper: var(--background);
+  --ecom-accent: var(--primary);
+  --ecom-accent-deep: color-mix(in oklch, var(--primary) 82%, black);
+  --ecom-accent-hot: var(--destructive);
+  --ecom-mark: color-mix(in oklch, var(--primary) 45%, var(--foreground));
+  --ecom-radius: var(--radius);
   --ecom-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ecom-header-offset: 9.25rem;
+  --ecom-cat-electronics: color-mix(in oklch, var(--primary) 55%, #2a3a3c);
+  --ecom-cat-apparel: color-mix(in oklch, var(--primary) 70%, #5a3a30);
+  --ecom-cat-home: color-mix(in oklch, var(--muted-foreground) 55%, var(--primary));
+  --ecom-cat-beauty: color-mix(in oklch, var(--destructive) 45%, var(--primary));
   position: relative;
   min-height: 100dvh;
   color: var(--ecom-ink);
   background:
-    radial-gradient(ellipse 70% 40% at 100% 0%, color-mix(in oklch, var(--ecom-accent) 10%, transparent), transparent 55%),
-    radial-gradient(ellipse 50% 35% at 0% 20%, color-mix(in oklch, var(--ecom-mark) 14%, transparent), transparent 50%),
-    linear-gradient(180deg, #e9edf1 0%, #f4f6f8 40%, #eef1f4 100%) !important;
+    radial-gradient(
+      ellipse 65% 38% at 100% 0%,
+      color-mix(in oklch, var(--ecom-accent) 12%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--background) 88%, var(--muted)) 0%,
+      var(--background) 42%,
+      color-mix(in oklch, var(--background) 94%, var(--muted)) 100%
+    ) !important;
   overflow-x: clip;
 }
 
 .dark .ecom-page {
-  --ecom-ink: #eef2f6;
-  --ecom-mute: color-mix(in oklch, #eef2f6 55%, transparent);
-  --ecom-line: color-mix(in oklch, #eef2f6 14%, transparent);
-  --ecom-line-strong: color-mix(in oklch, #eef2f6 24%, transparent);
-  --ecom-panel: #141820;
-  --ecom-soft: #1a2029;
-  --ecom-accent: #3db8c2;
-  --ecom-accent-hot: #ff5a6e;
-  --ecom-mark: #f2c94c;
+  --ecom-accent-deep: color-mix(in oklch, var(--primary) 78%, white);
+  --ecom-mark: color-mix(in oklch, var(--primary) 50%, white);
   background:
-    radial-gradient(ellipse 70% 40% at 100% 0%, color-mix(in oklch, var(--ecom-accent) 14%, transparent), transparent 55%),
-    radial-gradient(ellipse 50% 35% at 0% 18%, color-mix(in oklch, var(--ecom-mark) 10%, transparent), transparent 50%),
-    linear-gradient(180deg, #0b0e13 0%, #12161e 45%, #0e1218 100%) !important;
+    radial-gradient(
+      ellipse 65% 38% at 100% 0%,
+      color-mix(in oklch, var(--ecom-accent) 14%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--background) 92%, black) 0%,
+      var(--background) 48%,
+      color-mix(in oklch, var(--background) 88%, black) 100%
+    ) !important;
+}
+
+/* پیشفرض — هویت خاکی گرم اتلیه */
+.style-nova .ecom-page,
+.ecom-page[data-ds="default"] {
+  --ecom-ink: #1a1614;
+  --ecom-mute: color-mix(in oklch, #1a1614 55%, transparent);
+  --ecom-line: color-mix(in oklch, #1a1614 11%, transparent);
+  --ecom-line-strong: color-mix(in oklch, #1a1614 20%, transparent);
+  --ecom-panel: #fffcf8;
+  --ecom-soft: #f3ebe3;
+  --ecom-paper: #efe6dc;
+  --ecom-accent: #8b5340;
+  --ecom-accent-deep: #6a3d30;
+  --ecom-accent-hot: #b8322e;
+  --ecom-mark: #c4a06a;
+  --ecom-radius: 0.4rem;
+  --ecom-cat-electronics: #3d5a5b;
+  --ecom-cat-apparel: #8b5340;
+  --ecom-cat-home: #6b6458;
+  --ecom-cat-beauty: #9a5a58;
+  background:
+    radial-gradient(
+      ellipse 65% 38% at 100% 0%,
+      color-mix(in oklch, #8b5340 12%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(180deg, #ebe2d7 0%, #f5efe8 42%, #efe7dd 100%) !important;
+}
+
+.dark .style-nova .ecom-page,
+html.dark.style-nova .ecom-page,
+.dark .ecom-page[data-ds="default"] {
+  --ecom-ink: #f6efe8;
+  --ecom-mute: color-mix(in oklch, #f6efe8 48%, transparent);
+  --ecom-line: color-mix(in oklch, #e8c4a8 14%, #2a221c);
+  --ecom-line-strong: color-mix(in oklch, #e8c4a8 22%, #3a3028);
+  --ecom-panel: #1c1612;
+  --ecom-soft: #241c17;
+  --ecom-paper: #0e0b09;
+  --ecom-accent: #e0a888;
+  --ecom-accent-deep: #f0c0a0;
+  --ecom-accent-hot: #ff8a7a;
+  --ecom-mark: #e0c090;
+  --ecom-cat-electronics: #7a9a9c;
+  --ecom-cat-apparel: #e0a888;
+  --ecom-cat-home: #b0a898;
+  --ecom-cat-beauty: #d49a96;
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 92% -5%,
+      rgb(180 100 60 / 22%) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse 55% 40% at 8% 15%,
+      rgb(120 70 40 / 12%) 0%,
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse 40% 30% at 50% 100%,
+      rgb(80 50 30 / 16%) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      #14100d 0%,
+      #0f0c0a 38%,
+      #0b0908 100%
+    ) !important;
+}
+
+.dark .style-nova .ecom-page::before,
+html.dark.style-nova .ecom-page::before,
+.dark .ecom-page[data-ds="default"]::before {
+  opacity: 0.12;
+}
+
+.dark .style-nova .ecom-page .ecom-header,
+html.dark.style-nova .ecom-page .ecom-header,
+.dark .ecom-page[data-ds="default"] .ecom-header {
+  background: color-mix(in oklch, #1c1612 82%, transparent) !important;
+  border-bottom-color: color-mix(in oklch, #e8c4a8 12%, #2a221c) !important;
+}
+
+.dark .style-nova .ecom-page .ecom-filters,
+.dark .style-nova .ecom-page .ecom-card,
+.dark .style-nova .ecom-page .ecom-banner,
+html.dark.style-nova .ecom-page .ecom-filters,
+html.dark.style-nova .ecom-page .ecom-card,
+.dark .ecom-page[data-ds="default"] .ecom-filters,
+.dark .ecom-page[data-ds="default"] .ecom-card {
+  border-color: color-mix(in oklch, #e8c4a8 12%, #2a221c);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, #e0a888 6%, transparent),
+    0 16px 40px rgb(0 0 0 / 35%);
+}
+
+.dark .style-nova .ecom-page .ecom-card:hover,
+html.dark.style-nova .ecom-page .ecom-card:hover,
+.dark .ecom-page[data-ds="default"] .ecom-card:hover {
+  border-color: color-mix(in oklch, #e0a888 28%, #3a3028);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, #e0a888 12%, transparent),
+    0 22px 48px rgb(0 0 0 / 45%);
+}
+
+.dark .style-nova .ecom-page .ecom-search-wrap [data-slot="input"],
+.dark .style-nova .ecom-page .ecom-search-wrap input,
+html.dark.style-nova .ecom-page .ecom-search-wrap [data-slot="input"],
+.dark .ecom-page[data-ds="default"] .ecom-search-wrap input {
+  background: #1c1612 !important;
+  border-color: color-mix(in oklch, #e8c4a8 16%, #2a221c) !important;
+}
+
+/* Shape reactions — دیزاین‌سیستم‌های دیگر */
+.style-vega .ecom-page {
+  --ecom-radius: calc(var(--radius) + 0.15rem);
+}
+
+.style-glass .ecom-page {
+  --ecom-radius: calc(var(--radius) + 0.12rem);
+}
+
+.style-glass .ecom-page .ecom-header,
+.style-glass .ecom-page .ecom-filters,
+.style-glass .ecom-page .ecom-card,
+.style-glass .ecom-page .ecom-banner {
+  backdrop-filter: blur(14px) saturate(1.08);
+}
+
+.style-rose .ecom-page {
+  --ecom-radius: calc(var(--radius) + 0.2rem);
+}
+
+.style-nili .ecom-page {
+  --ecom-radius: 0.3rem;
+}
+
+.style-khesht .ecom-page {
+  --ecom-radius: 0.2rem;
+}
+
+.style-khesht .ecom-page .ecom-card-cta,
+.style-khesht .ecom-page .ecom-brand-mark,
+.style-khesht .ecom-page .ecom-credit {
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--ecom-accent) 40%, black);
 }
 
 .ecom-page::before {
@@ -44,13 +207,13 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  opacity: 0.35;
+  opacity: 0.22;
   background-image: repeating-linear-gradient(
     -18deg,
     transparent,
-    transparent 11px,
-    color-mix(in oklch, var(--ecom-ink) 4%, transparent) 11px,
-    color-mix(in oklch, var(--ecom-ink) 4%, transparent) 12px
+    transparent 12px,
+    color-mix(in oklch, var(--ecom-ink) 3.5%, transparent) 12px,
+    color-mix(in oklch, var(--ecom-ink) 3.5%, transparent) 13px
   );
 }
 
@@ -125,7 +288,7 @@
 .ecom-search-wrap {
   margin-inline: auto;
   width: 100%;
-  max-width: 80rem;
+  max-width: 92rem;
   padding: 0 1rem 0.85rem;
 }
 
@@ -210,7 +373,7 @@
 .ecom-body {
   margin-inline: auto;
   width: 100%;
-  max-width: 80rem;
+  max-width: 92rem;
   flex: 1;
   padding: 1.25rem 1rem 2.5rem;
 }
@@ -221,137 +384,409 @@
   }
 }
 
-/* Hero strip */
-.ecom-hero {
-  position: relative;
-  display: grid;
+.ecom-catalog {
+  display: flex;
+  flex-direction: column;
   gap: 1.25rem;
-  overflow: hidden;
-  border: 1px solid var(--ecom-line);
-  border-radius: 1.15rem;
-  background:
-    linear-gradient(
-      125deg,
-      color-mix(in oklch, var(--ecom-accent) 88%, #000) 0%,
-      color-mix(in oklch, var(--ecom-accent) 55%, #0a2e33) 48%,
-      color-mix(in oklch, var(--ecom-ink) 90%, #000) 100%
-    );
-  color: #f5fafb;
-  padding: 1.35rem 1.25rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 24px 48px color-mix(in oklch, var(--ecom-accent) 18%, transparent);
 }
 
-@media (min-width: 900px) {
-  .ecom-hero {
-    grid-template-columns: 1.2fr 0.8fr;
-    align-items: center;
-    padding: 1.75rem 1.75rem;
-    min-height: 13.5rem;
+/* Banner slider — editorial compositions */
+.ecom-banner {
+  position: relative;
+  border: 1px solid var(--ecom-line);
+  border-radius: 1.15rem;
+  overflow: hidden;
+  background: var(--ecom-soft);
+  box-shadow: 0 16px 40px color-mix(in oklch, var(--ecom-ink) 6%, transparent);
+}
+
+.ecom-banner-carousel {
+  width: 100%;
+}
+
+.ecom-banner-slide {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 12.5rem;
+  overflow: hidden;
+  padding: 1.25rem 1.15rem 1.35rem;
+  color: #f7f1ea;
+}
+
+@media (min-width: 720px) {
+  .ecom-banner-slide {
+    grid-template-columns: minmax(0, 1.15fr) minmax(10rem, 0.85fr);
+    gap: 1rem;
+    min-height: 14.5rem;
+    padding: 1.6rem 1.75rem 1.7rem;
   }
 }
 
-.ecom-hero::before {
-  content: "";
-  position: absolute;
-  inset-inline-end: -8%;
-  top: -30%;
-  width: 16rem;
-  height: 16rem;
-  border-radius: 999px;
-  background: color-mix(in oklch, var(--ecom-mark) 35%, transparent);
-  filter: blur(28px);
-  pointer-events: none;
+.ecom-banner-slide[data-tone="warm"] {
+  background:
+    radial-gradient(ellipse 55% 70% at 85% 20%, color-mix(in oklch, var(--ecom-mark) 35%, transparent), transparent 55%),
+    linear-gradient(
+      125deg,
+      color-mix(in oklch, var(--ecom-accent) 88%, #1a100c) 0%,
+      color-mix(in oklch, var(--ecom-accent-deep) 70%, #120e0c) 55%,
+      #171210 100%
+    );
 }
 
-.ecom-hero-kicker {
+.ecom-banner-slide[data-tone="cool"] {
+  background:
+    radial-gradient(ellipse 50% 60% at 90% 80%, color-mix(in oklch, #6a8a8c 40%, transparent), transparent 55%),
+    linear-gradient(
+      135deg,
+      #2a3a3c 0%,
+      color-mix(in oklch, var(--ecom-cat-electronics, #3d5a5b) 75%, #1a2224) 50%,
+      #12181a 100%
+    );
+}
+
+.ecom-banner-slide[data-tone="clay"] {
+  background:
+    radial-gradient(ellipse 55% 55% at 78% 30%, color-mix(in oklch, #c4a06a 28%, transparent), transparent 50%),
+    linear-gradient(
+      140deg,
+      #5a4638 0%,
+      color-mix(in oklch, var(--ecom-cat-home, #6b6458) 80%, #2a221c) 52%,
+      #1a1512 100%
+    );
+}
+
+.ecom-banner-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 28rem;
+}
+
+.ecom-banner-kicker {
   display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+  margin: 0;
   border: 1px solid color-mix(in oklch, white 28%, transparent);
   border-radius: 999px;
   background: color-mix(in oklch, white 10%, transparent);
   padding: 0.2rem 0.65rem;
   font-size: 0.68rem;
-  font-weight: 650;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
-.ecom-hero h2 {
-  position: relative;
-  margin-top: 0.85rem;
-  max-width: 18ch;
-  font-size: clamp(1.45rem, 3.2vw, 2.15rem);
+.ecom-banner-copy h2 {
+  margin: 0.7rem 0 0;
+  max-width: 16ch;
+  font-size: clamp(1.25rem, 3vw, 1.85rem);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.2;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
 }
 
-.ecom-hero p {
-  position: relative;
-  margin-top: 0.55rem;
+.ecom-banner-text {
+  margin: 0.55rem 0 0;
   max-width: 34rem;
   font-size: 0.84rem;
   line-height: 1.7;
   color: color-mix(in oklch, white 78%, transparent);
 }
 
-.ecom-hero-actions {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 1.1rem;
+.ecom-banner-cta {
+  margin-top: 1rem !important;
+  height: 2.35rem !important;
+  border-radius: 999px !important;
+  background: color-mix(in oklch, white 92%, var(--ecom-mark)) !important;
+  color: #1a140e !important;
+  font-weight: 750 !important;
+  box-shadow: none !important;
 }
 
-.ecom-hero-cta {
-  height: 2.45rem !important;
+.ecom-banner-cta:hover {
+  background: white !important;
+}
+
+.ecom-banner-art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@media (min-width: 720px) {
+  .ecom-banner-art {
+    position: relative;
+    min-height: 11rem;
+  }
+}
+
+.ecom-banner-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(2px);
+}
+
+.ecom-banner-orb-a {
+  inset-inline-end: 8%;
+  top: -12%;
+  width: 9rem;
+  height: 9rem;
+  background: color-mix(in oklch, white 18%, transparent);
+}
+
+.ecom-banner-orb-b {
+  inset-inline-end: 28%;
+  bottom: -20%;
+  width: 11rem;
+  height: 11rem;
+  background: color-mix(in oklch, var(--ecom-mark) 22%, transparent);
+}
+
+.ecom-banner-frame {
+  position: absolute;
+  inset-inline-end: 12%;
+  top: 18%;
+  width: min(42%, 12rem);
+  aspect-ratio: 1;
+  border: 1px dashed color-mix(in oklch, white 30%, transparent);
+  border-radius: 1.4rem;
+  transform: rotate(-8deg);
+  opacity: 0.7;
+}
+
+.ecom-banner-slab {
+  position: absolute;
+  inset-inline-end: 16%;
+  bottom: 16%;
+  width: min(36%, 9.5rem);
+  aspect-ratio: 0.78;
+  border-radius: 1.1rem 1.1rem 0.45rem 0.45rem;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in oklch, white 40%, transparent),
+      color-mix(in oklch, black 25%, transparent)
+    ),
+    color-mix(in oklch, white 12%, transparent);
+  border: 1px solid color-mix(in oklch, white 28%, transparent);
+  box-shadow: 0 22px 40px color-mix(in oklch, black 30%, transparent);
+  transform: rotate(6deg);
+}
+
+.ecom-banner-slide[data-tone="home"] .ecom-banner-slab,
+.ecom-banner-slide[data-tone="clay"] .ecom-banner-slab {
+  border-radius: 0.35rem 0.35rem 1.6rem 1.6rem;
+  transform: rotate(-7deg);
+}
+
+.ecom-banner-slide[data-tone="cool"] .ecom-banner-slab {
+  border-radius: 1rem 1rem 0.35rem 0.35rem;
+  transform: rotate(-4deg);
+}
+
+.ecom-banner-chip {
+  position: absolute;
+  inset-inline-end: 38%;
+  top: 28%;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  background: color-mix(in oklch, white 16%, transparent);
+  border: 1px solid color-mix(in oklch, white 25%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.ecom-banner-index {
+  position: absolute;
+  inset-inline-start: 1rem;
+  bottom: 0.75rem;
+  z-index: 2;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: color-mix(in oklch, white 55%, transparent);
+}
+
+@media (max-width: 719px) {
+  .ecom-banner-art {
+    opacity: 0.45;
+  }
+
+  .ecom-banner-slab {
+    inset-inline-end: -4%;
+    bottom: 8%;
+    width: 7.5rem;
+  }
+
+  .ecom-banner-frame {
+    inset-inline-end: -2%;
+    width: 9rem;
+  }
+}
+
+.ecom-banner-nav {
+  inset-inline: 0.65rem !important;
+  width: 2.15rem !important;
+  height: 2.15rem !important;
+  border: 1px solid color-mix(in oklch, white 28%, transparent) !important;
+  background: color-mix(in oklch, black 35%, transparent) !important;
+  color: white !important;
+  box-shadow: 0 8px 20px color-mix(in oklch, black 25%, transparent) !important;
+  backdrop-filter: blur(8px);
+}
+
+.ecom-banner-nav-prev {
+  inset-inline-start: 0.65rem !important;
+  inset-inline-end: auto !important;
+}
+
+.ecom-banner-nav-next {
+  inset-inline-end: 0.65rem !important;
+  inset-inline-start: auto !important;
+}
+
+/* Intro under banner */
+.ecom-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.15rem 0.15rem 0.35rem;
+}
+
+@media (min-width: 768px) {
+  .ecom-intro {
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+}
+
+.ecom-intro-kicker {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  color: var(--ecom-accent);
+}
+
+.ecom-intro h2 {
+  margin-top: 0.35rem;
+  max-width: 18ch;
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  color: var(--ecom-ink);
+}
+
+.ecom-intro p {
+  margin-top: 0.45rem;
+  max-width: 38rem;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: var(--ecom-mute);
+}
+
+.ecom-intro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ecom-intro-cta {
+  height: 2.4rem !important;
   border-radius: 999px !important;
-  background: var(--ecom-mark) !important;
-  color: #1a1505 !important;
+  background: var(--ecom-accent) !important;
+  color: #fff8f4 !important;
   font-weight: 700 !important;
   box-shadow: none !important;
 }
 
-.ecom-hero-ghost {
-  height: 2.45rem !important;
+.ecom-intro-ghost {
+  height: 2.4rem !important;
   border-radius: 999px !important;
-  border: 1px solid color-mix(in oklch, white 35%, transparent) !important;
-  background: transparent !important;
-  color: white !important;
+  border: 1px solid var(--ecom-line-strong) !important;
+  background: var(--ecom-panel) !important;
+  color: var(--ecom-ink) !important;
   box-shadow: none !important;
 }
 
-.ecom-hero-stage {
-  position: relative;
-  display: none;
-  min-height: 10rem;
+/* Product rails / carousels */
+.ecom-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
-@media (min-width: 900px) {
-  .ecom-hero-stage {
-    display: block;
+.ecom-rail-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.ecom-rail-head h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.ecom-rail-head p {
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  color: var(--ecom-mute);
+}
+
+.ecom-rail-more {
+  color: var(--ecom-accent) !important;
+  font-weight: 700 !important;
+}
+
+.ecom-rail-carousel {
+  position: relative;
+  padding-inline: 0.1rem;
+}
+
+.ecom-rail-nav {
+  width: 2.1rem !important;
+  height: 2.1rem !important;
+  border: 1px solid var(--ecom-line) !important;
+  background: var(--ecom-panel) !important;
+  color: var(--ecom-ink) !important;
+  box-shadow: 0 8px 18px color-mix(in oklch, var(--ecom-ink) 8%, transparent) !important;
+}
+
+.ecom-rail-nav-prev {
+  inset-inline-start: -0.35rem !important;
+  inset-inline-end: auto !important;
+}
+
+.ecom-rail-nav-next {
+  inset-inline-end: -0.35rem !important;
+  inset-inline-start: auto !important;
+}
+
+/* Shop + sticky filters (راست در RTL) */
+.ecom-shop-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .ecom-shop-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.5rem;
   }
 }
 
-.ecom-hero-orb {
-  position: absolute;
-  inset: 8% 12%;
-  border-radius: 1.5rem;
-  background:
-    radial-gradient(circle at 30% 30%, color-mix(in oklch, white 35%, transparent), transparent 45%),
-    linear-gradient(160deg, color-mix(in oklch, var(--ecom-mark) 70%, white), color-mix(in oklch, var(--ecom-accent) 40%, #062428));
-  box-shadow:
-    0 28px 50px color-mix(in oklch, black 35%, transparent),
-    inset 0 1px 0 color-mix(in oklch, white 40%, transparent);
-  transform: rotate(-6deg);
-}
-
-.ecom-hero-orb::after {
-  content: "";
-  position: absolute;
-  inset: 18%;
-  border-radius: 999px;
-  border: 1px dashed color-mix(in oklch, white 45%, transparent);
+.ecom-shop-main {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 /* Toolbar */
@@ -359,7 +794,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-bottom: 1rem;
 }
 
 @media (min-width: 640px) {
@@ -382,13 +816,22 @@
   color: var(--ecom-mute);
 }
 
-/* Filters rail */
+/* Filters rail — sticky on scroll */
 .ecom-filters {
   border: 1px solid var(--ecom-line);
   border-radius: 1rem;
   background: var(--ecom-panel);
   padding: 1rem;
   box-shadow: 0 12px 32px color-mix(in oklch, var(--ecom-ink) 5%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .ecom-filters {
+    position: sticky;
+    top: var(--ecom-header-offset);
+    /* بدون اسکرول داخلی — کل صفحه اسکرول می‌شود */
+    overflow: visible;
+  }
 }
 
 .ecom-filters h2 {
@@ -425,61 +868,290 @@
 }
 
 .ecom-media {
+  --ecom-media-depth: color-mix(in oklch, var(--ecom-product, var(--ecom-accent)) 42%, #12100e);
   position: relative;
   aspect-ratio: 1 / 1.05;
   overflow: hidden;
   isolation: isolate;
+  background: var(--ecom-soft);
 }
 
-.ecom-media-wash {
+.ecom-media-stage {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 22% 18%, color-mix(in oklch, white 55%, transparent), transparent 42%),
-    linear-gradient(160deg, var(--ecom-product, #9db4c0), color-mix(in oklch, var(--ecom-product, #9db4c0) 45%, #1a1f28));
+    radial-gradient(
+      ellipse 70% 55% at 50% 18%,
+      color-mix(in oklch, white 38%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 90% 70% at 80% 90%,
+      color-mix(in oklch, var(--ecom-product, var(--ecom-accent)) 28%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in oklch, var(--ecom-product, var(--ecom-accent)) 72%, white) 0%,
+      color-mix(in oklch, var(--ecom-product, var(--ecom-accent)) 55%, #2a2420) 48%,
+      var(--ecom-media-depth) 100%
+    );
+  transition: transform 500ms var(--ecom-ease);
 }
 
-.ecom-media-shape {
+.ecom-card:hover .ecom-media-stage {
+  transform: scale(1.04);
+}
+
+.ecom-media-glow {
   position: absolute;
-  inset-inline-end: 8%;
-  bottom: 10%;
-  width: 58%;
-  aspect-ratio: 1;
-  border-radius: 1.4rem;
-  background: color-mix(in oklch, white 22%, transparent);
-  border: 1px solid color-mix(in oklch, white 35%, transparent);
-  backdrop-filter: blur(6px);
-  transform: rotate(8deg);
-  box-shadow: 0 18px 36px color-mix(in oklch, black 18%, transparent);
+  inset-inline-start: -15%;
+  top: -20%;
+  width: 55%;
+  height: 55%;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, white 45%, transparent),
+    transparent 70%
+  );
+  filter: blur(8px);
+  pointer-events: none;
 }
 
-.ecom-media-shape::before {
+.ecom-media-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      color-mix(in oklch, black 8%, transparent) 2px,
+      color-mix(in oklch, black 8%, transparent) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      color-mix(in oklch, white 6%, transparent) 2px,
+      color-mix(in oklch, white 6%, transparent) 3px
+    );
+}
+
+.ecom-media-orbit {
+  position: absolute;
+  inset: 14% 10% 28% 18%;
+  border: 1px dashed color-mix(in oklch, white 28%, transparent);
+  border-radius: 1.6rem;
+  opacity: 0.55;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.ecom-media-orbit::after {
   content: "";
   position: absolute;
-  inset: 18%;
+  inset: 12%;
+  border-radius: inherit;
+  border: 1px solid color-mix(in oklch, white 16%, transparent);
+}
+
+.ecom-media-object {
+  position: absolute;
+  inset-inline-end: 12%;
+  bottom: 22%;
+  z-index: 1;
+  width: min(52%, 9.5rem);
+  aspect-ratio: 0.78;
+  display: grid;
+  place-items: center;
+  transition: transform 420ms var(--ecom-ease);
+}
+
+.ecom-card:hover .ecom-media-object {
+  transform: translateY(-6px) rotate(-2deg);
+}
+
+.ecom-media-shell,
+.ecom-media-face,
+.ecom-media-spec,
+.ecom-media-mark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ecom-media-shell {
+  border-radius: 1.15rem 1.15rem 0.55rem 0.55rem;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in oklch, white 55%, transparent) 0%,
+      color-mix(in oklch, white 8%, transparent) 38%,
+      color-mix(in oklch, black 28%, transparent) 100%
+    ),
+    color-mix(in oklch, var(--ecom-product, var(--ecom-accent)) 35%, #1c1815);
+  border: 1px solid color-mix(in oklch, white 32%, transparent);
+  box-shadow:
+    0 22px 40px color-mix(in oklch, black 28%, transparent),
+    inset 0 1px 0 color-mix(in oklch, white 45%, transparent),
+    inset 0 -12px 24px color-mix(in oklch, black 18%, transparent);
+}
+
+.ecom-media-face {
+  inset: 12% 14% 28% 14%;
+  border-radius: 0.75rem;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, white 22%, transparent),
+      color-mix(in oklch, black 18%, transparent)
+    ),
+    color-mix(in oklch, var(--ecom-product, var(--ecom-accent)) 18%, #0f0d0c);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, white 12%, transparent);
+}
+
+.ecom-media-spec {
+  inset: 8% 18% auto auto;
+  width: 34%;
+  height: 18%;
   border-radius: 999px;
-  background: color-mix(in oklch, white 28%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklch, white 70%, transparent),
+    transparent
+  );
+  filter: blur(1px);
+  opacity: 0.85;
 }
 
-.ecom-media-shape[data-kind="electronics"] {
-  border-radius: 1.1rem 1.1rem 0.45rem 0.45rem;
-  transform: rotate(-4deg);
+.ecom-media-mark {
+  inset: auto 28% 14% 28%;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in oklch, white 35%, transparent);
 }
 
-.ecom-media-shape[data-kind="apparel"] {
-  border-radius: 999px 999px 1.2rem 1.2rem;
-  transform: rotate(3deg);
+.ecom-media-pedestal {
+  position: absolute;
+  inset-inline: 16%;
+  bottom: 10%;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in oklch, black 35%, transparent),
+    transparent 70%
+  );
+  filter: blur(4px);
+  z-index: 0;
 }
 
-.ecom-media-shape[data-kind="home"] {
+/* Category silhouettes */
+.ecom-media[data-kind="electronics"] .ecom-media-object {
+  aspect-ratio: 0.72;
+  width: min(48%, 8.75rem);
+}
+
+.ecom-media[data-kind="electronics"] .ecom-media-shell {
+  border-radius: 1.05rem 1.05rem 0.4rem 0.4rem;
+}
+
+.ecom-media[data-kind="electronics"] .ecom-media-face {
+  inset: 10% 12% 22% 12%;
   border-radius: 0.55rem;
-  transform: rotate(12deg) scale(0.92);
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in oklch, var(--ecom-product) 40%, #6a8a90),
+      color-mix(in oklch, black 55%, #1a2224)
+    );
 }
 
-.ecom-media-shape[data-kind="beauty"] {
+.ecom-media[data-kind="electronics"] .ecom-media-mark {
+  inset: auto 36% 10% 36%;
+  height: 0.22rem;
+}
+
+.ecom-media[data-kind="apparel"] .ecom-media-object {
+  aspect-ratio: 0.85;
+  width: min(56%, 10rem);
+  bottom: 20%;
+}
+
+.ecom-media[data-kind="apparel"] .ecom-media-shell {
+  border-radius: 999px 999px 1.4rem 1.4rem;
+  transform: rotate(4deg);
+}
+
+.ecom-media[data-kind="apparel"] .ecom-media-face {
+  inset: 18% 22% 30% 22%;
+  border-radius: 999px 999px 1rem 1rem;
+  opacity: 0.55;
+}
+
+.ecom-media[data-kind="apparel"] .ecom-media-mark {
+  display: none;
+}
+
+.ecom-media[data-kind="home"] .ecom-media-object {
+  aspect-ratio: 1.05;
+  width: min(54%, 9.75rem);
+  bottom: 18%;
+}
+
+.ecom-media[data-kind="home"] .ecom-media-shell {
+  border-radius: 0.35rem 0.35rem 1.8rem 1.8rem;
+  transform: rotate(-6deg) scale(0.95);
+}
+
+.ecom-media[data-kind="home"] .ecom-media-face {
+  inset: 22% 18% 35% 18%;
+  border-radius: 0.25rem 0.25rem 999px 999px;
+}
+
+.ecom-media[data-kind="home"] .ecom-media-orbit {
+  border-radius: 0.8rem;
+  transform: rotate(12deg);
+}
+
+.ecom-media[data-kind="beauty"] .ecom-media-object {
+  aspect-ratio: 0.42;
+  width: min(28%, 5.5rem);
+  inset-inline-end: 28%;
+  bottom: 20%;
+}
+
+.ecom-media[data-kind="beauty"] .ecom-media-shell {
   border-radius: 999px;
-  width: 46%;
-  inset-inline-end: 18%;
+}
+
+.ecom-media[data-kind="beauty"] .ecom-media-face {
+  inset: 28% 18% 18% 18%;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, white 25%, transparent),
+      color-mix(in oklch, var(--ecom-product) 40%, #3a2020)
+    );
+}
+
+.ecom-media[data-kind="beauty"] .ecom-media-mark {
+  inset: 12% 30% auto 30%;
+  height: 12%;
+  border-radius: 0.2rem;
+  background: color-mix(in oklch, white 22%, #2a1c1a);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, white 18%, transparent);
+}
+
+.ecom-media[data-kind="beauty"] .ecom-media-orbit {
+  border-radius: 999px;
+  inset: 18% 22% 26% 22%;
   transform: none;
 }
 
@@ -489,12 +1161,21 @@
   bottom: 0.75rem;
   z-index: 2;
   border-radius: 999px;
-  background: color-mix(in oklch, black 42%, transparent);
+  background: color-mix(in oklch, black 48%, transparent);
   color: white;
-  padding: 0.2rem 0.55rem;
+  padding: 0.22rem 0.6rem;
   font-size: 0.62rem;
   font-weight: 650;
-  backdrop-filter: blur(8px);
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(10px) saturate(1.1);
+  border: 1px solid color-mix(in oklch, white 14%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecom-card:hover .ecom-media-stage,
+  .ecom-card:hover .ecom-media-object {
+    transform: none;
+  }
 }
 
 .ecom-badge-sale {
@@ -644,27 +1325,42 @@
   color: var(--ecom-mute);
 }
 
-.ecom-price-filter {
-  --ecom-ink: #12151c;
-  --ecom-line: color-mix(in oklch, #12151c 12%, transparent);
-  --ecom-panel: #ffffff;
-  --ecom-accent: #0c5c63;
-}
-
-.dark .ecom-price-filter {
-  --ecom-ink: #eef2f6;
-  --ecom-line: color-mix(in oklch, #eef2f6 14%, transparent);
-  --ecom-panel: #141820;
-  --ecom-accent: #3db8c2;
-}
-
-.ecom-price-filter .ecom-price-display {
+.ecom-price-filter .ecom-price-display > div {
   border-color: var(--ecom-line);
+  background: var(--ecom-soft);
+}
+
+.ecom-price-chip {
+  border-radius: 999px;
+  border: 1px solid var(--ecom-line);
+  padding: 0.25rem 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--ecom-mute);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.ecom-price-chip:hover {
+  border-color: color-mix(in oklch, var(--ecom-ink) 30%, transparent);
+  color: var(--ecom-ink);
+}
+
+.ecom-price-chip-on {
+  border-color: transparent;
+  background: var(--ecom-ink);
+  color: var(--ecom-panel);
+  font-weight: 700;
 }
 
 .ecom-price-slider {
   min-height: 1.75rem;
   padding-block: 0.45rem;
+  touch-action: none;
 }
 
 .ecom-price-slider [data-slot="slider-track"] {
@@ -684,11 +1380,213 @@
   box-shadow: 0 4px 12px color-mix(in oklch, var(--ecom-accent) 28%, transparent) !important;
 }
 
-/* Detail / cart inherit mild polish */
+/* Detail / cart / checkout surfaces */
 .ecom-page .rounded-xl.border,
-.ecom-page .rounded-2xl.border {
+.ecom-page .rounded-2xl.border,
+.ecom-page .rounded-lg.border {
   border-color: var(--ecom-line);
   background: var(--ecom-panel);
+}
+
+.ecom-detail-media {
+  overflow: hidden;
+  border: 1px solid var(--ecom-line);
+  border-radius: 1.05rem;
+  background: var(--ecom-soft);
+}
+
+.ecom-detail-thumbs .ecom-media {
+  border-radius: 0.65rem;
+  border: 1px solid var(--ecom-line);
+}
+
+.ecom-thumb-active {
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--ecom-accent) 55%, transparent);
+}
+
+/* Product detail */
+.ecom-detail-stats {
+  border: 1px solid var(--ecom-line);
+  border-radius: 1rem;
+  background: var(--ecom-panel);
+}
+
+.ecom-detail-price {
+  border-color: var(--ecom-line) !important;
+  background: var(--ecom-panel) !important;
+}
+
+.ecom-color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ecom-color-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.35rem;
+  border: 1px solid var(--ecom-line);
+  border-radius: 999px;
+  background: var(--ecom-panel);
+  padding: 0.3rem 0.75rem 0.3rem 0.4rem;
+  color: var(--ecom-ink);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.ecom-color-swatch:hover {
+  border-color: color-mix(in oklch, var(--ecom-accent) 35%, var(--ecom-line));
+}
+
+.ecom-color-swatch.is-selected {
+  border-color: var(--ecom-accent);
+  background: color-mix(in oklch, var(--ecom-accent) 8%, var(--ecom-panel));
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ecom-accent) 35%, transparent);
+}
+
+.ecom-color-dot {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--ecom-swatch, #9a8f86);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, black 18%, transparent),
+    0 1px 2px color-mix(in oklch, black 12%, transparent);
+}
+
+.ecom-color-swatch.is-light .ecom-color-dot {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, black 22%, transparent),
+    0 1px 2px color-mix(in oklch, black 8%, transparent);
+}
+
+.ecom-color-name {
+  font-size: 0.8rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.ecom-qty {
+  border: 1px solid var(--ecom-line);
+  border-radius: 0.75rem;
+  background: var(--ecom-panel);
+}
+
+.ecom-add-btn {
+  border-radius: 999px !important;
+  background: var(--ecom-accent) !important;
+  color: #fff8f4 !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.ecom-add-btn:hover:not(:disabled) {
+  background: var(--ecom-accent-deep) !important;
+}
+
+.ecom-detail-tabs {
+  gap: 0.85rem !important;
+}
+
+.ecom-tabs-list {
+  height: auto !important;
+  width: 100%;
+  justify-content: flex-start !important;
+  gap: 0.15rem !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid var(--ecom-line);
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.ecom-tabs-trigger {
+  height: auto !important;
+  flex: 0 0 auto !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0.65rem 0.85rem !important;
+  color: var(--ecom-mute) !important;
+  font-size: 0.88rem !important;
+  font-weight: 650 !important;
+  box-shadow: none !important;
+}
+
+.ecom-tabs-trigger:hover {
+  color: var(--ecom-ink) !important;
+  background: transparent !important;
+}
+
+.ecom-tabs-trigger[data-active],
+.ecom-tabs-trigger[aria-selected="true"],
+.ecom-tabs-trigger[data-selected] {
+  color: var(--ecom-accent) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.ecom-tabs-trigger::after {
+  background: var(--ecom-accent) !important;
+  bottom: -1px !important;
+  height: 2px !important;
+}
+
+.ecom-tabs-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.35rem;
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: color-mix(in oklch, var(--ecom-ink) 78%, var(--ecom-mute));
+}
+
+.ecom-tabs-panel p {
+  margin: 0;
+}
+
+.ecom-specs {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border: 1px solid var(--ecom-line);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background: var(--ecom-panel);
+}
+
+.ecom-spec-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.38fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--ecom-line);
+  font-size: 0.86rem;
+}
+
+.ecom-spec-row:last-child {
+  border-bottom: 0;
+}
+
+.ecom-spec-row:nth-child(even) {
+  background: color-mix(in oklch, var(--ecom-soft) 55%, transparent);
+}
+
+.ecom-spec-row dt {
+  color: var(--ecom-mute);
+  font-weight: 600;
+}
+
+.ecom-spec-row dd {
+  margin: 0;
+  text-align: start;
+  font-weight: 650;
+  color: var(--ecom-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -698,4 +1596,49 @@
   .ecom-card:hover {
     transform: none;
   }
+}
+
+/* Credit */
+.ecom-credit-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0.35rem 1rem 1.5rem;
+}
+
+.ecom-credit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  border: 1px solid var(--ecom-line);
+  border-radius: 999px;
+  background: var(--ecom-panel);
+  color: var(--ecom-ink);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: 0 8px 20px color-mix(in oklch, var(--ecom-ink) 5%, transparent);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.ecom-credit:hover {
+  border-color: color-mix(in oklch, var(--ecom-accent) 40%, var(--ecom-line));
+  background: color-mix(in oklch, var(--ecom-accent) 8%, var(--ecom-panel));
+}
+
+.ecom-credit:active {
+  transform: scale(0.98);
+}
+
+.ecom-credit-prefix {
+  color: var(--ecom-mute);
+}
+
+.ecom-credit strong {
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  color: var(--ecom-accent);
 }

@@ -214,6 +214,16 @@ export function LandingPage() {
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-1.5">
+            <a
+              href="https://farsiui.ir"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="landing-credit hidden sm:inline-flex"
+              title="ساخته‌شده با FarsiUI"
+            >
+              <span className="landing-credit-prefix">ساخته‌شده با</span>
+              <strong>FarsiUI</strong>
+            </a>
             <Button
               size="sm"
               className="landing-btn landing-btn-primary hidden sm:inline-flex"
@@ -367,13 +377,12 @@ export function LandingPage() {
           className="scroll-mt-16 bg-background py-10 sm:py-12"
         >
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="max-w-2xl space-y-3">
+            <div className="max-w-3xl space-y-3">
               <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground">
                 امکانات
               </p>
-              <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                آنچه لازم دارید —
-                <br className="hidden sm:block" />
+              <h2 className="landing-section-title text-xl font-semibold tracking-tight sm:text-2xl">
+                آنچه لازم دارید —{" "}
                 <span className="text-muted-foreground">نه بیشتر، نه کمتر</span>
               </h2>
               <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -382,26 +391,19 @@ export function LandingPage() {
               </p>
             </div>
 
-            <ul className="mt-10 grid gap-4">
+            <ul className="landing-feature-list mt-10">
               {features.map((feature, index) => (
-                <li
-                  key={feature.title}
-                  className="landing-elev-card landing-sheet group grid gap-2 rounded-xl px-4 py-4 sm:grid-cols-[4rem_minmax(0,0.85fr)_minmax(0,1.25fr)] sm:items-center sm:gap-8 sm:px-5 sm:py-5"
-                >
+                <li key={feature.title} className="landing-feature-row">
                   <span
-                    className={cn(
-                      "text-lg font-semibold text-foreground/25 transition-colors duration-300 group-hover:text-primary/70",
-                      numericClass
-                    )}
+                    className={cn("landing-feature-num", numericClass)}
+                    aria-hidden
                   >
                     {toPersianDigits(String(index + 1).padStart(2, "0"))}
                   </span>
-                  <h3 className="text-base font-medium tracking-tight sm:text-lg">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground sm:text-[0.95rem]">
-                    {feature.description}
-                  </p>
+                  <div className="landing-feature-copy">
+                    <h3 className="landing-feature-title">{feature.title}</h3>
+                    <p className="landing-feature-desc">{feature.description}</p>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -420,10 +422,8 @@ export function LandingPage() {
                 <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground">
                   گردش کار
                 </p>
-                <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                  از جرقهٔ ایده
-                  <br />
-                  تا انتشار
+                <h2 className="landing-section-title text-xl font-semibold tracking-tight sm:text-2xl">
+                  از جرقهٔ ایده تا انتشار
                 </h2>
                 <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
                   هر مرحله در همان فضای کاری دیده می‌شود؛ بدون کپی‌کردن وضعیت بین
@@ -475,9 +475,8 @@ export function LandingPage() {
               <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground">
                 نتیجه
               </p>
-              <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                وقتی تمرکز برمی‌گردد،
-                <br />
+              <h2 className="landing-section-title text-xl font-semibold tracking-tight sm:text-2xl">
+                وقتی تمرکز برمی‌گردد،{" "}
                 <span className="text-muted-foreground">تیم جلو می‌رود</span>
               </h2>
             </div>
@@ -547,9 +546,8 @@ export function LandingPage() {
               <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground">
                 قیمت‌گذاری
               </p>
-              <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                شفاف. آرام.
-                <br />
+              <h2 className="landing-section-title text-xl font-semibold tracking-tight sm:text-2xl">
+                شفاف. آرام.{" "}
                 <span className="text-muted-foreground">بدون شگفتی ماهانه</span>
               </h2>
               <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -632,9 +630,8 @@ export function LandingPage() {
               <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground">
                 پشتیبانی
               </p>
-              <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                پرسش‌هایی که معمولاً
-                <br />
+              <h2 className="landing-section-title text-xl font-semibold tracking-tight sm:text-2xl">
+                پرسش‌هایی که معمولاً{" "}
                 <span className="text-muted-foreground">پرسیده می‌شوند</span>
               </h2>
               <p className="text-sm leading-relaxed text-muted-foreground">
@@ -677,10 +674,8 @@ export function LandingPage() {
             <p className="text-xs font-medium tracking-[0.2em] text-muted-foreground">
               همین حالا
             </p>
-            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-              فضای کاری‌تان را
-              <br />
-              شروع کنید
+            <h2 className="landing-section-title text-xl font-semibold tracking-tight sm:text-2xl">
+              فضای کاری‌تان را شروع کنید
             </h2>
             <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
               بدون کارت بانکی شروع کنید. اگر مناسب نبود، داده‌های نمایشی را پاک
@@ -742,11 +737,20 @@ export function LandingPage() {
             onNavigate={scrollTo}
           />
         </div>
-        <div className="mx-auto mt-12 flex max-w-6xl flex-col gap-2 border-t border-foreground/8 px-4 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="mx-auto mt-12 flex max-w-6xl flex-col gap-3 border-t border-foreground/8 px-4 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p className={numericClass}>
             © {toPersianDigits(1405)} سپهر. همه حقوق محفوظ است.
           </p>
-          <p>این صفحه یک نمونه نمایشی FarsiUI است.</p>
+          <a
+            href="https://farsiui.ir"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="landing-credit landing-credit-footer"
+            title="ساخته‌شده با FarsiUI"
+          >
+            <span className="landing-credit-prefix">ساخته‌شده با</span>
+            <strong>FarsiUI</strong>
+          </a>
         </div>
       </footer>
     </div>

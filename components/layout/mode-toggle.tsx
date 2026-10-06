@@ -9,7 +9,7 @@ import { persistUserThemePreference } from "@/lib/theme-preference"
 import { cn } from "@/lib/utils"
 
 /**
- * Binary light/dark toggle. First visit uses ThemeProvider defaultTheme="system".
+ * Binary light/dark toggle. First visit uses ThemeProvider defaultTheme="dark".
  * After the user toggles once, preference is stored as light or dark.
  */
 export function ModeToggle() {

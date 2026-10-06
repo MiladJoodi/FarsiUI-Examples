@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import * as React from "react"
 
@@ -10,14 +9,15 @@ import {
   products,
   type ProductCategory,
 } from "@/lib/mock/ecommerce"
+import { HeroBannerSlider } from "@/components/ecommerce/hero-banner-slider"
 import { ProductCard } from "@/components/ecommerce/product-card"
+import { ProductRail } from "@/components/ecommerce/product-rail"
 import {
   defaultFilters,
   FiltersSheetButton,
   FiltersSidebar,
   type CatalogFiltersState,
 } from "@/components/ecommerce/product-filters"
-import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -40,39 +40,22 @@ function resolveCategory(
   return "all"
 }
 
-export function CatalogView() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const q = (searchParams.get("q") ?? "").trim()
-  const category = resolveCategory(searchParams.get("category"))
-
-  const [filters, setFilters] = React.useState<CatalogFiltersState>({
-    ...defaultFilters,
-    category,
-  })
-  const [sort, setSort] = React.useState<SortKey>("featured")
-
-  const activeFilters: CatalogFiltersState = {
-    ...filters,
-    category,
-  }
-
-  function handleFiltersChange(next: CatalogFiltersState) {
-    setFilters(next)
-    const params = new URLSearchParams(searchParams.toString())
-    if (next.category === "all") params.delete("category")
-    else params.set("category", next.category)
-    const qs = params.toString()
-    router.replace(qs ? `/examples/ecommerce?${qs}` : "/examples/ecommerce")
-  }
-
-  const filtered = products
+function applyFilters(
+  list: typeof products,
+  activeFilters: CatalogFiltersState,
+  q: string,
+  sort: SortKey
+) {
+  return list
     .filter((p) => {
       if (q) {
         const hay = `${p.name} ${p.brand} ${p.shortDescription}`
         if (!hay.includes(q)) return false
       }
-      if (activeFilters.category !== "all" && p.category !== activeFilters.category) {
+      if (
+        activeFilters.category !== "all" &&
+        p.category !== activeFilters.category
+      ) {
         return false
       }
       if (
@@ -108,62 +91,70 @@ export function CatalogView() {
           return 0
       }
     })
+}
+
+export function CatalogView() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const q = (searchParams.get("q") ?? "").trim()
+  const category = resolveCategory(searchParams.get("category"))
+
+  const [filters, setFilters] = React.useState<CatalogFiltersState>({
+    ...defaultFilters,
+    category,
+  })
+  const [sort, setSort] = React.useState<SortKey>("featured")
+
+  const activeFilters: CatalogFiltersState = {
+    ...filters,
+    category,
+  }
+
+  function handleFiltersChange(next: CatalogFiltersState) {
+    setFilters(next)
+    const params = new URLSearchParams(searchParams.toString())
+    if (next.category === "all") params.delete("category")
+    else params.set("category", next.category)
+    const qs = params.toString()
+    router.replace(qs ? `/examples/ecommerce?${qs}` : "/examples/ecommerce")
+  }
+
+  const filtered = applyFilters(products, activeFilters, q, sort)
 
   const title =
     activeFilters.category === "all"
-      ? "منتخب اتلیه"
+      ? "همه کالاها"
       : categoryLabels[activeFilters.category]
 
-  const showHero = !q && activeFilters.category === "all"
+  const showEditorial = !q && activeFilters.category === "all"
+
+  const curated = React.useMemo(
+    () => products.filter((p) => p.rating >= 4.5).slice(0, 8),
+    []
+  )
 
   return (
-    <div>
-      {showHero ? (
-        <section className="ecom-hero" aria-label="پیشنهاد ویژه">
-          <div>
-            <span className="ecom-hero-kicker">
-              <span aria-hidden>●</span>
-              پیشنهاد هفته
-            </span>
-            <h2>خرید با سلیقه، نه فقط لیست کالا</h2>
-            <p>
-              اتلیهٔ نورا منتخب الکترونیک، پوشاک و خانه را مثل یک ویترین سردبیری
-              چیده است — فیلتر کن، مقایسه کن، سریع بخر.
-            </p>
-            <div className="ecom-hero-actions">
-              <Button
-                className="ecom-hero-cta"
-                nativeButton={false}
-                render={
-                  <Link href="/examples/ecommerce?category=electronics" />
-                }
-              >
-                الکترونیک منتخب
-              </Button>
-              <Button
-                className="ecom-hero-ghost"
-                variant="outline"
-                nativeButton={false}
-                render={<Link href="/examples/ecommerce?category=home" />}
-              >
-                خانه و آشپزخانه
-              </Button>
-            </div>
-          </div>
-          <div className="ecom-hero-stage" aria-hidden>
-            <div className="ecom-hero-orb" />
-          </div>
-        </section>
+    <div className="ecom-catalog">
+      {showEditorial ? (
+        <>
+          <HeroBannerSlider />
+          <ProductRail
+            title="منتخب سردبیری"
+            subtitle="بالاترین امتیازها در اتلیه"
+            products={curated}
+            autoPlay
+          />
+        </>
       ) : null}
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+      <div className="ecom-shop-layout">
         <FiltersSidebar
           value={activeFilters}
           onChange={handleFiltersChange}
           resultCount={filtered.length}
         />
 
-        <div className="min-w-0 flex-1 space-y-4">
+        <div className="ecom-shop-main">
           <div className="ecom-toolbar">
             <div className="min-w-0">
               <h1>{title}</h1>

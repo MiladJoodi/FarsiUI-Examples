@@ -41,7 +41,7 @@ export const defaultFilters: CatalogFiltersState = {
   inStockOnly: false,
 }
 
-const PRICE_STEP = 50_000
+const PRICE_STEP = 100_000
 
 const PRICE_PRESETS: {
   id: string
@@ -71,9 +71,11 @@ function activePricePresetId(range: [number, number]) {
 }
 
 function clampPriceRange(raw: number[]): [number, number] {
-  const a = Math.min(PRICE_MAX, Math.max(PRICE_MIN, raw[0] ?? PRICE_MIN))
-  const b = Math.min(PRICE_MAX, Math.max(PRICE_MIN, raw[1] ?? PRICE_MAX))
-  return a <= b ? [a, b] : [b, a]
+  const a = Math.round((raw[0] ?? PRICE_MIN) / PRICE_STEP) * PRICE_STEP
+  const b = Math.round((raw[1] ?? PRICE_MAX) / PRICE_STEP) * PRICE_STEP
+  const lo = Math.min(PRICE_MAX, Math.max(PRICE_MIN, a))
+  const hi = Math.min(PRICE_MAX, Math.max(PRICE_MIN, b))
+  return lo <= hi ? [lo, hi] : [hi, lo]
 }
 
 export function FiltersSidebar({
@@ -86,7 +88,7 @@ export function FiltersSidebar({
   resultCount: number
 }) {
   return (
-    <aside className="ecom-filters hidden w-56 shrink-0 lg:block xl:w-64">
+    <aside className="ecom-filters hidden w-60 shrink-0 lg:block xl:w-64">
       <FiltersPanel
         value={value}
         onChange={onChange}
@@ -120,7 +122,10 @@ export function FiltersSheetButton({
         <SlidersHorizontalIcon className="size-4" />
         فیلترها
       </Button>
-      <SheetContent side="right" className="w-[min(22rem,100%)] overflow-y-auto p-0">
+      <SheetContent
+        side="right"
+        className="w-[min(22rem,100%)] overflow-y-auto p-0"
+      >
         <SheetHeader className="border-b p-4 text-start">
           <SheetTitle>فیلتر محصولات</SheetTitle>
           <SheetDescription>
@@ -155,6 +160,13 @@ function FiltersPanel({
     string,
   ][]
   const activePreset = activePricePresetId(value.priceRange)
+  const [draftPrice, setDraftPrice] = React.useState<[number, number]>(
+    value.priceRange
+  )
+
+  React.useEffect(() => {
+    setDraftPrice(value.priceRange)
+  }, [value.priceRange])
 
   function toggleBrand(brand: string) {
     const exists = value.brands.includes(brand)
@@ -166,8 +178,10 @@ function FiltersPanel({
     })
   }
 
-  function setPriceRange(next: [number, number]) {
-    onChange({ ...value, priceRange: next })
+  function commitPriceRange(next: [number, number]) {
+    const clamped = clampPriceRange(next)
+    setDraftPrice(clamped)
+    onChange({ ...value, priceRange: clamped })
   }
 
   return (
@@ -218,7 +232,7 @@ function FiltersPanel({
             <button
               type="button"
               className="text-[0.65rem] font-medium text-muted-foreground underline-offset-2 hover:underline"
-              onClick={() => setPriceRange([PRICE_MIN, PRICE_MAX])}
+              onClick={() => commitPriceRange([PRICE_MIN, PRICE_MAX])}
             >
               بازنشانی
             </button>
@@ -229,13 +243,13 @@ function FiltersPanel({
           <div className="rounded-lg border bg-muted/25 px-2.5 py-2">
             <p className="text-[0.65rem] text-muted-foreground">از</p>
             <p className="ecom-num mt-0.5 text-xs font-semibold leading-snug">
-              {formatToman(value.priceRange[0])}
+              {formatToman(draftPrice[0])}
             </p>
           </div>
           <div className="rounded-lg border bg-muted/25 px-2.5 py-2">
             <p className="text-[0.65rem] text-muted-foreground">تا</p>
             <p className="ecom-num mt-0.5 text-xs font-semibold leading-snug">
-              {formatToman(value.priceRange[1])}
+              {formatToman(draftPrice[1])}
             </p>
           </div>
         </div>
@@ -245,10 +259,16 @@ function FiltersPanel({
           min={PRICE_MIN}
           max={PRICE_MAX}
           step={PRICE_STEP}
-          value={[value.priceRange[0], value.priceRange[1]]}
+          minStepsBetweenValues={1}
+          value={draftPrice}
           onValueChange={(next) => {
             if (!Array.isArray(next) || next.length < 2) return
-            setPriceRange(clampPriceRange(next))
+            setDraftPrice(clampPriceRange(next as number[]))
+          }}
+          onValueCommitted={(next) => {
+            const arr = Array.isArray(next) ? [...next] : [next]
+            if (arr.length < 2) return
+            commitPriceRange(clampPriceRange(arr))
           }}
           aria-label="بازه قیمت"
         />
@@ -265,11 +285,11 @@ function FiltersPanel({
               <button
                 key={preset.id}
                 type="button"
-                onClick={() => setPriceRange([...preset.range])}
+                onClick={() => commitPriceRange([...preset.range])}
                 className={
                   selected
-                    ? "rounded-full bg-foreground px-2.5 py-1 text-[0.68rem] font-semibold text-background"
-                    : "rounded-full border px-2.5 py-1 text-[0.68rem] font-medium text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                    ? "ecom-price-chip ecom-price-chip-on"
+                    : "ecom-price-chip"
                 }
               >
                 {preset.label}

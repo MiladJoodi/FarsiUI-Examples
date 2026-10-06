@@ -70,9 +70,9 @@
 }
 
 .settings-icon-active {
-  border-color: var(--st-border-strong);
-  background: var(--foreground);
-  color: var(--background);
+  border-color: color-mix(in oklch, var(--primary) 40%, transparent);
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 /* ——— Nav ——— */
@@ -111,10 +111,10 @@
 }
 
 .settings-nav-item[aria-current="page"] {
-  background: var(--st-fill-hover);
+  background: color-mix(in oklch, var(--primary) 10%, transparent);
   color: var(--foreground);
   font-weight: 600;
-  box-shadow: inset -2px 0 0 var(--foreground);
+  box-shadow: inset -2px 0 0 var(--primary);
 }
 
 .settings-nav-item svg {
@@ -156,9 +156,9 @@
 .settings-page .settings-input:focus-visible,
 .settings-page input.settings-input:focus-visible,
 .settings-page textarea.settings-input:focus-visible {
-  border-color: color-mix(in oklch, var(--foreground) 40%, transparent) !important;
+  border-color: color-mix(in oklch, var(--primary) 55%, transparent) !important;
   outline: none !important;
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--foreground) 8%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 16%, transparent) !important;
 }
 
 .settings-page [data-slot="select-trigger"].settings-input {
@@ -172,8 +172,8 @@
 }
 
 .settings-page [data-slot="select-trigger"].settings-input:focus-visible {
-  border-color: color-mix(in oklch, var(--foreground) 40%, transparent) !important;
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--foreground) 8%, transparent) !important;
+  border-color: color-mix(in oklch, var(--primary) 55%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 16%, transparent) !important;
 }
 
 /* ——— Buttons ——— */
@@ -278,9 +278,9 @@
 }
 
 .settings-choice[data-selected="true"] {
-  border-color: var(--st-border-strong);
-  background: var(--st-fill);
-  box-shadow: inset 0 0 0 1px var(--st-border-strong);
+  border-color: color-mix(in oklch, var(--primary) 42%, transparent);
+  background: color-mix(in oklch, var(--primary) 8%, var(--background));
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--primary) 22%, transparent);
 }
 
 /* ——— Privacy meter ——— */
@@ -302,7 +302,7 @@
 .settings-meter-fill {
   height: 100%;
   border-radius: inherit;
-  background: var(--foreground);
+  background: var(--primary);
   transition: width 280ms var(--st-ease);
 }
 
@@ -346,13 +346,116 @@
   box-shadow: 0 10px 28px -14px color-mix(in oklch, var(--foreground) 28%, transparent);
 }
 
+/* ——— Design systems: each remints its own surface ——— */
+.style-nova .settings-page {
+  --st-radius: 0.35rem;
+  --st-radius-lg: 0.5rem;
+  --st-border: color-mix(in oklch, var(--foreground) 11%, transparent);
+  --st-fill: color-mix(in oklch, var(--primary) 4%, var(--background));
+  --st-fill-hover: color-mix(in oklch, var(--primary) 8%, var(--background));
+}
+
+.style-vega .settings-page {
+  --st-radius: 0.7rem;
+  --st-radius-lg: 0.95rem;
+  --st-border: color-mix(in oklch, var(--foreground) 10%, transparent);
+  --st-fill: color-mix(in oklch, var(--card) 88%, var(--background));
+  --st-fill-hover: color-mix(in oklch, var(--primary) 6%, var(--card));
+  --st-control-h: 2.35rem;
+}
+
+.style-vega .settings-card,
+.style-vega .settings-nav,
+.style-vega .settings-meter,
+.style-vega .settings-savebar-inner {
+  box-shadow: 0 14px 36px -28px color-mix(in oklch, var(--foreground) 30%, transparent);
+}
+
+.style-glass .settings-page {
+  --st-radius: 0.65rem;
+  --st-radius-lg: 0.85rem;
+  --st-border: color-mix(in oklch, var(--primary) 22%, var(--border));
+  --st-fill: color-mix(in oklch, var(--card) 55%, transparent);
+  --st-fill-hover: color-mix(in oklch, var(--primary) 10%, transparent);
+}
+
+.style-glass .settings-card,
+.style-glass .settings-nav,
+.style-glass .settings-meter,
+.style-glass .settings-session,
+.style-glass .settings-choice,
+.style-glass .settings-savebar-inner,
+.style-glass .settings-page .settings-input,
+.style-glass .settings-page input.settings-input,
+.style-glass .settings-page textarea.settings-input,
+.style-glass .settings-page [data-slot="select-trigger"].settings-input {
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+}
+
+.style-rose .settings-page {
+  --st-radius: 0.85rem;
+  --st-radius-lg: 1.1rem;
+  --st-border: color-mix(in oklch, var(--primary) 18%, var(--border));
+  --st-fill: color-mix(in oklch, var(--primary) 6%, var(--card));
+  --st-fill-hover: color-mix(in oklch, var(--primary) 11%, var(--card));
+}
+
+.style-rose .settings-btn-primary,
+.style-rose .settings-icon,
+.style-rose .settings-nav-item {
+  border-radius: 999px !important;
+}
+
+.style-nili .settings-page {
+  --st-radius: 0.15rem;
+  --st-radius-lg: 0.2rem;
+  --st-border: color-mix(in oklch, var(--foreground) 16%, transparent);
+  --st-border-strong: color-mix(in oklch, var(--foreground) 28%, transparent);
+  --st-fill: var(--card);
+  --st-fill-hover: color-mix(in oklch, var(--primary) 8%, var(--card));
+}
+
+.style-nili .settings-card,
+.style-nili .settings-nav,
+.style-nili .settings-choice,
+.style-nili .settings-session,
+.style-nili .settings-meter,
+.style-nili .settings-icon,
+.style-nili .settings-btn,
+.style-nili .settings-savebar-inner {
+  border-radius: 0 !important;
+}
+
+.style-nili .settings-nav-item[aria-current="page"] {
+  box-shadow: inset -3px 0 0 var(--primary);
+}
+
+.style-khesht .settings-page {
+  --st-radius: 0.12rem;
+  --st-radius-lg: 0.15rem;
+  --st-border: color-mix(in oklch, var(--foreground) 16%, transparent);
+  --st-fill: var(--card);
+  --st-fill-hover: color-mix(in oklch, var(--primary) 8%, var(--card));
+}
+
 .style-khesht .settings-btn-primary {
+  border-radius: 0 !important;
   box-shadow: 2px 2px 0 0 var(--khesht-offset, var(--primary)) !important;
+}
+
+.style-khesht .settings-btn-primary:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--khesht-offset, var(--primary)) !important;
 }
 
 .style-khesht .settings-card,
 .style-khesht .settings-nav,
-.style-khesht .settings-choice {
+.style-khesht .settings-choice,
+.style-khesht .settings-meter,
+.style-khesht .settings-session,
+.style-khesht .settings-savebar-inner {
+  border-radius: 0;
   box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--foreground) 18%, transparent);
 }
 

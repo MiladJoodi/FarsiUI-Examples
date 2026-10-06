@@ -9,6 +9,7 @@ import {
 } from "@/lib/mock/pricing"
 import { ExampleHeaderChrome } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
+import { FarsiUICredit } from "@/components/shared/farsiui-credit"
 
 import "@/styles/pricing.css"
 
@@ -48,9 +49,10 @@ export function PricingShell({ children }: { children: ReactNode }) {
         }
       />
 
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-9">
+      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-11">
         {children}
       </div>
+      <FarsiUICredit />
     </div>
   )
 }

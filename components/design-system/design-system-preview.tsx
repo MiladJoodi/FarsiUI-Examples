@@ -22,7 +22,7 @@ export const DESIGN_SYSTEM_PRESETS = [
   {
     id: "default",
     label: "پیشفرض",
-    hint: "تیره و طلایی",
+    hint: "مسی و گرم",
     styleName: "base-nova",
     styleRootClass: "style-nova",
   },

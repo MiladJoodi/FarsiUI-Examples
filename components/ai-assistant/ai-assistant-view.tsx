@@ -35,6 +35,7 @@ import {
 import { DesignSystemPicker } from "@/components/design-system/design-system-picker"
 import { ModeToggle } from "@/components/layout/mode-toggle"
 import { SearchField } from "@/components/shared/search-field"
+import { FarsiUICredit } from "@/components/shared/farsiui-credit"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -148,7 +149,7 @@ export function AiAssistantView() {
         )
       )
       setThinking(false)
-    }, 700)
+    }, 2000)
   }
 
   function sendMessage(text?: string) {
@@ -491,6 +492,10 @@ function ChatSidebar({
       </ScrollArea>
 
       <div className="ai-sidebar-foot">
+        <FarsiUICredit
+          compact
+          linkClassName="ai-credit w-full justify-center"
+        />
         <div className="flex items-center justify-between gap-2 rounded-xl px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-2">
             <Avatar size="sm">
@@ -511,7 +516,7 @@ function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
     <div className="ai-empty">
       <div className="flex flex-col items-center">
         <div className="ai-empty-orb" aria-hidden>
-          <SparklesIcon className="size-7 text-white" />
+          <SparklesIcon className="size-7" />
         </div>
         <h1>چه کمکی از دستم برمی‌آید؟</h1>
         <p>{assistantHint}</p>
@@ -594,13 +599,21 @@ function MessageRow({
 
 function ThinkingRow() {
   return (
-    <div className="ai-thinking flex items-center gap-2 ps-2 text-sm text-[color:var(--ai-mute)]">
-      <span className="inline-flex gap-1" aria-live="polite">
-        <span className="size-1.5 animate-bounce rounded-full [animation-delay:0ms]" />
-        <span className="size-1.5 animate-bounce rounded-full [animation-delay:120ms]" />
-        <span className="size-1.5 animate-bounce rounded-full [animation-delay:240ms]" />
+    <div
+      className="ai-thinking"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span className="ai-assistant-avatar ai-thinking-avatar" aria-hidden>
+        <SparklesIcon className="size-3.5" />
       </span>
-      <span>در حال نوشتن</span>
+      <span className="ai-thinking-label">در حال فکر کردن</span>
+      <span className="ai-thinking-dots" aria-hidden>
+        <i />
+        <i />
+        <i />
+      </span>
     </div>
   )
 }
@@ -794,6 +807,9 @@ function Composer({
         <p className={cn("ai-footnote", numericClass)}>
           FarsiUI ممکن است اشتباه کند.
         </p>
+        <div className="mt-2 flex justify-center md:hidden">
+          <FarsiUICredit compact linkClassName="ai-credit" />
+        </div>
       </div>
     </div>
   )
