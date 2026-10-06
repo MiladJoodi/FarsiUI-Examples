@@ -36,7 +36,7 @@ import {
 } from "@/lib/mock/calendar"
 import { teamMembers } from "@/lib/mock/tasks"
 import { SearchField } from "@/components/shared/search-field"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -48,44 +48,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
 
 type CalView = "month" | "week" | "day" | "agenda"
-type CalDensity = "compact" | "cozy" | "roomy"
-type CalPalette = "vivid" | "ink" | "sunset"
-
-type CalPrefs = {
-  density: CalDensity
-  palette: CalPalette
-  weekend: boolean
-  showTime: boolean
-}
-
-const DEFAULT_PREFS: CalPrefs = {
-  density: "cozy",
-  palette: "vivid",
-  weekend: true,
-  showTime: true,
-}
-
-const PREFS_KEY = "farsiui-cal-prefs"
-
-function loadPrefs(): CalPrefs {
-  if (typeof window === "undefined") return DEFAULT_PREFS
-  try {
-    const raw = window.localStorage.getItem(PREFS_KEY)
-    if (!raw) return DEFAULT_PREFS
-    return { ...DEFAULT_PREFS, ...JSON.parse(raw) }
-  } catch {
-    return DEFAULT_PREFS
-  }
-}
 
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 8)
 
 function isWeekendDate(day: Date) {
   const d = day.getDay()
-  return d === 4 || d === 5 // پنج‌شنبه و جمعه
+  return d === 4 || d === 5
 }
 
 function showCalToast(title: string, description: string) {
@@ -110,12 +80,14 @@ function getAttendeeProfile(name: string) {
       name: member.name,
       initials: member.initials,
       role: member.role,
+      avatar: member.avatar,
     }
   }
   return {
     name,
     initials: name.length > 3 ? name.slice(0, 2) : name,
     role: "گروه / مهمان",
+    avatar: undefined as string | undefined,
   }
 }
 
@@ -142,7 +114,6 @@ export function CalendarExampleView() {
   const [selectedDay, setSelectedDay] = React.useState<Date | null>(null)
   const [view, setView] = React.useState<CalView>("month")
   const [query, setQuery] = React.useState("")
-  const [prefs, setPrefs] = React.useState<CalPrefs>(DEFAULT_PREFS)
   const [activeCategories, setActiveCategories] = React.useState<
     Record<EventCategory, boolean>
   >({
@@ -159,17 +130,7 @@ export function CalendarExampleView() {
     setToday(now)
     setCursor(now)
     setSelectedDay(now)
-    setPrefs(loadPrefs())
   }, [])
-
-  React.useEffect(() => {
-    if (typeof window === "undefined") return
-    window.localStorage.setItem(PREFS_KEY, JSON.stringify(prefs))
-  }, [prefs])
-
-  function updatePrefs(patch: Partial<CalPrefs>) {
-    setPrefs((prev) => ({ ...prev, ...patch }))
-  }
 
   function createAt(day: Date, hour?: number) {
     const label = hour
@@ -253,37 +214,8 @@ export function CalendarExampleView() {
   }
 
   return (
-    <div
-      className="cal-studio"
-      data-density={prefs.density}
-      data-palette={prefs.palette}
-      data-weekend={prefs.weekend ? "on" : "off"}
-      data-show-time={prefs.showTime ? "on" : "off"}
-    >
-      <header className="cal-hero">
-        <div>
-          <p className="cal-kicker">تقویم شمسی</p>
-          <h1 className="cal-title">برنامهٔ تیم در یک نگاه</h1>
-          <p className="cal-lead">
-            چهار نما، فیلتر زنده، و تنظیمات نمایش — دابل‌کلیک روی روز برای نمای
-            روزانه؛ کلیک روی اسلات خالی برای ساخت رویداد.
-          </p>
-        </div>
-        <Button
-          className="cal-btn cal-btn-primary"
-          onClick={() =>
-            showCalToast(
-              "رویداد جدید",
-              "فرم ایجاد در این نمونه فقط نمایشی است."
-            )
-          }
-        >
-          <PlusIcon data-icon="inline-start" />
-          رویداد جدید
-        </Button>
-      </header>
-
-      <div className="cal-strip">
+    <div className="cal-studio">
+      <div className="cal-toolbar">
         <div className="cal-nav">
           <Button
             variant="outline"
@@ -339,11 +271,42 @@ export function CalendarExampleView() {
 
         <SearchField
           wrapperClassName="cal-search"
-          placeholder="جستجوی رویداد، مکان یا شرکت‌کننده…"
+          placeholder="جستجوی رویداد…"
           aria-label="جستجوی رویدادها"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+
+        <div className="cal-toolbar-end">
+          <Button
+            className="cal-btn cal-btn-primary"
+            onClick={() =>
+              showCalToast(
+                "رویداد جدید",
+                "فرم ایجاد در این نمونه فقط نمایشی است."
+              )
+            }
+          >
+            <PlusIcon data-icon="inline-start" className="size-3.5" />
+            رویداد جدید
+          </Button>
+        </div>
+      </div>
+
+      <div className="cal-mobile-cats">
+        {calendarCategories.map((cat) => (
+          <button
+            key={cat.id}
+            type="button"
+            className="cal-cat"
+            style={{ width: "auto" }}
+            aria-pressed={activeCategories[cat.id]}
+            onClick={() => toggleCategory(cat.id)}
+          >
+            <span className="cal-dot" data-cat={cat.id} aria-hidden />
+            {cat.label}
+          </button>
+        ))}
       </div>
 
       <div className="cal-layout">
@@ -354,7 +317,6 @@ export function CalendarExampleView() {
               today={today}
               selectedDay={selectedDay}
               eventsByDay={eventsByDay}
-              weekendOn={prefs.weekend}
               onSelectDay={(day) => {
                 setSelectedDay(day)
                 setCursor(day)
@@ -374,7 +336,6 @@ export function CalendarExampleView() {
               today={today}
               selectedDay={selectedDay}
               eventsByDay={eventsByDay}
-              weekendOn={prefs.weekend}
               onSelectDay={setSelectedDay}
               onOpenEvent={setSelectedEvent}
               onCreateSlot={(day, hour) => createAt(day, hour)}
@@ -396,8 +357,8 @@ export function CalendarExampleView() {
           ) : null}
         </div>
 
-        <aside className="cal-side">
-          <div className="cal-side-card">
+        <aside className="cal-side" aria-label="نمای جانبی">
+          <div className="cal-side-block">
             <Calendar
               mode="single"
               selected={selectedDay}
@@ -413,71 +374,8 @@ export function CalendarExampleView() {
             />
           </div>
 
-          <div className="cal-side-card">
-            <p className="cal-side-title">سفارشی‌سازی</p>
-            <p className="cal-side-sub">تراکم، پالت و نمایش</p>
-            <div className="cal-prefs">
-              <p className="cal-pref-label">تراکم</p>
-              <div className="cal-pref-row">
-                {(
-                  [
-                    ["compact", "فشرده"],
-                    ["cozy", "متعادل"],
-                    ["roomy", "باز"],
-                  ] as const
-                ).map(([id, label]) => (
-                  <button
-                    key={id}
-                    type="button"
-                    className="cal-pref-chip"
-                    data-active={prefs.density === id ? "true" : "false"}
-                    onClick={() => updatePrefs({ density: id })}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <p className="cal-pref-label">پالت رنگ</p>
-              <div className="cal-pref-row">
-                {(
-                  [
-                    ["vivid", "زنده"],
-                    ["ink", "مرکّب"],
-                    ["sunset", "غروب"],
-                  ] as const
-                ).map(([id, label]) => (
-                  <button
-                    key={id}
-                    type="button"
-                    className="cal-pref-chip"
-                    data-active={prefs.palette === id ? "true" : "false"}
-                    onClick={() => updatePrefs({ palette: id })}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <label className="cal-pref-toggle">
-                <input
-                  type="checkbox"
-                  checked={prefs.weekend}
-                  onChange={(e) => updatePrefs({ weekend: e.target.checked })}
-                />
-                برجسته کردن آخر هفته
-              </label>
-              <label className="cal-pref-toggle">
-                <input
-                  type="checkbox"
-                  checked={prefs.showTime}
-                  onChange={(e) => updatePrefs({ showTime: e.target.checked })}
-                />
-                نمایش ساعت روی کارت‌ها
-              </label>
-            </div>
-          </div>
-
-          <div className="cal-side-card">
-            <p className="cal-side-title">دسته‌بندی‌ها</p>
+          <div className="cal-side-block">
+            <p className="cal-side-title">دسته‌ها</p>
             <p className="cal-side-sub">برای فیلتر روی هر مورد بزنید</p>
             <div className="cal-cats">
               {calendarCategories.map((cat) => (
@@ -495,11 +393,11 @@ export function CalendarExampleView() {
             </div>
           </div>
 
-          <div className="cal-side-card">
+          <div className="cal-side-block">
             <p className="cal-side-title">امروز</p>
             <p className="cal-side-sub cal-num">{formatJalaliFull(today)}</p>
             {todayEvents.length === 0 ? (
-              <p className="mt-3 text-sm text-muted-foreground">
+              <p className="cal-side-sub" style={{ marginTop: "0.75rem" }}>
                 رویدادی برای امروز نیست.
               </p>
             ) : (
@@ -524,22 +422,6 @@ export function CalendarExampleView() {
         </aside>
       </div>
 
-      <div className="cal-mobile-cats">
-        {calendarCategories.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            className="cal-cat"
-            style={{ width: "auto" }}
-            aria-pressed={activeCategories[cat.id]}
-            onClick={() => toggleCategory(cat.id)}
-          >
-            <span className="cal-dot" data-cat={cat.id} aria-hidden />
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
       <EventDialog
         event={selectedEvent}
         onOpenChange={(open) => {
@@ -555,7 +437,6 @@ function MonthView({
   today,
   selectedDay,
   eventsByDay,
-  weekendOn,
   onSelectDay,
   onOpenDay,
   onOpenEvent,
@@ -565,7 +446,6 @@ function MonthView({
   today: Date
   selectedDay: Date
   eventsByDay: Map<string, CalendarEvent[]>
-  weekendOn: boolean
   onSelectDay: (day: Date) => void
   onOpenDay: (day: Date) => void
   onOpenEvent: (event: CalendarEvent) => void
@@ -575,7 +455,7 @@ function MonthView({
   const month = cursor.getMonth()
 
   return (
-    <div className="cal-panel">
+    <div className="cal-sheet">
       <div className="cal-weekdays">
         {WEEKDAY_HEADERS.map((label) => (
           <div key={label} className="cal-weekday">
@@ -590,7 +470,7 @@ function MonthView({
           const outside = day.getMonth() !== month
           const isToday = sameDay(day, today)
           const isSelected = sameDay(day, selectedDay)
-          const weekend = weekendOn && isWeekendDate(day)
+          const weekend = isWeekendDate(day)
           return (
             <div
               key={key}
@@ -660,7 +540,6 @@ function WeekView({
   today,
   selectedDay,
   eventsByDay,
-  weekendOn,
   onSelectDay,
   onOpenEvent,
   onCreateSlot,
@@ -669,7 +548,6 @@ function WeekView({
   today: Date
   selectedDay: Date
   eventsByDay: Map<string, CalendarEvent[]>
-  weekendOn: boolean
   onSelectDay: (day: Date) => void
   onOpenEvent: (event: CalendarEvent) => void
   onCreateSlot: (day: Date, hour: number) => void
@@ -677,13 +555,13 @@ function WeekView({
   const days = weekDays(cursor)
 
   return (
-    <div className="cal-panel">
+    <div className="cal-sheet">
       <div className="cal-week-head">
         <div />
         {days.map((day) => {
           const isToday = sameDay(day, today)
           const isSelected = sameDay(day, selectedDay)
-          const weekend = weekendOn && isWeekendDate(day)
+          const weekend = isWeekendDate(day)
           return (
             <button
               key={toDateKey(day)}
@@ -718,7 +596,7 @@ function WeekView({
               const slotEvents = (eventsByDay.get(key) ?? []).filter((e) =>
                 timeStartsInHour(e.startTime, hour)
               )
-              const weekend = weekendOn && isWeekendDate(day)
+              const weekend = isWeekendDate(day)
               return (
                 <button
                   key={`${key}-${hour}`}
@@ -762,7 +640,7 @@ function DayView({
   onCreateSlot: (hour: number) => void
 }) {
   return (
-    <div className="cal-panel cal-day-timeline">
+    <div className="cal-sheet cal-day-timeline">
       <div className="cal-list-head">
         <h2>
           {formatJalaliWeekday(day).trim()}، {formatJalaliFull(day)}
@@ -822,7 +700,7 @@ function AgendaView({
   onOpenEvent: (event: CalendarEvent) => void
 }) {
   return (
-    <div className="cal-panel cal-list">
+    <div className="cal-sheet cal-list">
       <div className="cal-list-head">
         <h2>رویدادهای نزدیک</h2>
         <p>بر اساس فیلتر و بازهٔ فعال</p>
@@ -935,6 +813,9 @@ function EventDialog({
                       {attendees.map((person) => (
                         <li key={person.name}>
                           <Avatar size="sm">
+                            {person.avatar ? (
+                              <AvatarImage src={person.avatar} alt="" />
+                            ) : null}
                             <AvatarFallback className="text-[0.6rem]">
                               {person.initials}
                             </AvatarFallback>

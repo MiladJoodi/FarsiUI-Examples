@@ -12,20 +12,20 @@ export function CalendarShell({ children }: { children: ReactNode }) {
     <div className="calendar-page">
       <ExampleHeaderChrome
         className="calendar-header"
-        innerClassName="max-w-7xl"
+        innerClassName="max-w-[92rem]"
         start={
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold tracking-tight">
               روزنگار
             </p>
             <p className="hidden truncate text-[0.65rem] text-muted-foreground sm:block">
-              تقویم شمسی تیم · جلسات و ددلاین
+              تقویم شمسی · جلسات و قرارها
             </p>
           </div>
         }
         end={<ModeToggle />}
       />
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto w-full max-w-[92rem] flex-1 px-3 py-4 sm:px-5 sm:py-5 lg:px-6">
         {children}
       </div>
     </div>
