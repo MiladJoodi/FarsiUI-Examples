@@ -138,7 +138,7 @@ export function FiltersSheetButton({
   const [sheetHost, setSheetHost] = React.useState<HTMLElement | null>(null)
 
   React.useEffect(() => {
-    setSheetHost(document.querySelector(".ecom-page"))
+    setSheetHost(document.querySelector<HTMLElement>(".ecom-page"))
   }, [])
 
   return (

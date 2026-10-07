@@ -74,7 +74,7 @@ export function AiAssistantView() {
   const [sheetHost, setSheetHost] = React.useState<HTMLElement | null>(null)
 
   React.useEffect(() => {
-    setSheetHost(document.querySelector(".ai-page"))
+    setSheetHost(document.querySelector<HTMLElement>(".ai-page"))
   }, [])
   const [sourcesOpen, setSourcesOpen] = React.useState(false)
   const [settingsOpen, setSettingsOpen] = React.useState(false)
