@@ -71,6 +71,11 @@ export function AiAssistantView() {
   const [draft, setDraft] = React.useState("")
   const [modelId, setModelId] = React.useState(models[0].id)
   const [sidebarOpen, setSidebarOpen] = React.useState(false)
+  const [sheetHost, setSheetHost] = React.useState<HTMLElement | null>(null)
+
+  React.useEffect(() => {
+    setSheetHost(document.querySelector(".ai-page"))
+  }, [])
   const [sourcesOpen, setSourcesOpen] = React.useState(false)
   const [settingsOpen, setSettingsOpen] = React.useState(false)
   const [thinking, setThinking] = React.useState(false)
@@ -341,6 +346,7 @@ export function AiAssistantView() {
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent
             side="right"
+            container={sheetHost}
             className="w-[min(18rem,100%)] border-[color:var(--ai-line)] bg-[color:var(--ai-glass)] p-0 text-[color:var(--ai-ink)] backdrop-blur-xl md:hidden"
           >
             {sidebar}
@@ -348,13 +354,21 @@ export function AiAssistantView() {
         </Sheet>
 
         <Sheet open={sourcesOpen} onOpenChange={setSourcesOpen}>
-          <SheetContent side="left" className="w-[min(22rem,100%)] p-0">
+          <SheetContent
+            side="left"
+            container={sheetHost}
+            className="w-[min(22rem,100%)] p-0"
+          >
             <SourcesPanel sources={conversationSources} inSheet />
           </SheetContent>
         </Sheet>
 
         <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-          <SheetContent side="left" className="w-[min(22rem,100%)]">
+          <SheetContent
+            side="left"
+            container={sheetHost}
+            className="w-[min(22rem,100%)]"
+          >
             <SheetHeader className="text-start">
               <SheetTitle>تنظیمات دستیار</SheetTitle>
               <SheetDescription>

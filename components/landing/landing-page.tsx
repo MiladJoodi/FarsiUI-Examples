@@ -174,6 +174,7 @@ const faqs = [
 
 export function LandingPage() {
   const [menuOpen, setMenuOpen] = React.useState(false)
+  const [sheetHost, setSheetHost] = React.useState<HTMLDivElement | null>(null)
 
   function scrollTo(href: string) {
     setMenuOpen(false)
@@ -182,7 +183,10 @@ export function LandingPage() {
   }
 
   return (
-    <div className="landing-page min-h-dvh overflow-x-hidden bg-background text-foreground">
+    <div
+      ref={setSheetHost}
+      className="landing-page min-h-dvh overflow-x-hidden bg-background text-foreground"
+    >
       <header className="landing-elev-nav sticky top-0 z-30 border-b border-foreground/8 bg-[color-mix(in_oklch,var(--background)_68%,transparent)] backdrop-blur-xl">
         <div className="relative mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-6">
@@ -246,24 +250,31 @@ export function LandingPage() {
       </header>
 
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent side="right" className="w-[min(20rem,100%)]">
-          <SheetHeader className="text-start">
+        <SheetContent
+          side="right"
+          container={sheetHost}
+          className="flex w-[min(19rem,100%)] flex-col gap-0 p-0"
+        >
+          <SheetHeader className="border-b">
             <SheetTitle>{brand}</SheetTitle>
             <SheetDescription>ناوبری صفحه</SheetDescription>
           </SheetHeader>
-          <nav className="flex flex-col gap-1 px-4 pb-6" aria-label="منوی موبایل">
+          <nav
+            className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3"
+            aria-label="منوی موبایل"
+          >
             {navLinks.map((link) => (
               <Button
                 key={link.href}
                 variant="ghost"
-                className="justify-start"
+                className="h-10 justify-start px-3"
                 onClick={() => scrollTo(link.href)}
               >
                 {link.label}
               </Button>
             ))}
             <Button
-              className="landing-btn landing-btn-primary mt-2"
+              className="landing-btn landing-btn-primary mt-2 h-10"
               onClick={() => scrollTo("#pricing")}
             >
               شروع رایگان

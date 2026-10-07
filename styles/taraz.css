@@ -601,7 +601,7 @@ html.style-nova.dark .taraz-ops-dialog {
 }
 
 .dark .taraz-page .taraz-brand-mark {
-  color: #1a1400;
+  color: var(--tz-yellow-ink);
 }
 
 .taraz-page .taraz-sidebar-brand strong {
@@ -1173,6 +1173,27 @@ html.style-nova.dark .taraz-ops-dialog {
   border-radius: 999px;
   background: var(--tz-yellow);
   transform: translateY(-50%);
+}
+
+/* Mobile drawer — portaled into .taraz-page so tokens apply */
+.taraz-page .taraz-mobile-sheet {
+  background: var(--tz-panel);
+  color: var(--tz-ink);
+  border-inline-start: 1px solid var(--tz-line);
+}
+
+.taraz-page .taraz-mobile-sheet .taraz-nav {
+  flex: 0 1 auto;
+  padding: 0;
+  overflow: visible;
+}
+
+.taraz-page .taraz-mobile-sheet .taraz-nav-link {
+  width: 100%;
+}
+
+.taraz-page .taraz-mobile-sheet .taraz-sidebar-label {
+  display: inline;
 }
 
 /* List selection (accounts etc.) — no yellow wash */

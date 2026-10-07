@@ -357,12 +357,18 @@ export function SettingsView({
         </div>
 
         <Sheet open={navOpen} onOpenChange={setNavOpen}>
-          <SheetContent side="right" className="w-[min(17rem,100%)]">
-            <SheetHeader className="text-start">
+          <SheetContent
+            side="right"
+            className="flex w-[min(18rem,100%)] flex-col gap-0 p-0"
+          >
+            <SheetHeader className="border-b">
               <SheetTitle>بخش‌ها</SheetTitle>
               <SheetDescription>یکی را انتخاب کنید.</SheetDescription>
             </SheetHeader>
-            <nav className="settings-nav mx-4 mb-6" aria-label="فهرست موبایل">
+            <nav
+              className="settings-nav mx-2 mb-4 mt-1 flex-1 overflow-y-auto"
+              aria-label="فهرست موبایل"
+            >
               <ul className="space-y-px">
                 {settingsSections.map((item) => {
                   const Icon = SECTION_ICONS[item.id]

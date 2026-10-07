@@ -135,6 +135,11 @@ export function FiltersSheetButton({
   resultCount: number
 }) {
   const [open, setOpen] = React.useState(false)
+  const [sheetHost, setSheetHost] = React.useState<HTMLElement | null>(null)
+
+  React.useEffect(() => {
+    setSheetHost(document.querySelector(".ecom-page"))
+  }, [])
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -150,6 +155,7 @@ export function FiltersSheetButton({
       </Button>
       <SheetContent
         side="right"
+        container={sheetHost}
         className="w-[min(22rem,100%)] overflow-y-auto p-0"
       >
         <SheetHeader className="border-b p-4 text-start">

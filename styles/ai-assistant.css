@@ -138,14 +138,9 @@
   align-items: center;
   justify-content: center;
   border-radius: calc(var(--ai-radius) * 0.65);
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in oklch, var(--ai-neon) 55%, transparent),
-      color-mix(in oklch, var(--ai-neon-2) 35%, transparent)
-    );
-  box-shadow: 0 0 16px color-mix(in oklch, var(--ai-neon) 28%, transparent);
+  background: var(--ai-neon);
   color: var(--ai-send-fg);
+  box-shadow: 0 0 16px color-mix(in oklch, var(--ai-neon) 28%, transparent);
 }
 
 .ai-brand-mark svg {

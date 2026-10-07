@@ -12,6 +12,8 @@
   --ecom-accent-deep: color-mix(in oklch, var(--primary) 82%, black);
   --ecom-accent-hot: var(--destructive);
   --ecom-mark: color-mix(in oklch, var(--primary) 45%, var(--foreground));
+  --ecom-mark-bg: var(--ecom-accent);
+  --ecom-mark-fg: #fffaf7;
   --ecom-radius: var(--radius);
   --ecom-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ecom-header-offset: 9.25rem;
@@ -40,6 +42,8 @@
 .dark .ecom-page {
   --ecom-accent-deep: color-mix(in oklch, var(--primary) 78%, white);
   --ecom-mark: color-mix(in oklch, var(--primary) 50%, white);
+  --ecom-mark-bg: var(--ecom-accent);
+  --ecom-mark-fg: color-mix(in oklch, var(--ecom-accent) 18%, #0a0c0e);
   background:
     radial-gradient(
       ellipse 65% 38% at 100% 0%,
@@ -68,6 +72,8 @@
   --ecom-accent-deep: #6a3d30;
   --ecom-accent-hot: #b8322e;
   --ecom-mark: #c4a06a;
+  --ecom-mark-bg: #8b5340;
+  --ecom-mark-fg: #fff8f2;
   --ecom-radius: 0.4rem;
   --ecom-cat-electronics: #3d5a5b;
   --ecom-cat-apparel: #8b5340;
@@ -96,6 +102,8 @@ html.dark.style-nova .ecom-page,
   --ecom-accent-deep: #f0c0a0;
   --ecom-accent-hot: #ff8a7a;
   --ecom-mark: #e0c090;
+  --ecom-mark-bg: #e0a888;
+  --ecom-mark-fg: #1a140c;
   --ecom-cat-electronics: #7a9a9c;
   --ecom-cat-apparel: #e0a888;
   --ecom-cat-home: #b0a898;
@@ -253,12 +261,12 @@ html.dark.style-nova .ecom-page .ecom-search-wrap [data-slot="input"],
   height: 2.15rem;
   flex-shrink: 0;
   border-radius: var(--ecom-radius);
-  background: var(--ecom-ink);
-  color: var(--ecom-mark);
+  background: var(--ecom-mark-bg);
+  color: var(--ecom-mark-fg);
   font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: -0.04em;
-  box-shadow: 0 8px 20px color-mix(in oklch, var(--ecom-ink) 18%, transparent);
+  box-shadow: 0 8px 20px color-mix(in oklch, var(--ecom-mark-bg) 28%, transparent);
 }
 
 .ecom-brand-text {

@@ -175,6 +175,7 @@ export function TarazShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [period, setPeriod] = React.useState("today")
   const [collapsed, setCollapsed] = React.useState(false)
+  const [sheetHost, setSheetHost] = React.useState<HTMLDivElement | null>(null)
 
   React.useEffect(() => {
     try {
@@ -198,7 +199,11 @@ export function TarazShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="taraz-page overflow-x-clip" data-ds={designSystemId}>
+    <div
+      ref={setSheetHost}
+      className="taraz-page overflow-x-clip"
+      data-ds={designSystemId}
+    >
       <div className="taraz-shell">
         <aside
           className="taraz-sidebar"
@@ -285,12 +290,13 @@ export function TarazShell({ children }: { children: React.ReactNode }) {
                 </SheetTrigger>
                 <SheetContent
                   side="right"
-                  className="flex w-[min(20rem,100%)] flex-col p-0"
+                  container={sheetHost}
+                  className="taraz-mobile-sheet flex w-[min(19.5rem,100%)] flex-col gap-0 p-0"
                 >
-                  <SheetHeader className="border-b px-4 py-4 text-start">
+                  <SheetHeader className="border-b px-4 py-3.5 text-start">
                     <SheetTitle className="flex items-center gap-3 text-base">
                       <BrandMark size="md" />
-                      <span className="flex flex-col gap-0.5">
+                      <span className="flex min-w-0 flex-col gap-0.5">
                         <span className="font-bold">{BRAND_NAME}</span>
                         <span className="text-sm font-normal text-muted-foreground">
                           {BRAND_TAGLINE}
@@ -299,7 +305,7 @@ export function TarazShell({ children }: { children: React.ReactNode }) {
                     </SheetTitle>
                   </SheetHeader>
 
-                  <div className="taraz-sheet-nav min-h-0 flex-1 overflow-y-auto p-3">
+                  <div className="taraz-sheet-nav min-h-0 flex-1 overflow-y-auto px-2 py-2">
                     <SidebarNav onNavigate={() => setMobileOpen(false)} />
                   </div>
 

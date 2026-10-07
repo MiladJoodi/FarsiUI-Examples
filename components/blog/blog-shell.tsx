@@ -46,6 +46,7 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = React.useState(false)
   const [query, setQuery] = React.useState(urlQuery)
   const [syncedUrlQuery, setSyncedUrlQuery] = React.useState(urlQuery)
+  const [sheetHost, setSheetHost] = React.useState<HTMLDivElement | null>(null)
 
   if (urlQuery !== syncedUrlQuery) {
     setSyncedUrlQuery(urlQuery)
@@ -62,7 +63,7 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
   const isHome = pathname === BLOG_BASE && !urlQuery
 
   return (
-    <div className="blog-page">
+    <div ref={setSheetHost} className="blog-page">
       <ExampleHeaderChrome
         innerClassName="max-w-[68rem]"
         className="blog-chrome"
@@ -107,15 +108,19 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
       />
 
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent side="right" className="w-[min(18rem,100%)]">
-          <SheetHeader className="text-start">
+        <SheetContent
+          side="right"
+          container={sheetHost}
+          className="flex w-[min(19rem,100%)] flex-col gap-0 p-0"
+        >
+          <SheetHeader className="border-b">
             <SheetTitle>{blogName}</SheetTitle>
             <SheetDescription>{blogTagline}</SheetDescription>
           </SheetHeader>
-          <div className="space-y-4 px-4 pb-6">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3">
             <form onSubmit={submitSearch} className="flex items-center gap-1.5">
               <SearchField
-                className="h-8 min-w-0 flex-1 text-sm"
+                className="h-9 min-w-0 flex-1 text-sm"
                 placeholder="جستجو…"
                 aria-label="جستجوی مطلب"
                 value={query}
@@ -135,7 +140,7 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
                 href={BLOG_BASE}
                 onClick={() => setMenuOpen(false)}
                 className={cn(
-                  "flex h-8 items-center truncate rounded-md px-2.5 text-sm whitespace-nowrap transition-colors",
+                  "flex h-10 items-center truncate rounded-lg px-3 text-sm whitespace-nowrap transition-colors",
                   pathname === BLOG_BASE
                     ? "bg-foreground/6 font-medium text-foreground"
                     : "text-muted-foreground hover:bg-foreground/4 hover:text-foreground"
@@ -151,7 +156,7 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
                     href={href}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
-                      "flex h-8 items-center truncate rounded-md px-2.5 text-sm whitespace-nowrap transition-colors",
+                      "flex h-10 items-center truncate rounded-lg px-3 text-sm whitespace-nowrap transition-colors",
                       pathname === href
                         ? "bg-foreground/6 font-medium text-foreground"
                         : "text-muted-foreground hover:bg-foreground/4 hover:text-foreground"
@@ -162,7 +167,9 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
                 )
               })}
             </nav>
-            <FarsiUICredit />
+            <div className="mt-auto border-t pt-3">
+              <FarsiUICredit />
+            </div>
           </div>
         </SheetContent>
       </Sheet>

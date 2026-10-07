@@ -31,12 +31,15 @@
   content: none;
 }
 
-.analytics-page > * {
+.analytics-page > *:not(.analytics-header) {
   position: relative;
   z-index: 1;
 }
 
 .analytics-page .analytics-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   border-bottom: 1px solid var(--ax-line) !important;
   background: color-mix(in oklch, var(--background) 84%, transparent) !important;
   backdrop-filter: blur(14px);
@@ -1662,10 +1665,12 @@
 }
 
 .analytics-page[data-ds="default"] .analytics-header {
-  border-bottom: 0 !important;
-  background: transparent !important;
-  backdrop-filter: none;
+  border-bottom: 1px solid color-mix(in oklch, var(--ax-line) 75%, transparent) !important;
+  background: color-mix(in oklch, var(--ax-panel) 78%, transparent) !important;
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
   color: var(--ax-ink);
+  box-shadow: 0 1px 0 color-mix(in oklch, var(--ax-ink) 4%, transparent);
 }
 
 .analytics-page[data-ds="default"] .analytics-header::after {
@@ -2062,9 +2067,9 @@
 
 @media (max-width: 720px) {
   .analytics-page[data-ds="default"] .analytics-header {
-    background: color-mix(in oklch, var(--ax-panel) 92%, transparent) !important;
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--ax-line) !important;
+    background: color-mix(in oklch, var(--ax-panel) 88%, transparent) !important;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
   }
 
   .analytics-page[data-ds="default"] .ax-brand-name {
