@@ -151,11 +151,11 @@ export function ChannelDonutChart() {
       </div>
 
       <div className="taraz-donut-layout">
-        <div className="taraz-donut-ring relative mx-auto w-full max-w-[200px] sm:max-w-[220px]">
+        <div className="taraz-donut-ring relative mx-auto w-full max-w-[9.5rem] sm:max-w-[10.5rem] xl:max-w-[12rem]">
           <ChartContainer
             config={donutConfig}
-            className="mx-auto aspect-square w-full max-h-[200px] sm:max-h-[220px]"
-            initialDimension={{ width: 220, height: 220 }}
+            className="mx-auto aspect-square w-full max-h-[9.5rem] sm:max-h-[10.5rem] xl:max-h-[12rem]"
+            initialDimension={{ width: 168, height: 168 }}
           >
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
@@ -163,11 +163,11 @@ export function ChannelDonutChart() {
                 data={donutData}
                 dataKey="value"
                 nameKey="name"
-                innerRadius={62}
-                outerRadius={92}
-                paddingAngle={4}
+                innerRadius="62%"
+                outerRadius="88%"
+                paddingAngle={3}
                 strokeWidth={0}
-                cornerRadius={8}
+                cornerRadius={6}
               >
                 {donutData.map((entry) => (
                   <Cell key={entry.name} fill={entry.fill} />
@@ -176,9 +176,9 @@ export function ChannelDonutChart() {
             </PieChart>
           </ChartContainer>
 
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4">
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-3">
             <span className="taraz-caption">مجموع</span>
-            <span className="taraz-amount mt-0.5 text-center text-sm font-extrabold leading-snug sm:text-base">
+            <span className="taraz-amount mt-0.5 text-center text-[0.7rem] font-extrabold leading-snug sm:text-xs xl:text-sm">
               {formatToman(total)}
             </span>
           </div>

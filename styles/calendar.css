@@ -225,14 +225,8 @@ html.dark.style-nova .calendar-page {
 
 .rz-date-panels {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
-}
-
-@media (min-width: 420px) {
-  .rz-date-panels {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (min-width: 920px) {
@@ -257,30 +251,19 @@ html.dark.style-nova .calendar-page {
   border-inline-start: 0;
 }
 
-@media (max-width: 419px) {
+/* موبایل / تبلت: شبکه ۲×۲ فشرده */
+@media (max-width: 919px) {
   .rz-date-panel {
     border-inline-start: 0;
     border-top: 1px solid var(--rz-line);
-    padding-block: 0.7rem;
-  }
-
-  .rz-date-panel:first-child {
-    border-top: 0;
-    padding-top: 0;
-  }
-}
-
-@media (min-width: 420px) and (max-width: 919px) {
-  .rz-date-panel {
-    border-inline-start: 0;
-    border-top: 1px solid var(--rz-line);
-    padding: 0.65rem 0.5rem;
+    padding: 0.45rem 0.4rem;
+    gap: 0.15rem;
   }
 
   .rz-date-panel:nth-child(1),
   .rz-date-panel:nth-child(2) {
     border-top: 0;
-    padding-top: 0.1rem;
+    padding-top: 0.05rem;
   }
 
   .rz-date-panel:nth-child(2),
@@ -1141,132 +1124,161 @@ html.dark.style-nova .calendar-page {
 
 @media (max-width: 919px) {
   .rz-portal {
-    gap: 0.85rem;
+    gap: 0.75rem;
   }
 
   .rz-card {
-    padding: 0.95rem 0.9rem 1rem;
+    padding: 0.85rem 0.8rem 0.9rem;
   }
 
   .rz-hero-card {
-    padding: 0.95rem 0.85rem 1.05rem;
+    padding: 0.7rem 0.7rem 0.75rem;
   }
 
   .rz-hero-head {
-    padding-bottom: 0.6rem;
+    padding-bottom: 0.4rem;
   }
 
   .rz-hero-title {
-    font-size: 1.28rem;
-  }
-
-  .rz-hero-sub {
-    font-size: 1.02rem;
-    line-height: 1.5;
-  }
-
-  .rz-hero-body {
-    gap: 0.95rem;
-  }
-
-  .rz-hero-main {
-    gap: 0.7rem;
-  }
-
-  .rz-analog-svg {
-    width: min(9.25rem, 40vw);
-    height: min(9.25rem, 40vw);
-  }
-
-  .rz-digital {
-    font-size: 1.28rem;
-    letter-spacing: 0.08em;
-  }
-
-  .rz-date-code {
     font-size: 1.05rem;
   }
 
+  .rz-hero-sub {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .rz-hero-body {
+    gap: 0.55rem;
+  }
+
+  .rz-hero-main {
+    gap: 0.45rem;
+  }
+
+  .rz-analog-svg {
+    width: 5.75rem;
+    height: 5.75rem;
+  }
+
+  .rz-analog-num {
+    font-size: 9px;
+  }
+
+  .rz-digital {
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+
+  .rz-clock-stage {
+    gap: 0.25rem;
+  }
+
+  .rz-date-label {
+    font-size: 0.65rem;
+  }
+
+  .rz-date-code {
+    font-size: 0.88rem;
+  }
+
+  /* خطوط طولانی تکراری روی موبایل حذف — فقط کد عددی */
   .rz-date-line {
-    font-size: 0.7rem;
-    max-width: none;
+    display: none;
+  }
+
+  .rz-zodiac {
+    flex-direction: row;
+    gap: 0.3rem;
   }
 
   .rz-zodiac-symbol {
-    font-size: 1.55rem;
+    font-size: 1.15rem;
   }
 
   .rz-zodiac-name {
-    font-size: 0.95rem;
+    font-size: 0.8rem;
   }
 
+  /* نقل‌قول و توضیح روز فضا می‌گیرد — فقط دسکتاپ */
   .rz-hero-foot {
-    margin-top: 0.9rem;
-    gap: 0.5rem;
-  }
-
-  .rz-blurb {
-    padding: 0.7rem 0.8rem;
-    font-size: 0.82rem;
-  }
-
-  .rz-quote {
-    font-size: 0.74rem;
+    display: none;
   }
 
   .rz-month-section {
-    padding: 0.8rem 0.7rem 0.95rem;
+    padding: 0.75rem 0.65rem 0.85rem;
   }
 
   .rz-cal-banner {
-    padding-bottom: 0.7rem;
+    padding-bottom: 0.55rem;
   }
 
   .rz-cal-month {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
 
   .rz-cal-range,
   .rz-cal-hijri-range {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
   }
 
   .rz-weekday {
-    font-size: 0.68rem;
-    padding-block: 0.2rem;
+    font-size: 0.65rem;
+    padding-block: 0.15rem;
   }
 }
 
-/* موبایل باریک: اول تیتر و تاریخ، بعد ساعت */
+/* موبایل باریک: ساعت و تیتر کنار هم، فشرده */
 @media (max-width: 639px) {
-  .rz-hero-main {
-    order: -1;
+  .rz-hero-body {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: 0.55rem;
+    align-items: center;
   }
 
   .rz-clock-face-wrap {
     justify-content: center;
+  }
+
+  .rz-analog-svg {
+    width: 5.25rem;
+    height: 5.25rem;
+  }
+
+  .rz-hero-head {
+    text-align: start;
+    padding-bottom: 0.35rem;
+  }
+
+  .rz-hero-title {
+    font-size: 0.98rem;
+  }
+
+  .rz-hero-sub {
+    font-size: 0.78rem;
   }
 }
 
 /* تبلت باریک: ساعت راست، تیتر+پنل چپ */
 @media (min-width: 640px) and (max-width: 919px) {
   .rz-hero-body {
-    grid-template-columns: 8.75rem minmax(0, 1fr);
-    gap: 1rem;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 0.75rem;
     align-items: start;
   }
 
   .rz-analog-svg {
-    width: 8.5rem;
-    height: 8.5rem;
+    width: 6.25rem;
+    height: 6.25rem;
   }
 
   .rz-hero-title {
-    font-size: 1.32rem;
+    font-size: 1.1rem;
   }
 
   .rz-hero-sub {
-    font-size: 1.05rem;
+    font-size: 0.88rem;
   }
 }
 

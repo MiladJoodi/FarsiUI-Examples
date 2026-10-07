@@ -1366,15 +1366,21 @@ html.style-nova.dark .taraz-ops-dialog {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
-@media (min-width: 1024px) {
+/* Side-by-side only when the donut card is wide enough (desktop, not laptop). */
+@media (min-width: 1280px) {
   .taraz-page .taraz-donut-layout {
     flex-direction: row;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1rem;
   }
+}
+
+.taraz-page .taraz-chart-donut {
+  display: flex;
+  flex-direction: column;
 }
 
 .taraz-page .taraz-donut-legend {

@@ -472,9 +472,11 @@
 .pricing-card-amount {
   font-size: clamp(1.7rem, 3vw, 2.15rem);
   font-weight: 780;
-  letter-spacing: -0.02em;
+  letter-spacing: 0 !important;
   line-height: 1.1;
-  font-variant-numeric: tabular-nums;
+  font-kerning: none;
+  font-variant-numeric: normal;
+  font-feature-settings: normal;
   padding-block: 0.55rem 0.35rem;
 }
 
@@ -490,6 +492,9 @@
   line-height: 1.45;
   color: var(--px-mute);
   padding-bottom: 0.55rem;
+  letter-spacing: 0 !important;
+  font-variant-numeric: normal;
+  font-feature-settings: normal;
 }
 
 .pricing-card-saving {

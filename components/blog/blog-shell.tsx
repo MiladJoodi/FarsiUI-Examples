@@ -80,7 +80,6 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
         }
         end={
           <>
-            <FarsiUICredit className="hidden sm:inline-flex" />
             <form
               onSubmit={submitSearch}
               className="hidden min-w-0 max-w-[11rem] flex-1 xl:block xl:max-w-[13rem]"
@@ -103,6 +102,7 @@ export function BlogShell({ children }: { children: React.ReactNode }) {
             >
               <MenuIcon className="size-4" />
             </Button>
+            <FarsiUICredit className="hidden sm:inline-flex" />
           </>
         }
       />

@@ -13,7 +13,7 @@ export default function DashboardPage() {
       <OpsToolbar />
       <BalanceBlock />
 
-      <div className="grid min-w-0 gap-4 sm:gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.85fr)]">
+      <div className="grid min-w-0 gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,0.75fr)]">
         <CashflowChart />
         <ChannelDonutChart />
       </div>
